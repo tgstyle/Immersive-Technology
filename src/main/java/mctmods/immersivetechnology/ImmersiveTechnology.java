@@ -31,7 +31,7 @@ public class ImmersiveTechnology {
 	public static final String NAME = "Immersive Technology";
 	public static final String VERSION = "${version}";
 
-	public static CommonProxy proxy = DistExecutor.runForDist(() -> () -> new ClientProxy(), () -> () -> new CommonProxy());
+	public static CommonProxy proxy = DistExecutor.unsafeRunForDist(() -> () -> new ClientProxy(), () -> () -> new CommonProxy());
 
 	public ImmersiveTechnology() {
 		ITLogger.logger = LogManager.getLogger(MODID);
