@@ -1,74 +1,85 @@
 package mctmods.immersivetechnology.client;
 
-import blusunrize.immersiveengineering.api.ManualHelper;
-import blusunrize.immersiveengineering.api.ManualPageMultiblock;
-import blusunrize.immersiveengineering.api.energy.wires.WireApi;
-import blusunrize.immersiveengineering.client.ClientUtils;
-import blusunrize.immersiveengineering.client.IECustomStateMapper;
-import blusunrize.immersiveengineering.client.models.obj.IEOBJLoader;
-import blusunrize.immersiveengineering.common.IEContent;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IIEMetaBlock;
-import blusunrize.immersiveengineering.common.items.ItemEarmuffs;
-import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
-import blusunrize.lib.manual.ManualPages;
-import mctmods.immersivetechnology.ImmersiveTechnology;
-import mctmods.immersivetechnology.api.ITUtils;
-import mctmods.immersivetechnology.client.render.TileRenderBarrelOpen;
-import mctmods.immersivetechnology.client.render.TileRenderSteamTurbine;
-import mctmods.immersivetechnology.client.render.TileRenderSteelSheetmetalTank;
+//import blusunrize.immersiveengineering.api.ManualHelper;
+//import blusunrize.immersiveengineering.api.ManualPageMultiblock;
+//import blusunrize.immersiveengineering.api.energy.wires.WireApi;
+//import blusunrize.immersiveengineering.client.ClientUtils;
+//import blusunrize.immersiveengineering.client.IECustomStateMapper;
+//import blusunrize.immersiveengineering.client.models.obj.IEOBJLoader;
+//import blusunrize.immersiveengineering.common.IEContent;
+//import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IIEMetaBlock;
+//import blusunrize.immersiveengineering.common.items.ItemEarmuffs;
+//import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
+//import blusunrize.lib.manual.ManualPages;
+//import mctmods.immersivetechnology.ImmersiveTechnology;
+//import mctmods.immersivetechnology.api.ITUtils;
+//import mctmods.immersivetechnology.client.render.TileRenderBarrelOpen;
+//import mctmods.immersivetechnology.client.render.TileRenderSteamTurbine;
+//import mctmods.immersivetechnology.client.render.TileRenderSteelSheetmetalTank;
+//import mctmods.immersivetechnology.common.ITContent;
+//import mctmods.immersivetechnology.common.Config.ITConfig.Machines.Multiblock;
+//import mctmods.immersivetechnology.common.blocks.BlockITFluid;
+//import mctmods.immersivetechnology.common.blocks.BlockValve.BlockType_Valve;
+//import mctmods.immersivetechnology.common.blocks.connectors.types.BlockType_Connectors;
+//import mctmods.immersivetechnology.common.blocks.metal.multiblocks.*;
+//import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBarrelOpen;
+//import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySteamTurbineMaster;
+//import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySteelSheetmetalTankMaster;
+//import mctmods.immersivetechnology.common.blocks.metal.types.BlockType_MetalDevice;
+//import mctmods.immersivetechnology.common.blocks.stone.multiblocks.MultiblockCokeOvenAdvanced;
+//import mctmods.immersivetechnology.common.items.ItemITBase;
+//import mctmods.immersivetechnology.common.util.ITLogger;
+//import mctmods.immersivetechnology.common.util.network.MessageRequestUpdate;
+//import mctmods.immersivetechnology.common.util.network.MessageStopSound;
+//import mctmods.immersivetechnology.common.util.network.MessageTileSync;
+//import mctmods.immersivetechnology.common.util.sound.ITSoundHandler;
+//import net.minecraft.block.Block;
+//import net.minecraft.block.state.IBlockState;
+//import net.minecraft.client.Minecraft;
+//import net.minecraft.client.entity.EntityPlayerSP;
+//import net.minecraft.client.renderer.ItemMeshDefinition;
+//import net.minecraft.client.renderer.block.model.ModelBakery;
+//import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+//import net.minecraft.client.renderer.block.statemap.StateMapperBase;
+//import net.minecraft.init.Items;
+//import net.minecraft.inventory.EntityEquipmentSlot;
+//import net.minecraft.item.Item;
+//import net.minecraft.item.ItemBlock;
+//import net.minecraft.item.ItemStack;
+//import net.minecraft.util.ResourceLocation;
+//import net.minecraft.world.World;
+//import net.minecraftforge.api.distmarker.Dist;
+//import net.minecraftforge.client.event.ModelRegistryEvent;
+//import net.minecraftforge.client.model.ModelLoader;
+//import net.minecraftforge.client.model.ModelLoaderRegistry;
+//import net.minecraftforge.client.model.obj.OBJLoader;
+//import net.minecraftforge.common.MinecraftForge;
+//import net.minecraftforge.fluids.Fluid;
+//import net.minecraftforge.fml.client.registry.ClientRegistry;
+//import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+//import net.minecraftforge.fml.common.gameevent.PlayerEvent;
+//import net.minecraftforge.fml.common.gameevent.TickEvent;
+//import net.minecraftforge.fml.common.network.FMLNetworkEvent;
+//import net.minecraftforge.fml.relauncher.Side;
+//import javax.annotation.Nonnull;
+//import java.util.Locale;
+
 import mctmods.immersivetechnology.common.CommonProxy;
-import mctmods.immersivetechnology.common.ITContent;
-import mctmods.immersivetechnology.common.Config.ITConfig.Machines.Multiblock;
-import mctmods.immersivetechnology.common.blocks.BlockITFluid;
-import mctmods.immersivetechnology.common.blocks.BlockValve.BlockType_Valve;
-import mctmods.immersivetechnology.common.blocks.connectors.types.BlockType_Connectors;
-import mctmods.immersivetechnology.common.blocks.metal.multiblocks.*;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBarrelOpen;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySteamTurbineMaster;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySteelSheetmetalTankMaster;
-import mctmods.immersivetechnology.common.blocks.metal.types.BlockType_MetalDevice;
-import mctmods.immersivetechnology.common.blocks.stone.multiblocks.MultiblockCokeOvenAdvanced;
-import mctmods.immersivetechnology.common.items.ItemITBase;
-import mctmods.immersivetechnology.common.util.ITLogger;
-import mctmods.immersivetechnology.common.util.network.MessageRequestUpdate;
-import mctmods.immersivetechnology.common.util.network.MessageStopSound;
-import mctmods.immersivetechnology.common.util.network.MessageTileSync;
-import mctmods.immersivetechnology.common.util.sound.ITSoundHandler;
-import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.client.renderer.ItemMeshDefinition;
-import net.minecraft.client.renderer.block.model.ModelBakery;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.renderer.block.statemap.StateMapperBase;
-import net.minecraft.init.Items;
-import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
-import net.minecraftforge.client.event.ModelRegistryEvent;
-import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.client.model.ModelLoaderRegistry;
-import net.minecraftforge.client.model.obj.OBJLoader;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
+
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.PlayerEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
-import net.minecraftforge.fml.common.network.FMLNetworkEvent;
-import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 
-import javax.annotation.Nonnull;
-import java.util.Locale;
+import static mctmods.immersivetechnology.ImmersiveTechnology.MODID;
 
-@Mod.EventBusSubscriber(Side.CLIENT)
+@Mod.EventBusSubscriber(value = Dist.CLIENT, modid = MODID, bus = Bus.MOD)
 public class ClientProxy extends CommonProxy {
-	public static final String CAT_IT = "it";
+
+	@Override
+	public void serverStarting() {
+	}
+
+	/*public static final String CAT_IT = "it";
 
 	@Override
 	public void preInit() {
@@ -126,11 +137,6 @@ public class ClientProxy extends CommonProxy {
 
 		if(prevVolume != volumeAdjustment) ITSoundHandler.UpdateAllVolumes();
 	}
-
-	
-	/*
-	@author BluSunrize
-	*/
 
 	@SuppressWarnings("deprecation")
 	@SubscribeEvent
@@ -273,6 +279,6 @@ public class ClientProxy extends CommonProxy {
 		public ModelResourceLocation getModelLocation(@Nonnull ItemStack stack)	{
 			return location;
 		}
-	}
+	}*/
 
 }

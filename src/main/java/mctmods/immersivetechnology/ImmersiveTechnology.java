@@ -1,13 +1,18 @@
 package mctmods.immersivetechnology;
 
-//import blusunrize.immersiveengineering.common.Config;
+import org.apache.logging.log4j.LogManager;
+
+import mctmods.immersivetechnology.client.ClientProxy;
 import mctmods.immersivetechnology.common.CommonProxy;
-import mctmods.immersivetechnology.common.ITContent;
+//import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.util.ITLogger;
-import mctmods.immersivetechnology.common.util.ITSounds;
-import mctmods.immersivetechnology.common.util.compat.ITCompatModule;
+//import mctmods.immersivetechnology.common.util.ITSounds;
+//import mctmods.immersivetechnology.common.util.compat.ITCompatModule;
 //import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.ItemStack;
+//import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.AddReloadListenerEvent;
+import net.minecraftforge.fml.DistExecutor;
 //import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.Mod;
 //import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -16,6 +21,8 @@ import net.minecraftforge.fml.common.Mod;
 //import net.minecraftforge.fml.common.event.*;
 //import net.minecraftforge.fml.common.network.NetworkRegistry;
 //import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 
 @Mod(ImmersiveTechnology.MODID)
 public class ImmersiveTechnology {
@@ -23,8 +30,27 @@ public class ImmersiveTechnology {
 	public static final String MODID = "immersivetechnology";
 	public static final String NAME = "Immersive Technology";
 	public static final String VERSION = "${version}";
-	
-}
+
+	public static CommonProxy proxy = DistExecutor.runForDist(() -> () -> new ClientProxy(), () -> () -> new CommonProxy());
+
+	public ImmersiveTechnology() {
+		ITLogger.logger = LogManager.getLogger(MODID);
+		MinecraftForge.EVENT_BUS.addListener(this::serverStarting);
+		MinecraftForge.EVENT_BUS.addListener(this::addReloadListeners);
+	}
+
+	public void setup(FMLCommonSetupEvent event) {
+
+	}
+
+	public void serverStarting(FMLServerStartingEvent event) {
+		proxy.serverStarting();
+	}
+
+	public void addReloadListeners(AddReloadListenerEvent event) {
+
+	}
+
 /*
 	@SidedProxy(clientSide = "mctmods.immersivetechnology.client.ClientProxy" , serverSide = "mctmods.immersivetechnology.common.CommonProxy")
 	public static CommonProxy proxy;
@@ -70,6 +96,6 @@ public class ImmersiveTechnology {
 		public ItemStack getIconItemStack() {
 			return new ItemStack(ITContent.blockValve, 1, 0);
 		}
-	};
+	};*/
 
-}*/
+}

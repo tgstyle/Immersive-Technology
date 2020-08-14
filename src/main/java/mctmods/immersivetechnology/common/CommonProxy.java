@@ -1,41 +1,45 @@
 package mctmods.immersivetechnology.common;
 
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGuiTile;
-import mctmods.immersivetechnology.ImmersiveTechnology;
-import mctmods.immersivetechnology.api.ITLib;
-import mctmods.immersivetechnology.api.ITUtils;
-import mctmods.immersivetechnology.client.gui.*;
-import mctmods.immersivetechnology.common.blocks.connectors.tileentities.TileEntityTimer;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBoilerMaster;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityDistillerMaster;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySolarTowerMaster;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityTrashItem;
-import mctmods.immersivetechnology.common.blocks.stone.tileentities.TileEntityCokeOvenAdvancedMaster;
-import mctmods.immersivetechnology.common.gui.*;
-import mctmods.immersivetechnology.common.tileentities.TileEntityFluidValve;
-import mctmods.immersivetechnology.common.tileentities.TileEntityLoadController;
-import mctmods.immersivetechnology.common.tileentities.TileEntityStackLimiter;
-import mctmods.immersivetechnology.common.util.TemporaryTileEntityRequest;
-import mctmods.immersivetechnology.common.util.network.MessageRequestUpdate;
-import mctmods.immersivetechnology.common.util.network.MessageStopSound;
-import mctmods.immersivetechnology.common.util.network.MessageTileSync;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
-import net.minecraftforge.fml.common.network.IGuiHandler;
-import net.minecraftforge.fml.relauncher.Side;
+//import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGuiTile;
+//import mctmods.immersivetechnology.ImmersiveTechnology;
+//import mctmods.immersivetechnology.api.ITLib;
+//import mctmods.immersivetechnology.api.ITUtils;
+//import mctmods.immersivetechnology.client.gui.*;
+//import mctmods.immersivetechnology.common.blocks.connectors.tileentities.TileEntityTimer;
+//import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBoilerMaster;
+//import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityDistillerMaster;
+//import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySolarTowerMaster;
+//import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityTrashItem;
+//import mctmods.immersivetechnology.common.blocks.stone.tileentities.TileEntityCokeOvenAdvancedMaster;
+//import mctmods.immersivetechnology.common.gui.*;
+//import mctmods.immersivetechnology.common.tileentities.TileEntityFluidValve;
+//import mctmods.immersivetechnology.common.tileentities.TileEntityLoadController;
+//import mctmods.immersivetechnology.common.tileentities.TileEntityStackLimiter;
+//import mctmods.immersivetechnology.common.util.TemporaryTileEntityRequest;
+//import mctmods.immersivetechnology.common.util.network.MessageRequestUpdate;
+//import mctmods.immersivetechnology.common.util.network.MessageStopSound;
+//import mctmods.immersivetechnology.common.util.network.MessageTileSync;
+//import net.minecraft.entity.player.EntityPlayer;
+//import net.minecraft.tileentity.TileEntity;
+//import net.minecraft.util.math.BlockPos;
+//import net.minecraft.world.World;
+//import net.minecraftforge.common.MinecraftForge;
+//import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+//import net.minecraftforge.fml.common.gameevent.TickEvent;
+//import net.minecraftforge.fml.common.network.IGuiHandler;
+//import net.minecraftforge.fml.relauncher.Side;
 
-import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
+//import javax.annotation.Nonnull;
+//import java.util.ArrayList;
+//import java.util.List;
 
-public class CommonProxy implements IGuiHandler {
+public class CommonProxy {
 
-	public void preInit() {
+	
+	public void serverStarting() {		
+	}
+
+	/*public void preInit() {
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 
@@ -119,6 +123,6 @@ public class CommonProxy implements IGuiHandler {
 
 	public World getClientWorld() {
 		return null;
-	}
+	}*/
 
 }
