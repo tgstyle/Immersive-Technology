@@ -315,7 +315,7 @@ public class BlockITBase<E extends Enum<E> & BlockITBase.IBlockEnum> extends Blo
 	}
 
 	/**
-	* Used to determine ambient occlusion and culling when rebuilding chunks for render
+	* Used to determine ambient occlusion and culling when rebuilding chunks forrender
 	* @deprecated call via {@link IBlockState#isOpaqueCube()} whenever possible. Implementing/overriding is fine.
 	**/
 	@Override
@@ -367,10 +367,10 @@ public class BlockITBase<E extends Enum<E> & BlockITBase.IBlockEnum> extends Blo
 		return in.withProperty(prop, (V) val);
 	}
 
-	public void onIEBlockPlacedBy(World world, BlockPos pos, IBlockState state, EnumFacing side, float hitX, float hitY, float hitZ, EntityLivingBase placer, ItemStack stack) {
+	public void onITBlockPlacedBy(World world, BlockPos pos, IBlockState state, EnumFacing side, float hitX, float hitY, float hitZ, EntityLivingBase placer, ItemStack stack) {
 	}
 
-	public boolean canIEBlockBePlaced(World world, BlockPos pos, IBlockState newState, EnumFacing side, float hitX, float hitY, float hitZ, EntityPlayer player, ItemStack stack) {
+	public boolean canITBlockBePlaced(World world, BlockPos pos, IBlockState newState, EnumFacing side, float hitX, float hitY, float hitZ, EntityPlayer player, ItemStack stack) {
 		return true;
 	}
 

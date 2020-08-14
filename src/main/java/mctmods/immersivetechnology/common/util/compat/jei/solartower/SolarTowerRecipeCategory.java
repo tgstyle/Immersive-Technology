@@ -1,8 +1,7 @@
 package mctmods.immersivetechnology.common.util.compat.jei.solartower;
 
 import mctmods.immersivetechnology.api.crafting.SolarTowerRecipe;
-import mctmods.immersivetechnology.common.ITContent;
-import mctmods.immersivetechnology.common.blocks.metal.types.BlockType_MetalMultiblock;
+import mctmods.immersivetechnology.common.util.compat.jei.GenericMultiblockIngredient;
 import mctmods.immersivetechnology.common.util.compat.jei.ITRecipeCategory;
 import mctmods.immersivetechnology.common.util.compat.jei.JEIHelper;
 import mezz.jei.api.IGuiHelper;
@@ -13,7 +12,6 @@ import mezz.jei.api.gui.ITickTimer;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.IRecipeWrapper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
@@ -29,7 +27,7 @@ public class SolarTowerRecipeCategory extends ITRecipeCategory<SolarTowerRecipe,
 
 	@SuppressWarnings("deprecation")
 	public SolarTowerRecipeCategory(IGuiHelper helper) {
-		super("solarTower", "tile.immersivetech.metal_multiblock.solar_tower.name", helper.createDrawable(background, 0, 0, 176, 77), SolarTowerRecipe.class, new ItemStack(ITContent.blockMetalMultiblock, 1, BlockType_MetalMultiblock.SOLAR_TOWER.getMeta()));
+		super("solarTower", "tile.immersivetech.metal_multiblock.solar_tower.name", helper.createDrawable(background, 0, 0, 176, 77), SolarTowerRecipe.class, GenericMultiblockIngredient.SOLAR_TOWER);
 		tankOverlay = helper.createDrawable(background, 177, 31, 16, 47, -2, 2, -2, 2);
 		reflectorOverlay = helper.createDrawable(background, 198, 31, 10, 10, 0,0,0,0);
 		timer = helper.createTickTimer(200, 3, false);
@@ -40,15 +38,15 @@ public class SolarTowerRecipeCategory extends ITRecipeCategory<SolarTowerRecipe,
 	public void setRecipe(IRecipeLayout recipeLayout, SolarTowerRecipeWrapper recipeWrapper, IIngredients ingredients) {
 		List<List<FluidStack>> inputs = ingredients.getInputs(FluidStack.class);
 		int tankCapacity = 0;
-		for (List<FluidStack> stacks : inputs) {
-			for (FluidStack stack : stacks) {
-				if (stack.amount > tankCapacity) tankCapacity = stack.amount;
+		for(List<FluidStack> stacks : inputs) {
+			for(FluidStack stack : stacks) {
+				if(stack.amount > tankCapacity) tankCapacity = stack.amount;
 			}
 		}
 		List<List<FluidStack>> outputs = ingredients.getOutputs(FluidStack.class);
-		for (List<FluidStack> stacks : outputs) {
-			for (FluidStack stack : stacks) {
-				if (stack.amount > tankCapacity) tankCapacity = stack.amount;
+		for(List<FluidStack> stacks : outputs) {
+			for(FluidStack stack : stacks) {
+				if(stack.amount > tankCapacity) tankCapacity = stack.amount;
 			}
 		}
 
@@ -68,9 +66,9 @@ public class SolarTowerRecipeCategory extends ITRecipeCategory<SolarTowerRecipe,
 	public void drawExtras(Minecraft minecraft) {
 		int reflectors = timer.getValue();
 		reflectorOverlay.draw(minecraft, 32, 24);
-		if (reflectors >= 1) reflectorOverlay.draw(minecraft, 16, 40);
-		if (reflectors >= 2) reflectorOverlay.draw(minecraft, 48, 40);
-		if (reflectors == 3) reflectorOverlay.draw(minecraft, 32, 56);
+		if(reflectors >= 1) reflectorOverlay.draw(minecraft, 16, 40);
+		if(reflectors >= 2) reflectorOverlay.draw(minecraft, 48, 40);
+		if(reflectors == 3) reflectorOverlay.draw(minecraft, 32, 56);
 	}
 
 	@Override

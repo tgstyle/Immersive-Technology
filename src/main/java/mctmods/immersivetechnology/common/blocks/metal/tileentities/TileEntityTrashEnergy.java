@@ -1,5 +1,6 @@
 package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 
+import mctmods.immersivetechnology.common.Config;
 import mctmods.immersivetechnology.common.tileentities.TileEntityCommonOSD;
 import mctmods.immersivetechnology.common.util.ITrashCanBounds;
 import mctmods.immersivetechnology.common.util.TranslationKey;
@@ -9,8 +10,6 @@ import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 
 public class TileEntityTrashEnergy extends TileEntityCommonOSD implements IEnergyStorage, ITrashCanBounds {
-
-
 
 	@Override
 	public boolean hasCapability(final Capability<?> capability, final EnumFacing facing) {
@@ -58,6 +57,8 @@ public class TileEntityTrashEnergy extends TileEntityCommonOSD implements IEnerg
 
 	@Override
 	public TranslationKey text() {
-		return TranslationKey.OVERLAY_OSD_TRASH_ENERGY_NORMAL_FIRST_LINE;
+		return Config.ITConfig.Experimental.per_tick_trash_cans?
+				TranslationKey.OVERLAY_OSD_TRASH_ENERGY_NORMAL_ALTERNATIVE :
+				TranslationKey.OVERLAY_OSD_TRASH_ENERGY_NORMAL_FIRST_LINE;
 	}
 }

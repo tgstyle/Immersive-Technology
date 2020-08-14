@@ -3,11 +3,10 @@ package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 import javax.annotation.Nullable;
 
 import blusunrize.immersiveengineering.api.IEEnums.SideConfig;
-import blusunrize.immersiveengineering.api.Lib;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
-import blusunrize.immersiveengineering.common.util.ChatUtils;
 import blusunrize.immersiveengineering.common.util.Utils;
+import mctmods.immersivetechnology.common.Config.ITConfig.Barrels;
 import mctmods.immersivetechnology.common.util.ITFluidTank;
 import mctmods.immersivetechnology.common.util.TranslationKey;
 import net.minecraft.block.state.IBlockState;
@@ -20,7 +19,6 @@ import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
@@ -30,13 +28,25 @@ import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
 public class TileEntityBarrelSteel extends TileEntityIEBase implements ITickable, IEBlockInterfaces.IBlockOverlayText, IEBlockInterfaces.IConfigurableSides, IEBlockInterfaces.IPlayerInteraction, IEBlockInterfaces.ITileDrop, IEBlockInterfaces.IComparatorOverride, ITFluidTank.TankListener {
 
+	private static int tankSize = Barrels.barrel_steel_tankSize;
+	private static int transferSpeed = Barrels.barrel_steel_transferSpeed;
+
 	public int[] sideConfig = {1, 0};
-	public ITFluidTank tank = new ITFluidTank(24000, this);
+
+	public ITFluidTank tank;
 
 	private int sleep = 0;
 
 	SidedFluidHandler[] sidedFluidHandler = {new SidedFluidHandler(this, EnumFacing.DOWN), new SidedFluidHandler(this, EnumFacing.UP)};
 	SidedFluidHandler nullsideFluidHandler = new SidedFluidHandler(this, null);
+
+	public void createTank() {
+		tank = new ITFluidTank(tankSize, this);
+	}
+
+	public TileEntityBarrelSteel() {
+		createTank();
+	}
 
 	@Override
 	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
@@ -65,24 +75,28 @@ public class TileEntityBarrelSteel extends TileEntityIEBase implements ITickable
 	public void update() {
 		if(world.isRemote) return;
 		for(int index = 0; index < 2; index++) {
-		if(tank.getFluidAmount() > 0 && sideConfig[index] == 1) {
+			if(tank.getFluidAmount() > 0 && sideConfig[index] == 1) {
 				EnumFacing face = EnumFacing.getFront(index);
 				IFluidHandler output = FluidUtil.getFluidHandler(world, getPos().offset(face), face.getOpposite());
-            	if(output != null) {
-                	if(sleep == 0) {
-                    	FluidStack accepted = Utils.copyFluidStackWithAmount(tank.getFluid(), Math.min(500, tank.getFluidAmount()), false);
-                    	accepted.amount = output.fill(Utils.copyFluidStackWithAmount(accepted, accepted.amount, true), false);
-                		if(accepted.amount > 0) {
-                			int drained = output.fill(Utils.copyFluidStackWithAmount(accepted, accepted.amount, false), true);
-                			tank.drain(drained, true);
-                			sleep = 0;
-                		} else {
-                			sleep = 20;
-                		}
-                	} else {
-                		sleep--;
-                	}
-            	}
+				if(output != null) {
+					if(sleep == 0) {
+						FluidStack accepted = Utils.copyFluidStackWithAmount(tank.getFluid(), Math.min(transferSpeed, tank.getFluidAmount()), false);
+						if(accepted == null) {
+							sleep = 20;
+							return;
+						}
+						accepted.amount = output.fill(Utils.copyFluidStackWithAmount(accepted, accepted.amount, true), false);
+						if(accepted.amount > 0) {
+							int drained = output.fill(Utils.copyFluidStackWithAmount(accepted, accepted.amount, false), true);
+							tank.drain(drained, true);
+							sleep = 0;
+						} else {
+							sleep = 20;
+						}
+					} else {
+						sleep--;
+					}
+				}
 			}
 		}
 	}
@@ -143,12 +157,21 @@ public class TileEntityBarrelSteel extends TileEntityIEBase implements ITickable
 		return true;
 	}
 
-	public boolean isFluidValid(FluidStack fluid) {
-		return fluid != null && fluid.getFluid() != null && !fluid.getFluid().isGaseous(fluid);
+	@Override
+	public boolean receiveClientEvent(int id, int arg) {
+		if(id == 0) {
+			this.markContainingBlockForUpdate(null);
+			return true;
+		}
+		return false;
 	}
 
-	static class SidedFluidHandler implements IFluidHandler {
-		TileEntityBarrelSteel barrel;
+	public boolean isFluidValid(FluidStack fluid) {
+		return fluid != null && fluid.getFluid() != null;
+	}
+
+	public static class SidedFluidHandler implements IFluidHandler {
+		public TileEntityBarrelSteel barrel;
 		EnumFacing facing;
 
 		SidedFluidHandler(TileEntityBarrelSteel barrel, EnumFacing facing) {
@@ -184,11 +207,6 @@ public class TileEntityBarrelSteel extends TileEntityIEBase implements ITickable
 
 	@Override
 	public boolean interact(EnumFacing side, EntityPlayer player, EnumHand hand, ItemStack heldItem, float hitX, float hitY, float hitZ) {
-		FluidStack fluid = FluidUtil.getFluidContained(heldItem);
-		if(!isFluidValid(fluid)) {
-			ChatUtils.sendServerNoSpamMessages(player, new TextComponentTranslation(Lib.CHAT_INFO + "noGasAllowed"));
-			return true;
-		}
 		if(FluidUtil.interactWithFluidHandler(player, hand, tank)) {
 			return true;
 		}

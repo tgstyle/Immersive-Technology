@@ -26,8 +26,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class TileEntityTimer extends TileEntityConnectorRedstone implements IGuiTile {
-	private static EnumFacing face;
-	private static BlockPos position;
+	private EnumFacing face;
+	private BlockPos position;
 
 	private int redstoneChannelsending = 0;
 	private int lastOutput = 0;
@@ -200,7 +200,7 @@ public class TileEntityTimer extends TileEntityConnectorRedstone implements IGui
 
 	@Override
 	public float[] getBlockBounds() {
-		switch (facing) {
+		switch(facing) {
 		case NORTH:
 			return new float[] {.25f, 0, 0, .75f, .75f, 1};
 		case SOUTH:

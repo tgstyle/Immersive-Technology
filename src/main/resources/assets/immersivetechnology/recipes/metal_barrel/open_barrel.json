@@ -5,15 +5,15 @@
 		"data": 1
 	},
 	"pattern": [
-		"H H",
 		"S S",
-		"SSS"
+		"B B",
+		"BBB"
 	],
 	"key": {
-		"S": {
+		"B": {
 			"item": "#blockSheetmetalIron"
 		},
-		"H": {
+		"S": {
 			"item": "#slabSheetmetalIron"
 		}
 	}

@@ -6,6 +6,9 @@ public enum TranslationKey {
     OVERLAY_OSD_TRASH_ITEM_NORMAL_FIRST_LINE("overlay.immersivetech.osd.trash_item.normal.firstline"),
     OVERLAY_OSD_TRASH_FLUID_NORMAL_FIRST_LINE("overlay.immersivetech.osd.trash_fluid.normal.firstline"),
     OVERLAY_OSD_TRASH_ENERGY_NORMAL_FIRST_LINE("overlay.immersivetech.osd.trash_energy.normal.firstline"),
+    OVERLAY_OSD_TRASH_ITEM_NORMAL_ALTERNATIVE("overlay.immersivetech.osd.trash_item.normal.alternative"),
+    OVERLAY_OSD_TRASH_FLUID_NORMAL_ALTERNATIVE("overlay.immersivetech.osd.trash_fluid.normal.alternative"),
+    OVERLAY_OSD_TRASH_ENERGY_NORMAL_ALTERNATIVE("overlay.immersivetech.osd.trash_energy.normal.alternative"),
     OVERLAY_OSD_BARREL_NORMAL_FIRST_LINE("overlay.immersivetech.osd.barrel.normal.firstline"),
     OVERLAY_OSD_FLUID_VALVE_NORMAL_FIRST_LINE("overlay.immersivetech.osd.fluid_valve.normal.firstline"),
     OVERLAY_OSD_FLUID_VALVE_SNEAKING_FIRST_LINE("overlay.immersivetech.osd.fluid_valve.sneaking.firstline"),
@@ -37,34 +40,37 @@ public enum TranslationKey {
     GUI_SECONDS("gui.immersivetech.seconds"),
     OVERLAY_REDSTONE_OFF("overlay.immersivetech.redstone_off"),
     OVERLAY_REDSTONE_NORMAL("overlay.immersivetech.redstone_normal"),
-    OVERLAY_REDSTONE_INVERTED("overlay.immersivetech.redstone_inverted");
+    OVERLAY_REDSTONE_INVERTED("overlay.immersivetech.redstone_inverted"),
+    GUI_GENERIC_MULTIBLOCK_TOOLTIP("gui.immersivetech.generic_multiblock_jei_tooltip"),
+    CATEGORY_DISTILLER_CHANCE("category.immersivetech.metal_multiblock.distillerChance");
 
-    public String location;
-    TranslationKey(String location) {
-        this.location = location;
-    }
+	public String location;
+	TranslationKey(String location) {
+		this.location = location;
+	}
 
-    public String text(boolean addSpaceBefore, boolean addSpaceAfter) {
-        return (addSpaceBefore? " ":"") + I18n.format(location) + (addSpaceAfter? " ":"");
-    }
+	public String text(boolean addSpaceBefore, boolean addSpaceAfter) {
+		return (addSpaceBefore? " ":"") + I18n.format(location) + (addSpaceAfter? " ":"");
+	}
 
-    public String text(boolean addSpaceBefore) {
-        return text(addSpaceBefore, false);
-    }
+	public String text(boolean addSpaceBefore) {
+		return text(addSpaceBefore, false);
+	}
 
-    public String text() {
-        return text(false, false);
-    }
+	public String text() {
+		return text(false, false);
+	}
 
-    public String format(boolean addSpaceBefore, boolean addSpaceAfter, Object... parameters) {
-        return (addSpaceBefore? " ":"") + I18n.format(location, parameters) + (addSpaceAfter? " ":"");
-    }
+	public String format(boolean addSpaceBefore, boolean addSpaceAfter, Object... parameters) {
+		return (addSpaceBefore? " ":"") + I18n.format(location, parameters) + (addSpaceAfter? " ":"");
+	}
 
-    public String format(boolean addSpaceBefore, Object... parameters) {
-        return format(addSpaceBefore, false, parameters);
-    }
+	public String format(boolean addSpaceBefore, Object... parameters) {
+		return format(addSpaceBefore, false, parameters);
+	}
 
-    public String format(Object... parameters) {
-        return format(false, false, parameters);
-    }
+	public String format(Object... parameters) {
+		return format(false, false, parameters);
+	}
+
 }

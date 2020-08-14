@@ -7,6 +7,7 @@ import mctmods.immersivetechnology.api.client.MechanicalEnergyAnimation;
 import mctmods.immersivetechnology.api.crafting.SteamTurbineRecipe;
 import mctmods.immersivetechnology.common.Config.ITConfig.Machines.SteamTurbine;
 import mctmods.immersivetechnology.common.Config.ITConfig.MechanicalEnergy;
+import mctmods.immersivetechnology.common.util.ITFluidTank;
 import mctmods.immersivetechnology.common.util.ITSounds;
 import mctmods.immersivetechnology.common.util.network.MessageStopSound;
 import mctmods.immersivetechnology.common.util.sound.ITSoundHandler;
@@ -23,24 +24,23 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class TileEntitySteamTurbineMaster extends TileEntitySteamTurbineSlave {
+public class TileEntitySteamTurbineMaster extends TileEntitySteamTurbineSlave implements ITFluidTank.TankListener {
 
+	private static int inputTankSize = SteamTurbine.steamTurbine_input_tankSize;
+	private static int outputTankSize = SteamTurbine.steamTurbine_input_tankSize;
 	private static int maxSpeed = MechanicalEnergy.mechanicalEnergy_speed_max;
 	private static int speedGainPerTick = SteamTurbine.steamTurbine_speed_gainPerTick;
 	private static int speedLossPerTick = SteamTurbine.steamTurbine_speed_lossPerTick;
-	private static int inputTankSize = SteamTurbine.steamTurbine_input_tankSize;
-	private static int outputTankSize = SteamTurbine.steamTurbine_input_tankSize;
 	private static float maxRotationSpeed = SteamTurbine.steamTurbine_speed_maxRotation;
+	BlockPos fluidOutputPos;
 
 	public FluidTank[] tanks = new FluidTank[] {
-		new FluidTank(inputTankSize),
-		new FluidTank(outputTankSize)
+		new ITFluidTank(inputTankSize, this),
+		new ITFluidTank(outputTankSize, this)
 	};
 
 	public int burnRemaining = 0;
 	public int speed;
-
-	public static BlockPos fluidOutputPos;
 
 	public SteamTurbineRecipe lastRecipe;
 
@@ -76,7 +76,7 @@ public class TileEntitySteamTurbineMaster extends TileEntitySteamTurbineSlave {
 
 	private void pumpOutputOut() {
 		if(tanks[1].getFluidAmount() == 0) return;
-		if(fluidOutputPos == null) fluidOutputPos = ITUtils.LocalOffsetToWorldBlockPos(this.getPos(), 0, 2, 8, facing);
+		if(fluidOutputPos == null) fluidOutputPos = ITUtils.LocalOffsetToWorldBlockPos(this.getPos(), 0, 2, 8, facing, mirrored);
 		IFluidHandler output = FluidUtil.getFluidHandler(world, fluidOutputPos, facing.getOpposite());
 		if(output == null) return;
 		FluidStack out = tanks[1].getFluid();
@@ -84,8 +84,6 @@ public class TileEntitySteamTurbineMaster extends TileEntitySteamTurbineSlave {
 		if(accepted == 0) return;
 		int drained = output.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
 		this.tanks[1].drain(drained, true);
-		efficientMarkDirty();
-		this.markContainingBlockForUpdate(null);
 	}
 
 	public void handleSounds() {
@@ -119,6 +117,7 @@ public class TileEntitySteamTurbineMaster extends TileEntitySteamTurbineSlave {
 
 	@Override
 	public void update() {
+		if(!formed) return;
 		if(world.isRemote) {
 			handleSounds();
 			return;
@@ -135,7 +134,7 @@ public class TileEntitySteamTurbineMaster extends TileEntitySteamTurbineSlave {
 			SteamTurbineRecipe recipe = (lastRecipe != null && tanks[0].getFluid().isFluidEqual(lastRecipe.fluidInput)) ? lastRecipe : SteamTurbineRecipe.findFuel(tanks[0].getFluid());
 			if(recipe != null && recipe.fluidInput.amount <= tanks[0].getFluidAmount()) {
 				lastRecipe = recipe;
-				burnRemaining = recipe.getTotalProcessTime();
+				burnRemaining = recipe.getTotalProcessTime() - 1;
 				tanks[0].drain(recipe.fluidInput.amount, true);
 				if(recipe.fluidOutput != null) tanks[1].fill(recipe.fluidOutput, true);
 				this.markContainingBlockForUpdate(null);
@@ -143,6 +142,11 @@ public class TileEntitySteamTurbineMaster extends TileEntitySteamTurbineSlave {
 			} else speedDown();
 		} else speedDown();
 		pumpOutputOut();
+	}
+
+	@Override
+	public void TankContentsChanged() {
+		this.markContainingBlockForUpdate(null);
 	}
 
 	@Override

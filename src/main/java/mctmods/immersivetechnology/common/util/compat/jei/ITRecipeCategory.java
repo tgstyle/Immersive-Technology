@@ -8,7 +8,6 @@ import mezz.jei.api.recipe.IRecipeWrapper;
 import mezz.jei.api.recipe.IRecipeWrapperFactory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
@@ -19,9 +18,9 @@ public abstract class ITRecipeCategory<T, W extends IRecipeWrapper> implements I
 	public String localizedName;
 	private final IDrawable background;
 	private final Class<T> recipeClass;
-	private final ItemStack[] displayStacks;
+	private final GenericMultiblockIngredient[] displayStacks;
 
-	public ITRecipeCategory(String uniqueName, String localKey, IDrawable background, Class<T> recipeClass, ItemStack... displayStacks) {
+	public ITRecipeCategory(String uniqueName, String localKey, IDrawable background, Class<T> recipeClass, GenericMultiblockIngredient... displayStacks) {
 		this.uniqueName = uniqueName;
 		this.localizedName = I18n.format(localKey);
 		this.background = background;
@@ -29,9 +28,8 @@ public abstract class ITRecipeCategory<T, W extends IRecipeWrapper> implements I
 		this.displayStacks = displayStacks;
 	}
 
-	@SuppressWarnings("deprecation")
 	public void addCatalysts(IModRegistry registry) {
-		for(ItemStack stack : displayStacks) registry.addRecipeCategoryCraftingItem(stack, getUid());
+		for(GenericMultiblockIngredient stack : displayStacks) registry.addRecipeCatalyst(stack, getUid());
 	}
 
 	@Nullable

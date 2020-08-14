@@ -3,11 +3,11 @@ package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 import blusunrize.immersiveengineering.api.Lib;
 import blusunrize.immersiveengineering.common.util.ChatUtils;
 import blusunrize.immersiveengineering.common.util.Utils;
+import mctmods.immersivetechnology.common.Config.ITConfig.Barrels;
 import mctmods.immersivetechnology.common.util.ITFluidTank;
 import mctmods.immersivetechnology.common.util.TranslationKey;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.RayTraceResult;
@@ -21,32 +21,18 @@ import java.util.Random;
 
 public class TileEntityBarrelOpen extends TileEntityBarrelSteel {
 
-	public ITFluidTank tank = new ITFluidTank(12000, this);
+	private static int tankSize = Barrels.barrel_open_tankSize;
+	private static int transferSpeed = Barrels.barrel_open_transferSpeed;
+
+	@Override
+	public void createTank() {
+		tank = new ITFluidTank(tankSize, this);
+	}
 
 	private int lastRandom = 0;
 	private int sleep = 0;
 
 	private static Random RANDOM = new Random();
-
-	@Override
-	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
-		this.readTank(nbt);
-	}
-
-	public void readTank(NBTTagCompound nbt) {
-		tank.readFromNBT(nbt.getCompoundTag("tank"));
-	}
-
-	@Override
-	public void writeCustomNBT(NBTTagCompound nbt, boolean descPacket) {
-		this.writeTank(nbt, false);
-	}
-
-	public void writeTank(NBTTagCompound nbt, boolean toItem) {
-		boolean write = tank.getFluidAmount() > 0;
-		NBTTagCompound tankTag = tank.writeToNBT(new NBTTagCompound());
-		if(!toItem || write) nbt.setTag("tank", tankTag);
-	}
 
 	@Override
 	public void update() {
@@ -61,7 +47,7 @@ public class TileEntityBarrelOpen extends TileEntityBarrelSteel {
 						if(world.isThundering()) amount = 200;
 						tank.fill(new FluidStack(FluidRegistry.WATER, amount), true);
 					} else if(temp >= 2.0F) {
-						tank.drain(100, true);
+						tank.drain(Math.min(100, tank.getFluidAmount()), true);
 					}
 				}
 			}
@@ -74,7 +60,7 @@ public class TileEntityBarrelOpen extends TileEntityBarrelSteel {
 					IFluidHandler output = FluidUtil.getFluidHandler(world, getPos().offset(face), face.getOpposite());
 					if(output != null) {
 						if(sleep == 0) {
-							FluidStack accepted = Utils.copyFluidStackWithAmount(tank.getFluid(), Math.min(40, tank.getFluidAmount()), false);
+							FluidStack accepted = Utils.copyFluidStackWithAmount(tank.getFluid(), Math.min(transferSpeed, tank.getFluidAmount()), false);
 							accepted.amount = output.fill(Utils.copyFluidStackWithAmount(accepted, accepted.amount, true), false);
 							if(accepted.amount > 0) {
 								int drained = output.fill(Utils.copyFluidStackWithAmount(accepted, accepted.amount, false), true);
@@ -93,11 +79,6 @@ public class TileEntityBarrelOpen extends TileEntityBarrelSteel {
 	}
 
 	@Override
-	public void TankContentsChanged() {
-		this.markContainingBlockForUpdate(null);
-	}
-
-	@Override
 	public String[] getOverlayText(EntityPlayer player, RayTraceResult mop, boolean hammer) {
 		if(Utils.isFluidRelatedItemStack(player.getHeldItem(EnumHand.MAIN_HAND))) {
 			FluidStack fluid = tank.getFluid();
@@ -109,13 +90,13 @@ public class TileEntityBarrelOpen extends TileEntityBarrelSteel {
 	}
 
 	@Override
-	public int getComparatorInputOverride()	{
-		return (int)(15 * (tank.getFluidAmount() / (float)tank.getCapacity()));
+	public boolean toggleSide(int side, EntityPlayer p) {
+		return false;
 	}
 
 	@Override
-	public boolean toggleSide(int side, EntityPlayer p) {
-		return false;
+	public boolean isFluidValid(FluidStack fluid) {
+		return fluid != null && fluid.getFluid() != null && !fluid.getFluid().isGaseous(fluid);
 	}
 
 	@Override
