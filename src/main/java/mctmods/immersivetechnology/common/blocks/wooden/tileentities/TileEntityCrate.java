@@ -3,11 +3,11 @@ package mctmods.immersivetechnology.common.blocks.wooden.tileentities;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IPlayerInteraction;
 import mctmods.immersivetechnology.common.tileentities.TileEntityCommonOSD;
 import mctmods.immersivetechnology.common.util.TranslationKey;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -28,26 +28,26 @@ public class TileEntityCrate extends TileEntityCommonOSD implements IItemHandler
 	}
 
 	@Override
-	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
+	public void readCustomNBT(CompoundNBT nbt, boolean descPacket) {
 		super.readCustomNBT(nbt, descPacket);
-		setItemStack(new ItemStack(nbt.getCompoundTag("item")));
+		setItemStack(new ItemStack(nbt.getCompound("item")));
 	}
 
 	@Override
-	public void writeCustomNBT(NBTTagCompound nbt, boolean descPacket) {
+	public void writeCustomNBT(CompoundNBT nbt, boolean descPacket) {
 		super.writeCustomNBT(nbt, descPacket);
-		nbt.setTag("item", interactiveItemStack.writeToNBT(new NBTTagCompound()));
+		nbt.put("item", interactiveItemStack.writeToNBT(new CompoundNBT()));
 	}
 
 	@Override
-	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+	public boolean hasCapability(Capability<?> capability, Direction facing) {
 		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) return true;
 		return false;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+	public <T> T getCapability(Capability<T> capability, Direction facing) {
 		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) return (T)this;
 		return super.getCapability(capability, facing);
 	}
@@ -90,7 +90,7 @@ public class TileEntityCrate extends TileEntityCommonOSD implements IItemHandler
 	}
 
 	@Override
-	public boolean interact(EnumFacing side, EntityPlayer player, EnumHand hand, ItemStack heldItem, float hitX, float hitY, float hitZ) {
+	public boolean interact(Direction side, PlayerEntity player, Hand hand, ItemStack heldItem, float hitX, float hitY, float hitZ) {
 		if(heldItem.isEmpty()) {
 			if(player.isSneaking()) {
 				visibleItemStack = ItemStack.EMPTY;
@@ -108,19 +108,19 @@ public class TileEntityCrate extends TileEntityCommonOSD implements IItemHandler
 	}
 
 	@Override
-	public void receiveMessageFromServer(NBTTagCompound message) {
-		setItemStack(new ItemStack(message.getCompoundTag("item")));
+	public void receiveMessageFromServer(CompoundNBT message) {
+		setItemStack(new ItemStack(message.getCompound("item")));
 		super.receiveMessageFromServer(message);
 	}
 
 	@Override
-	public void notifyNearbyClients(NBTTagCompound nbt) {
-		nbt.setTag("item", interactiveItemStack.writeToNBT(new NBTTagCompound()));
+	public void notifyNearbyClients(CompoundNBT nbt) {
+		nbt.put("item", interactiveItemStack.writeToNBT(new CompoundNBT()));
 		super.notifyNearbyClients(nbt);
 	}
 
 	@Override
-	public String[] getOverlayText(EntityPlayer player, RayTraceResult mop, boolean hammer) {
+	public String[] getOverlayText(PlayerEntity player, RayTraceResult mop, boolean hammer) {
 		return new String[]{ !interactiveItemStack.isEmpty()? text().format(interactiveItemStack.getDisplayName(), lastAcceptedAmount) : TranslationKey.GUI_EMPTY.text() };
 	}
 	

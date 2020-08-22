@@ -7,7 +7,7 @@ import mctmods.immersivetechnology.common.blocks.stone.tileentities.TileEntityCo
 import mctmods.immersivetechnology.common.gui.ContainerCokeOvenAdvanced;
 import mctmods.immersivetechnology.common.util.network.MessageRequestUpdate;
 import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.entity.player.PlayerInventory;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
@@ -15,8 +15,8 @@ import java.util.ArrayList;
 public class GuiCokeOvenAdvanced extends GuiIEContainerBase {
 	TileEntityCokeOvenAdvancedMaster tile;
 
-	public GuiCokeOvenAdvanced(InventoryPlayer inventoryPlayer, TileEntityCokeOvenAdvancedMaster tile) {
-		super(new ContainerCokeOvenAdvanced(inventoryPlayer, tile));
+	public GuiCokeOvenAdvanced(PlayerInventory playerInventory, TileEntityCokeOvenAdvancedMaster tile) {
+		super(new ContainerCokeOvenAdvanced(playerInventory, tile));
 		this.tile=tile;
 	}
 

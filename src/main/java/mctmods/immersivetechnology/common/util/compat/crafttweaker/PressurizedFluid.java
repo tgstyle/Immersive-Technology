@@ -4,7 +4,7 @@ import crafttweaker.CraftTweakerAPI;
 import crafttweaker.IAction;
 import crafttweaker.api.liquid.ILiquidStack;
 import mctmods.immersivetechnology.common.ITContent;
-import net.minecraftforge.fluids.Fluid;
+import net.minecraft.fluid.Fluid;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 

@@ -11,9 +11,9 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraftforge.fluids.Fluid;
+import net.minecraft.fluid.Fluid;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTank;
+import net.minecraftforge.fluids.IFluidTank;
 import org.lwjgl.opengl.GL11;
 
 public class TileRenderBarrelOpen extends TileEntitySpecialRenderer<TileEntityBarrelOpen> {
@@ -34,7 +34,7 @@ public class TileRenderBarrelOpen extends TileEntitySpecialRenderer<TileEntityBa
 			this.green = (c >> 8) & 0xFF;
 			this.red = (c >> 16) & 0xFF;
 			this.alphaValue = (c >> 24) & 0xFF;
-			final TextureAtlasSprite sprite = Minecraft.getMinecraft().getTextureMapBlocks().getTextureExtry(fluid.getStill().toString());
+			final TextureAtlasSprite sprite = Minecraft.getInstance().getTextureMapBlocks().getTextureExtry(fluid.getStill().toString());
 			this.diffU = this.maxU - this.minU;
 			this.diffV = this.maxV - this.minV;
 			if(sprite != null) {
@@ -55,7 +55,7 @@ public class TileRenderBarrelOpen extends TileEntitySpecialRenderer<TileEntityBa
 				GlStateManager.enableBlend();
 				GlStateManager.enableAlpha();
 				GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
-				Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+				Minecraft.getInstance().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 				final Tessellator tess = Tessellator.getInstance();
 				final BufferBuilder buffer = tess.getBuffer();
 				buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_LMAP_COLOR);

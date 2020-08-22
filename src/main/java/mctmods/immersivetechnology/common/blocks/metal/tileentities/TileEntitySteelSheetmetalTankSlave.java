@@ -8,17 +8,17 @@ import blusunrize.immersiveengineering.common.blocks.wooden.BlockTypes_WoodenDec
 import blusunrize.immersiveengineering.common.util.Utils;
 import mctmods.immersivetechnology.api.ITUtils;
 import mctmods.immersivetechnology.common.util.TranslationKey;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTank;
+import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fml.relauncher.Side;
@@ -33,12 +33,12 @@ public class TileEntitySteelSheetmetalTankSlave extends TileEntityMultiblockPart
 	}
 
 	@Override
-	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
+	public void readCustomNBT(CompoundNBT nbt, boolean descPacket) {
 		super.readCustomNBT(nbt, descPacket);
 	}
 
 	@Override
-	public void writeCustomNBT(NBTTagCompound nbt, boolean descPacket) {
+	public void writeCustomNBT(CompoundNBT nbt, boolean descPacket) {
 		super.writeCustomNBT(nbt, descPacket);
 	}
 
@@ -63,18 +63,18 @@ public class TileEntitySteelSheetmetalTankSlave extends TileEntityMultiblockPart
 	}
 
 	@Override
-	public String[] getOverlayText(EntityPlayer player, RayTraceResult mop, boolean hammer) {
-		if(Utils.isFluidRelatedItemStack(player.getHeldItem(EnumHand.MAIN_HAND))) {
+	public String[] getOverlayText(PlayerEntity player, RayTraceResult mop, boolean hammer) {
+		if(Utils.isFluidRelatedItemStack(player.getHeldItem(Hand.MAIN_HAND))) {
 			FluidStack fs = master() != null ? master.tank.getFluid() : null;
 			return (fs != null)?
-				new String[]{TranslationKey.OVERLAY_STEEL_TANK_NORMAL_FIRST_LINE.format(fs.getLocalizedName(), fs.amount)}:
+				new String[]{TranslationKey.OVERLAY_STEEL_TANK_NORMAL_FIRST_LINE.format(fs.getTranslationKey(), fs.amount)}:
 				new String[]{TranslationKey.GUI_EMPTY.text()};
 		}
 		return null;
 	}
 
 	@Override
-	public boolean useNixieFont(EntityPlayer player, RayTraceResult mop) {
+	public boolean useNixieFont(PlayerEntity player, RayTraceResult mop) {
 		return false;
 	}
 
@@ -107,23 +107,23 @@ public class TileEntitySteelSheetmetalTankSlave extends TileEntityMultiblockPart
 	}
 
 	@Override
-	protected IFluidTank[] getAccessibleFluidTanks(EnumFacing side) {
+	protected IFluidTank[] getAccessibleFluidTanks(Direction side) {
 		if(master() != null && (pos == 4 || pos == 40)) return new FluidTank[]{master.tank};
 		return new FluidTank[0];
 	}
 
 	@Override
-	protected boolean canFillTankFrom(int iTank, EnumFacing side, FluidStack resource) {
+	protected boolean canFillTankFrom(int iTank, Direction side, FluidStack resource) {
 		return pos == 4 || pos == 40;
 	}
 
 	@Override
-	protected boolean canDrainTankFrom(int iTank, EnumFacing side) {
+	protected boolean canDrainTankFrom(int iTank, Direction side) {
 		return pos == 4;
 	}
 
 	@Override
-	public boolean interact(EnumFacing side, EntityPlayer player, EnumHand hand, ItemStack heldItem, float hitX, float hitY, float hitZ) {
+	public boolean interact(Direction side, PlayerEntity player, Hand hand, ItemStack heldItem, float hitX, float hitY, float hitZ) {
 		if(master() != null) {
 			if(FluidUtil.interactWithFluidHandler(player, hand, master.tank)) {
 				this.updateMasterBlock(null, true);

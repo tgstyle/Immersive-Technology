@@ -6,12 +6,12 @@ import blusunrize.immersiveengineering.common.util.Utils;
 import mctmods.immersivetechnology.common.Config.ITConfig.Barrels;
 import mctmods.immersivetechnology.common.util.ITFluidTank;
 import mctmods.immersivetechnology.common.util.TranslationKey;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
@@ -56,7 +56,7 @@ public class TileEntityBarrelOpen extends TileEntityBarrelSteel {
 		for(int index = 0; index < 2; index++) {
 			if(tank.getFluidAmount() > 0 && sideConfig[index] == 1) {
 				if(tank.getFluidAmount() > 0) {
-					EnumFacing face = EnumFacing.getFront(index);
+					Direction face = Direction.byIndex(index);
 					IFluidHandler output = FluidUtil.getFluidHandler(world, getPos().offset(face), face.getOpposite());
 					if(output != null) {
 						if(sleep == 0) {
@@ -79,18 +79,18 @@ public class TileEntityBarrelOpen extends TileEntityBarrelSteel {
 	}
 
 	@Override
-	public String[] getOverlayText(EntityPlayer player, RayTraceResult mop, boolean hammer) {
-		if(Utils.isFluidRelatedItemStack(player.getHeldItem(EnumHand.MAIN_HAND))) {
+	public String[] getOverlayText(PlayerEntity player, RayTraceResult mop, boolean hammer) {
+		if(Utils.isFluidRelatedItemStack(player.getHeldItem(Hand.MAIN_HAND))) {
 			FluidStack fluid = tank.getFluid();
 			return (fluid != null)?
-					new String[]{TranslationKey.OVERLAY_OSD_BARREL_NORMAL_FIRST_LINE.format(fluid.getLocalizedName(), fluid.amount)}:
+					new String[]{TranslationKey.OVERLAY_OSD_BARREL_NORMAL_FIRST_LINE.format(fluid.getTranslationKey(), fluid.amount)}:
 					new String[]{TranslationKey.GUI_EMPTY.text()};
 		}
 		return null;
 	}
 
 	@Override
-	public boolean toggleSide(int side, EntityPlayer p) {
+	public boolean toggleSide(int side, PlayerEntity p) {
 		return false;
 	}
 
@@ -100,10 +100,10 @@ public class TileEntityBarrelOpen extends TileEntityBarrelSteel {
 	}
 
 	@Override
-	public boolean interact(EnumFacing side, EntityPlayer player, EnumHand hand, ItemStack heldItem, float hitX, float hitY, float hitZ) {
+	public boolean interact(Direction side, PlayerEntity player, Hand hand, ItemStack heldItem, float hitX, float hitY, float hitZ) {
 		FluidStack fluid = FluidUtil.getFluidContained(heldItem);
 		if(!isFluidValid(fluid)) {
-			ChatUtils.sendServerNoSpamMessages(player, new TextComponentTranslation(Lib.CHAT_INFO + "noGasAllowed"));
+			ChatUtils.sendServerNoSpamMessages(player, new TranslationTextComponent(Lib.CHAT_INFO + "noGasAllowed"));
 			return true;
 		}
 		if(FluidUtil.interactWithFluidHandler(player, hand, tank)) {

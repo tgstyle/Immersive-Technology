@@ -14,13 +14,13 @@ import blusunrize.immersiveengineering.common.util.Utils;
 import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityAlternatorSlave;
 import mctmods.immersivetechnology.common.blocks.metal.types.BlockType_MetalMultiblock;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -59,15 +59,15 @@ public class MultiblockAlternator implements IMultiblock {
 	}
 
 	@Override
-	public boolean isBlockTrigger(IBlockState state) {
+	public boolean isBlockTrigger(BlockState state) {
 		return state.getBlock() == IEContent.blockMetalDecoration0 && (state.getBlock().getMetaFromState(state) == BlockTypes_MetalDecoration0.HEAVY_ENGINEERING.getMeta());
 	}
 
 	@Override
-	public boolean createStructure(World world, BlockPos pos, EnumFacing side, EntityPlayer player) {
-		side = (side == EnumFacing.UP || side == EnumFacing.DOWN)? EnumFacing.fromAngle(player.rotationYaw) : side.getOpposite();
-		IBlockState master = ITContent.blockMetalMultiblock.getStateFromMeta(BlockType_MetalMultiblock.ALTERNATOR.getMeta());
-		IBlockState slave = ITContent.blockMetalMultiblock.getStateFromMeta(BlockType_MetalMultiblock.ALTERNATOR_SLAVE.getMeta());
+	public boolean createStructure(World world, BlockPos pos, Direction side, PlayerEntity player) {
+		side = (side == Direction.UP || side == Direction.DOWN)? Direction.fromAngle(player.rotationYaw) : side.getOpposite();
+		BlockState master = ITContent.blockMetalMultiblock.getStateFromMeta(BlockType_MetalMultiblock.ALTERNATOR.getMeta());
+		BlockState slave = ITContent.blockMetalMultiblock.getStateFromMeta(BlockType_MetalMultiblock.ALTERNATOR_SLAVE.getMeta());
 		if(!this.structureCheck(world, pos, side)) return false;
 		if(player != null) {
 			ItemStack hammer = player.getHeldItemMainhand().getItem().getToolClasses(player.getHeldItemMainhand()).contains(Lib.TOOL_HAMMER)?player.getHeldItemMainhand(): player.getHeldItemOffhand();
@@ -78,7 +78,7 @@ public class MultiblockAlternator implements IMultiblock {
 				for(int w = - 1 ; w <= 1 ; w ++) {
 					if(l == 1 && h == 1) continue;
 					BlockPos pos2 = pos.offset(side, l).offset(side.rotateY(), w).add(0, h, 0);
-					int[] offset = new int[] {(side == EnumFacing.WEST ? - l : side == EnumFacing.EAST ? l : side == EnumFacing.NORTH ? w : - w), h, (side == EnumFacing.NORTH ? - l : side == EnumFacing.SOUTH ? l : side == EnumFacing.EAST ? w : - w)};
+					int[] offset = new int[] {(side == Direction.WEST ? - l : side == Direction.EAST ? l : side == Direction.NORTH ? w : - w), h, (side == Direction.NORTH ? - l : side == Direction.SOUTH ? l : side == Direction.EAST ? w : - w)};
 					world.setBlockState(pos2, (offset[0]==0&&offset[1]==0&&offset[2]==0)? master : slave);
 					TileEntity curr = world.getTileEntity(pos2);
 					if(curr instanceof TileEntityAlternatorSlave) {
@@ -96,7 +96,7 @@ public class MultiblockAlternator implements IMultiblock {
 		return true;
 	}
 
-	private boolean structureCheck(World world, BlockPos startPos, EnumFacing dir) {
+	private boolean structureCheck(World world, BlockPos startPos, Direction dir) {
 		for(int h = - 1 ; h <= 1 ; h ++) {
 			for(int l = 0 ; l <= 3 ; l ++) {
 				for(int w = - 1 ; w <= 1 ; w ++) {

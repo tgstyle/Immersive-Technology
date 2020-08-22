@@ -14,13 +14,13 @@ import blusunrize.immersiveengineering.common.util.Utils;
 import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySolarReflectorSlave;
 import mctmods.immersivetechnology.common.blocks.metal.types.BlockType_MetalMultiblock;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -62,15 +62,15 @@ public class MultiblockSolarReflector implements IMultiblock {
 	}
 
 	@Override
-	public boolean isBlockTrigger(IBlockState state) {
+	public boolean isBlockTrigger(BlockState state) {
 		return Utils.compareToOreName(new ItemStack(state.getBlock(), 1, state.getBlock().getMetaFromState(state)), "blockSilver");
 	}
 
 	@Override
-	public boolean createStructure(World world, BlockPos pos, EnumFacing side, EntityPlayer player) {
-		side = (side == EnumFacing.UP || side == EnumFacing.DOWN)? EnumFacing.fromAngle(player.rotationYaw) : side.getOpposite();
-		IBlockState master = ITContent.blockMetalMultiblock.getStateFromMeta(BlockType_MetalMultiblock.SOLAR_REFLECTOR.getMeta());
-		IBlockState slave = ITContent.blockMetalMultiblock.getStateFromMeta(BlockType_MetalMultiblock.SOLAR_REFLECTOR_SLAVE.getMeta());
+	public boolean createStructure(World world, BlockPos pos, Direction side, PlayerEntity player) {
+		side = (side == Direction.UP || side == Direction.DOWN)? Direction.fromAngle(player.rotationYaw) : side.getOpposite();
+		BlockState master = ITContent.blockMetalMultiblock.getStateFromMeta(BlockType_MetalMultiblock.SOLAR_REFLECTOR.getMeta());
+		BlockState slave = ITContent.blockMetalMultiblock.getStateFromMeta(BlockType_MetalMultiblock.SOLAR_REFLECTOR_SLAVE.getMeta());
 		if(!this.structureCheck(world, pos, side)) return false;
 		if(player != null) {
 			ItemStack hammer = player.getHeldItemMainhand().getItem().getToolClasses(player.getHeldItemMainhand()).contains(Lib.TOOL_HAMMER)?player.getHeldItemMainhand(): player.getHeldItemOffhand();
@@ -80,7 +80,7 @@ public class MultiblockSolarReflector implements IMultiblock {
 			for(int w = - 1 ; w <= 1 ; w ++) {
 				if(h < - 1 && w == 0) continue;
 				BlockPos pos2 = pos.offset(side.rotateY(), w).add(0, h, 0);
-				int[] offset = new int[] {(side == EnumFacing.NORTH ? w : side == EnumFacing.SOUTH ? - w : 0), h, (side == EnumFacing.EAST ? w : side == EnumFacing.WEST ? - w : 0)};
+				int[] offset = new int[] {(side == Direction.NORTH ? w : side == Direction.SOUTH ? - w : 0), h, (side == Direction.EAST ? w : side == Direction.WEST ? - w : 0)};
 				world.setBlockState(pos2, (offset[0]==0&&offset[1]==0&&offset[2]==0)? master : slave);
 				TileEntity curr = world.getTileEntity(pos2);
 				if(curr instanceof TileEntitySolarReflectorSlave) {
@@ -97,7 +97,7 @@ public class MultiblockSolarReflector implements IMultiblock {
 		return true;
 	}
 
-	boolean structureCheck(World world, BlockPos startPos, EnumFacing dir) {
+	boolean structureCheck(World world, BlockPos startPos, Direction dir) {
 		for(int h = - 3 ; h <= 1 ; h ++) {
 			for(int w = - 1 ; w <= 1 ; w ++) {
 				if(h < - 1 && w == 0) continue;

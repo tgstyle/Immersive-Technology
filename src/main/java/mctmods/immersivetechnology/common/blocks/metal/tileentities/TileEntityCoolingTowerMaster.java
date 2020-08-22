@@ -18,13 +18,13 @@ import mctmods.immersivetechnology.common.util.network.IBinaryMessageReceiver;
 import mctmods.immersivetechnology.common.util.network.MessageStopSound;
 import mctmods.immersivetechnology.common.util.sound.ITSoundHandler;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.client.entity.player.ClientPlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Direction;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTank;
+import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -46,21 +46,21 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
     CoolingTowerRecipe recipe;
 
     @Override
-    public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
+    public void readCustomNBT(CompoundNBT nbt, boolean descPacket) {
         super.readCustomNBT(nbt, descPacket);
-        tanks[0].readFromNBT(nbt.getCompoundTag("tank0"));
-        tanks[1].readFromNBT(nbt.getCompoundTag("tank1"));
-        tanks[2].readFromNBT(nbt.getCompoundTag("tank2"));
-        tanks[3].readFromNBT(nbt.getCompoundTag("tank3"));
+        tanks[0].readFromNBT(nbt.getCompound("tank0"));
+        tanks[1].readFromNBT(nbt.getCompound("tank1"));
+        tanks[2].readFromNBT(nbt.getCompound("tank2"));
+        tanks[3].readFromNBT(nbt.getCompound("tank3"));
     }
 
     @Override
-    public void writeCustomNBT(NBTTagCompound nbt, boolean descPacket) {
+    public void writeCustomNBT(CompoundNBT nbt, boolean descPacket) {
         super.writeCustomNBT(nbt, descPacket);
-        nbt.setTag("tank0", tanks[0].writeToNBT(new NBTTagCompound()));
-        nbt.setTag("tank1", tanks[1].writeToNBT(new NBTTagCompound()));
-        nbt.setTag("tank2", tanks[2].writeToNBT(new NBTTagCompound()));
-        nbt.setTag("tank3", tanks[3].writeToNBT(new NBTTagCompound()));
+        nbt.put("tank0", tanks[0].writeToNBT(new CompoundNBT()));
+        nbt.put("tank1", tanks[1].writeToNBT(new CompoundNBT()));
+        nbt.put("tank2", tanks[2].writeToNBT(new CompoundNBT()));
+        nbt.put("tank3", tanks[3].writeToNBT(new CompoundNBT()));
     }
 
     public void spawnParticles() {
@@ -69,7 +69,7 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
         if(rand.nextInt(40) == 0) return;
         int lessParticleSetting = ClientUtils.mc().gameSettings.particleSetting;
         if(lessParticleSetting == 2 || lessParticleSetting == 1 && rand.nextInt(3) == 0) return;
-        EntityPlayerSP player = Minecraft.getMinecraft().player;
+        ClientPlayerEntity player = Minecraft.getInstance().player;
         double distanceLimit = 64;
         if(particleOrigin.distanceSq(player.posX, player.posY, player.posZ) > distanceLimit * distanceLimit) return;
         ParticleSmokeCustomSize cloud = new ParticleSmokeCustomSize(world,
@@ -104,7 +104,7 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
         }
         if(soundVolume == 0) ITSoundHandler.StopSound(soundOrigin);
         else {
-            EntityPlayerSP player = Minecraft.getMinecraft().player;
+            ClientPlayerEntity player = Minecraft.getInstance().player;
             float attenuation = Math.max((float) player.getDistanceSq(soundOrigin.getX(), soundOrigin.getY(), soundOrigin.getZ()) / 8, 1);
             ITSoundHandler.PlaySound(soundOrigin, ITSounds.coolingTower, SoundCategory.BLOCKS, true, (10 * soundVolume) / attenuation, 1);
         }
@@ -206,7 +206,7 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
         }
     }
 
-    public IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
+    public IFluidTank[] getAccessibleFluidTanks(Direction side, int position) {
         if(input0 == null) InitializePoIs();
         if(side == null) return tanks;
         if(input0.isPoI(side, position)) return new FluidTank[] {tanks[0]};
@@ -216,7 +216,7 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
         return ITUtils.emptyIFluidTankList;
     }
 
-    public boolean canFillTankFrom(int iTank, EnumFacing side, FluidStack resource, int position) {
+    public boolean canFillTankFrom(int iTank, Direction side, FluidStack resource, int position) {
         if(input0 == null) InitializePoIs();
         if(input0.isPoI(side, position)) {
             if(tanks[0].getFluidAmount() >= tanks[0].getCapacity()) return false;
@@ -230,7 +230,7 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
         return false;
     }
 
-    public boolean canDrainTankFrom(int iTank, EnumFacing side, int position) {
+    public boolean canDrainTankFrom(int iTank, Direction side, int position) {
         if(input0 == null) InitializePoIs();
         if(output0.isPoI(side, position)) {
             return tanks[2].getFluidAmount() > 0;

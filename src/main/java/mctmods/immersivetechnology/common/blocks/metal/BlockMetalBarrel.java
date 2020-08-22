@@ -9,9 +9,9 @@ import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBa
 import mctmods.immersivetechnology.common.blocks.metal.types.BlockType_MetalBarrel;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -26,18 +26,18 @@ public class BlockMetalBarrel extends BlockITTileProvider<BlockType_MetalBarrel>
 	}
 
 	@Override
-	protected EnumFacing getDefaultFacing() {
-		return EnumFacing.UP;
+	protected Direction getDefaultFacing() {
+		return Direction.UP;
 	}
 
 	@Override
-	public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
+	public BlockState getExtendedState(BlockState state, IBlockAccess world, BlockPos pos) {
 		state = super.getExtendedState(state, world, pos);
 		return state;
 	}
 
 	@Override
-	public boolean allowHammerHarvest(IBlockState state) {
+	public boolean allowHammerHarvest(BlockState state) {
 		return true;
 	}
 

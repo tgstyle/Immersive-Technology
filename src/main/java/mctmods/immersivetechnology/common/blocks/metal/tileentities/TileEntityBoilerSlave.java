@@ -10,17 +10,17 @@ import mctmods.immersivetechnology.api.ITUtils;
 import mctmods.immersivetechnology.api.crafting.BoilerRecipe;
 import mctmods.immersivetechnology.common.blocks.metal.TileEntityMultiblockNewSystem;
 import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockBoiler;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTank;
+import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.IFluidTank;
 
 import java.util.ArrayList;
@@ -33,12 +33,12 @@ public class TileEntityBoilerSlave extends TileEntityMultiblockNewSystem<TileEnt
 	}
 
 	@Override
-	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
+	public void readCustomNBT(CompoundNBT nbt, boolean descPacket) {
 		super.readCustomNBT(nbt, descPacket);
 	}
 
 	@Override
-	public void writeCustomNBT(NBTTagCompound nbt, boolean descPacket) {
+	public void writeCustomNBT(CompoundNBT nbt, boolean descPacket) {
 		super.writeCustomNBT(nbt, descPacket);
 	}
 
@@ -90,7 +90,7 @@ public class TileEntityBoilerSlave extends TileEntityMultiblockNewSystem<TileEnt
 	}
 
 	@Override
-	protected BoilerRecipe readRecipeFromNBT(NBTTagCompound tag) {
+	protected BoilerRecipe readRecipeFromNBT(CompoundNBT tag) {
 		return BoilerRecipe.loadFromNBT(tag);
 	}
 
@@ -160,9 +160,9 @@ public class TileEntityBoilerSlave extends TileEntityMultiblockNewSystem<TileEnt
 	}
 
 	@Override
-	protected IFluidTank[] getAccessibleFluidTanks(EnumFacing side) {
+	protected IFluidTank[] getAccessibleFluidTanks(Direction side) {
 		if(master() != null) {
-			if(pos == 35 && (side == null || side == EnumFacing.UP)) return new FluidTank[]{master.tanks[2]};
+			if(pos == 35 && (side == null || side == Direction.UP)) return new FluidTank[]{master.tanks[2]};
 			if(pos == 5 && (side == null || side == (mirrored ? facing.rotateY() : facing.rotateYCCW()))) return new FluidTank[]{master.tanks[1]};
 			if(pos == 9 && (side == null || side == (mirrored ? facing.rotateYCCW() : facing.rotateY()))) return new FluidTank[]{master.tanks[0]};
 		}
@@ -170,7 +170,7 @@ public class TileEntityBoilerSlave extends TileEntityMultiblockNewSystem<TileEnt
 	}
 
 	@Override
-	protected boolean canFillTankFrom(int iTank, EnumFacing side, FluidStack resource) {
+	protected boolean canFillTankFrom(int iTank, Direction side, FluidStack resource) {
 		if(master() == null) return false;
 		if(pos == 9 && (side == null || side == (mirrored? facing.rotateYCCW() : facing.rotateY()))) {
 			if(master.tanks[iTank].getFluidAmount() >= master.tanks[iTank].getCapacity()) return false;
@@ -186,8 +186,8 @@ public class TileEntityBoilerSlave extends TileEntityMultiblockNewSystem<TileEnt
 	}
 
 	@Override
-	protected boolean canDrainTankFrom(int iTank, EnumFacing side) {
-		return pos == 35 && (side == null || side == EnumFacing.UP);
+	protected boolean canDrainTankFrom(int iTank, Direction side) {
+		return pos == 35 && (side == null || side == Direction.UP);
 	}
 
 	@Override
@@ -225,8 +225,8 @@ public class TileEntityBoilerSlave extends TileEntityMultiblockNewSystem<TileEnt
 	@Override
 	public List<AxisAlignedBB> getAdvancedSelectionBounds() {
 		double[] boundingArray = new double[6];
-		EnumFacing fl = facing;
-		EnumFacing fw = facing.rotateY();
+		Direction fl = facing;
+		Direction fw = facing.rotateY();
 		if(mirrored) fw = fw.getOpposite();
 		if(pos < 15 && pos != 5 && pos != 9) {
 			List<AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(0, 0, 0, 1, .5f, 1).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
@@ -386,7 +386,7 @@ public class TileEntityBoilerSlave extends TileEntityMultiblockNewSystem<TileEnt
 	}
 
 	@Override
-	public boolean isOverrideBox(AxisAlignedBB box, EntityPlayer player, RayTraceResult mop, ArrayList<AxisAlignedBB> list) {
+	public boolean isOverrideBox(AxisAlignedBB box, PlayerEntity player, RayTraceResult mop, ArrayList<AxisAlignedBB> list) {
 		return false;
 	}
 }

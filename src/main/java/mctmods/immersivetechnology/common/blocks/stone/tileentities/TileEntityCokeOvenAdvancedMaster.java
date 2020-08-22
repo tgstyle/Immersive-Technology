@@ -15,12 +15,12 @@ import mctmods.immersivetechnology.common.util.network.MessageStopSound;
 import mctmods.immersivetechnology.common.util.network.MessageTileSync;
 import mctmods.immersivetechnology.common.util.sound.ITSoundHandler;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.client.entity.player.ClientPlayerEntity;
+import net.minecraft.entity.player.PlayerEntityMP;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
@@ -52,24 +52,24 @@ public class TileEntityCokeOvenAdvancedMaster extends TileEntityCokeOvenAdvanced
   NonNullList<ItemStack> inventory = NonNullList.withSize(slotCount, ItemStack.EMPTY);
 
 	@Override
-	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
+	public void readCustomNBT(CompoundNBT nbt, boolean descPacket) {
 		super.readCustomNBT(nbt, descPacket);
 		process = nbt.getFloat("process");
-		processMax = nbt.getInteger("processMax");
+		processMax = nbt.getInt("processMax");
 		active = nbt.getBoolean("active");
-		tank.readFromNBT(nbt.getCompoundTag("tank"));
-		if(!descPacket) inventory = Utils.readInventory(nbt.getTagList("inventory", 10), slotCount);
+		tank.readFromNBT(nbt.getCompound("tank"));
+		if(!descPacket) inventory = Utils.readInventory(nbt.getList("inventory", 10), slotCount);
 	}
 
 	@Override
-	public void writeCustomNBT(NBTTagCompound nbt, boolean descPacket) {
+	public void writeCustomNBT(CompoundNBT nbt, boolean descPacket) {
 		super.writeCustomNBT(nbt, descPacket);
-		nbt.setFloat("process", process);
-		nbt.setInteger("processMax", processMax);
-		nbt.setBoolean("active", active);
-		NBTTagCompound tankTag = tank.writeToNBT(new NBTTagCompound());
-		nbt.setTag("tank", tankTag);
-		if(!descPacket) nbt.setTag("inventory", Utils.writeInventory(inventory));
+		nbt.putFloat("process", process);
+		nbt.putInt("processMax", processMax);
+		nbt.putBoolean("active", active);
+		CompoundNBT tankTag = tank.writeToNBT(new CompoundNBT());
+		nbt.put("tank", tankTag);
+		if(!descPacket) nbt.put("inventory", Utils.writeInventory(inventory));
 	}
 
 	private void pumpOutputOut() {
@@ -91,7 +91,7 @@ public class TileEntityCokeOvenAdvancedMaster extends TileEntityCokeOvenAdvanced
 		BlockPos center = getPos();
 		if(soundVolume == 0) ITSoundHandler.StopSound(center);
 		else {
-			EntityPlayerSP player = Minecraft.getMinecraft().player;
+			ClientPlayerEntity player = Minecraft.getInstance().player;
 			float attenuation = Math.max((float) player.getDistanceSq(center.getX(), center.getY(), center.getZ()) / 8, 1);
 			ITSoundHandler.PlaySound(center, ITSounds.advCokeOven, SoundCategory.BLOCKS, true, soundVolume / attenuation, 1);
 		}
@@ -112,14 +112,14 @@ public class TileEntityCokeOvenAdvancedMaster extends TileEntityCokeOvenAdvanced
 	}
 
 	public void notifyNearbyClients() {
-		NBTTagCompound tag = new NBTTagCompound();
-		tag.setBoolean("active", active);
+		CompoundNBT tag = new CompoundNBT();
+		tag.putBoolean("active", active);
 		BlockPos center = getPos();
 		ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageTileSync(this, tag), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 0));
 	}
 
 	@Override
-	public void receiveMessageFromServer(NBTTagCompound message) {
+	public void receiveMessageFromServer(CompoundNBT message) {
 		if(message.hasKey("active")) active = message.getBoolean("active");
 		else if(message.hasKey("process")) {
 			process = message.getFloat("process");
@@ -128,8 +128,8 @@ public class TileEntityCokeOvenAdvancedMaster extends TileEntityCokeOvenAdvanced
 	}
 
 	public void updateRequested(EntityPlayerMP player) {
-		NBTTagCompound tag = new NBTTagCompound();
-		tag.setFloat("process", process);
+		CompoundNBT tag = new CompoundNBT();
+		tag.putFloat("process", process);
 		tag.setInteger("processMax", processMax);
 		ImmersiveTechnology.packetHandler.sendTo(new MessageTileSync(this, tag), player);
 	}
@@ -264,7 +264,7 @@ public class TileEntityCokeOvenAdvancedMaster extends TileEntityCokeOvenAdvanced
 	private float getProcessSpeed() {
 		int activePreheaters = 0;
 		for(int k = 0; k < 2; k++) {
-			EnumFacing f = k == 0 ? facing.rotateY() : facing.rotateYCCW();
+			Direction f = k == 0 ? facing.rotateY() : facing.rotateYCCW();
 			BlockPos pos = getPos().add(0, - 1, 0).offset(f, 2).offset(facing, 1);
 			TileEntity tile = Utils.getExistingTileEntity(world, pos);
 			if(!(tile instanceof TileEntityCokeOvenPreheater)) continue;

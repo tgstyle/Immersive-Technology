@@ -12,8 +12,8 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
-import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockStateContainer;
+import net.minecraft.block.BlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.math.BlockPos;
@@ -51,7 +51,7 @@ public class BlockConnectors extends BlockITTileProvider<BlockType_Connectors> {
 	}
 
 	@Override
-	public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
+	public BlockState getExtendedState(BlockState state, IBlockAccess world, BlockPos pos) {
 		state = super.getExtendedState(state, world, pos);
 		if(state instanceof IExtendedBlockState) {
 			IExtendedBlockState ext = (IExtendedBlockState) state;
@@ -63,7 +63,7 @@ public class BlockConnectors extends BlockITTileProvider<BlockType_Connectors> {
 	}
 
 	@Override
-	public void neighborChanged(IBlockState state, World world, BlockPos pos, Block blockIn, BlockPos fromPos) {
+	public void neighborChanged(BlockState state, World world, BlockPos pos, Block blockIn, BlockPos fromPos) {
 		super.neighborChanged(state, world, pos, blockIn, fromPos);
 		TileEntity te = world.getTileEntity(pos);
 
@@ -79,7 +79,7 @@ public class BlockConnectors extends BlockITTileProvider<BlockType_Connectors> {
 	}
 
 	@Override
-	public boolean allowHammerHarvest(IBlockState state) {
+	public boolean allowHammerHarvest(BlockState state) {
 		return true;
 	}
 

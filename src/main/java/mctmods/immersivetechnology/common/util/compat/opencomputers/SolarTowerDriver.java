@@ -15,7 +15,7 @@ import li.cil.oc.api.prefab.DriverSidedTileEntity;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -24,7 +24,7 @@ import java.util.HashMap;
 
 public class SolarTowerDriver extends DriverSidedTileEntity {
 	@Override
-	public ManagedEnvironment createEnvironment(World world, BlockPos pos, EnumFacing facing) {
+	public ManagedEnvironment createEnvironment(World world, BlockPos pos, Direction facing) {
 		TileEntity tile = world.getTileEntity(pos);
 
 		if(tile instanceof TileEntitySolarTowerSlave) {

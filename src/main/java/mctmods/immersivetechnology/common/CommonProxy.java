@@ -19,7 +19,7 @@ package mctmods.immersivetechnology.common;
 //import mctmods.immersivetechnology.common.util.network.MessageRequestUpdate;
 //import mctmods.immersivetechnology.common.util.network.MessageStopSound;
 //import mctmods.immersivetechnology.common.util.network.MessageTileSync;
-//import net.minecraft.entity.player.EntityPlayer;
+//import net.minecraft.entity.player.PlayerEntity;
 //import net.minecraft.tileentity.TileEntity;
 //import net.minecraft.util.math.BlockPos;
 //import net.minecraft.world.World;
@@ -77,12 +77,12 @@ public class CommonProxy {
 
 	public void postInitEnd() {}
 
-	public static <T extends TileEntity & IGuiTile> void openGuiForTile(@Nonnull EntityPlayer player, @Nonnull T tile) {
+	public static <T extends TileEntity & IGuiTile> void openGuiForTile(@Nonnull PlayerEntity player, @Nonnull T tile) {
 		player.openGui(ImmersiveTechnology.instance, tile.getGuiID(), tile.getWorld(), tile.getPos().getX(), tile.getPos().getY(), tile.getPos().getZ());
 	}
 
 	@Override
-	public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
+	public Object getServerGuiElement(int ID, PlayerEntity player, World world, int x, int y, int z) {
 		TileEntity tile = world.getTileEntity(new BlockPos(x, y, z));
 		if(tile instanceof IGuiTile) {
 			Object gui = null;
@@ -99,7 +99,7 @@ public class CommonProxy {
 	}
 
 	@Override
-	public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
+	public Object getClientGuiElement(int ID, PlayerEntity player, World world, int x, int y, int z) {
 		TileEntity tile = world.getTileEntity(new BlockPos(x, y, z));
 		if(tile instanceof IGuiTile) {
 			Object gui = null;
@@ -117,7 +117,7 @@ public class CommonProxy {
 		return null;
 	}
 
-	public EntityPlayer getClientPlayer() {
+	public PlayerEntity getClientPlayer() {
 		return null;
 	}
 

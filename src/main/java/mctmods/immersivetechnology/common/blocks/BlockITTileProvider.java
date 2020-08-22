@@ -23,18 +23,18 @@ import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.properties.PropertyInteger;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.util.EnumFacing.AxisDirection;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Direction.Axis;
+import net.minecraft.util.Direction.AxisDirection;
+import net.minecraft.util.Hand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -77,17 +77,17 @@ public abstract class BlockITTileProvider<E extends Enum<E> & BlockITBase.IBlock
 	}
 
 	@Override
-	public boolean hasTileEntity(IBlockState state) {
+	public boolean hasTileEntity(BlockState state) {
 		return true;
 	}
 
 	@Nullable
 	@Override
-	public TileEntity createTileEntity(World world, IBlockState state) {
+	public TileEntity createTileEntity(World world, BlockState state) {
 		TileEntity basic = createBasicTE(world, state.getValue(property));
 		Collection<IProperty<?>> keys = state.getPropertyKeys();
 		if(basic instanceof IDirectionalTile) {
-			EnumFacing newFacing = null;
+			Direction newFacing = null;
 			if(keys.contains(IEProperties.FACING_HORIZONTAL)) newFacing = state.getValue(IEProperties.FACING_HORIZONTAL);
 			else if(keys.contains(IEProperties.FACING_ALL)) newFacing = state.getValue(IEProperties.FACING_ALL);
 			int type = ((IDirectionalTile)basic).getFacingLimitation();
@@ -121,8 +121,8 @@ public abstract class BlockITTileProvider<E extends Enum<E> & BlockITBase.IBlock
 	}
 
 	@Override
-	protected IBlockState getInitDefaultState() {
-		IBlockState ret = super.getInitDefaultState();
+	protected BlockState getInitDefaultState() {
+		BlockState ret = super.getInitDefaultState();
 		if(ret.getPropertyKeys().contains(IEProperties.FACING_ALL))
 			ret = ret.withProperty(IEProperties.FACING_ALL, getDefaultFacing());
 		else if(ret.getPropertyKeys().contains(IEProperties.FACING_HORIZONTAL))
@@ -134,7 +134,7 @@ public abstract class BlockITTileProvider<E extends Enum<E> & BlockITBase.IBlock
 	public abstract TileEntity createBasicTE(World worldIn, E type);
 
 	@Override
-	public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
+	public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, BlockState state, int fortune) {
 		TileEntity tile = world.getTileEntity(pos);
 		DimensionBlockPos dpos = new DimensionBlockPos(pos, world instanceof World ? ((World)world).provider.getDimension(): 0);
 		if(tile == null && tempTile.containsKey(dpos)) tile = tempTile.get(dpos);
@@ -163,7 +163,7 @@ public abstract class BlockITTileProvider<E extends Enum<E> & BlockITBase.IBlock
 	}
 
 	@Override
-	public void breakBlock(World world, BlockPos pos, IBlockState state) {
+	public void breakBlock(World world, BlockPos pos, BlockState state) {
 		TileEntity tile = world.getTileEntity(pos);
 		if(tile instanceof IHasDummyBlocks) ((IHasDummyBlocks)tile).breakDummies(pos, state);
 		if(tile instanceof IImmersiveConnectable && !world.isRemote) ImmersiveNetHandler.INSTANCE.clearAllConnectionsFor(Utils.toCC(tile), world, world.getGameRules().getBoolean("doTileDrops"));
@@ -173,7 +173,7 @@ public abstract class BlockITTileProvider<E extends Enum<E> & BlockITBase.IBlock
 	}
 
 	@Override
-	public void harvestBlock(World world, EntityPlayer player, BlockPos pos, IBlockState state, TileEntity tile, ItemStack stack) {
+	public void harvestBlock(World world, PlayerEntity player, BlockPos pos, BlockState state, TileEntity tile, ItemStack stack) {
 		if(tile instanceof ITileDrop) {
 			ItemStack s = ((ITileDrop) tile).getTileDrop(player, state);
 			if(!s.isEmpty()) {
@@ -195,14 +195,14 @@ public abstract class BlockITTileProvider<E extends Enum<E> & BlockITBase.IBlock
 	}
 
 	@Override
-	public boolean canEntityDestroy(IBlockState state, IBlockAccess world, BlockPos pos, Entity entity) {
+	public boolean canEntityDestroy(BlockState state, IBlockAccess world, BlockPos pos, Entity entity) {
 		TileEntity tile = world.getTileEntity(pos);
 		if(tile instanceof IEntityProof) return ((IEntityProof) tile).canEntityDestroy(entity);
 		return super.canEntityDestroy(state, world, pos, entity);
 	}
 
 	@Override
-	public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
+	public ItemStack getPickBlock(BlockState state, RayTraceResult target, World world, BlockPos pos, PlayerEntity player) {
 		TileEntity tile = world.getTileEntity(pos);
 		if(tile instanceof ITileDrop) {
 			ItemStack s = ((ITileDrop) tile).getTileDrop(player, world.getBlockState(pos));
@@ -213,18 +213,18 @@ public abstract class BlockITTileProvider<E extends Enum<E> & BlockITBase.IBlock
 	}
 
 	@Override
-	public boolean eventReceived(IBlockState state, World worldIn, BlockPos pos, int eventID, int eventParam) {
+	public boolean eventReceived(BlockState state, World worldIn, BlockPos pos, int eventID, int eventParam) {
 		super.eventReceived(state, worldIn, pos, eventID, eventParam);
 		TileEntity tileentity = worldIn.getTileEntity(pos);
 		return tileentity != null && tileentity.receiveClientEvent(eventID, eventParam);
 	}
 
-	protected EnumFacing getDefaultFacing() {
-		return EnumFacing.NORTH;
+	protected Direction getDefaultFacing() {
+		return Direction.NORTH;
 	}
 
 	@Override
-	public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
+	public BlockState getActualState(BlockState state, IBlockAccess world, BlockPos pos) {
 		state = super.getActualState(state, world, pos);
 		TileEntity tile = world.getTileEntity(pos);
 
@@ -259,25 +259,25 @@ public abstract class BlockITTileProvider<E extends Enum<E> & BlockITBase.IBlock
 	}
 
 	@Override
-	public boolean rotateBlock(World world, BlockPos pos, EnumFacing axis) {
+	public boolean rotateBlock(World world, BlockPos pos, Direction axis) {
 		TileEntity tile = world.getTileEntity(pos);
 		if(tile instanceof IDirectionalTile) {
 			if(!((IDirectionalTile) tile).canRotate(axis)) return false;
-			IBlockState state = world.getBlockState(pos);
+			BlockState state = world.getBlockState(pos);
 			if(state.getPropertyKeys().contains(IEProperties.FACING_ALL) || state.getPropertyKeys().contains(IEProperties.FACING_HORIZONTAL)) {
 				PropertyDirection prop = state.getPropertyKeys().contains(IEProperties.FACING_HORIZONTAL) ? IEProperties.FACING_HORIZONTAL : IEProperties.FACING_ALL;
-				EnumFacing f = ((IDirectionalTile) tile).getFacing();
+				Direction f = ((IDirectionalTile) tile).getFacing();
 				int limit = ((IDirectionalTile) tile).getFacingLimitation();
 
 				if(limit == 0) { 
-					f = EnumFacing.VALUES[(f.ordinal() + 1) % EnumFacing.VALUES.length];
+					f = Direction.VALUES[(f.ordinal() + 1) % Direction.VALUES.length];
 				} else if(limit == 1) {
 					f = axis.getAxisDirection() == AxisDirection.POSITIVE ? f.rotateAround(axis.getAxis()).getOpposite() : f.rotateAround(axis.getAxis());
 				} else if(limit == 2 || limit == 5) {
 					f = axis.getAxisDirection() == AxisDirection.POSITIVE ? f.rotateY() : f.rotateYCCW();
 				}
 				if(f != ((IDirectionalTile) tile).getFacing()) {
-					EnumFacing old = ((IDirectionalTile) tile).getFacing();
+					Direction old = ((IDirectionalTile) tile).getFacing();
 					((IDirectionalTile) tile).setFacing(f);
 					((IDirectionalTile) tile).afterRotation(old, f);
 					state = applyProperty(state, prop, ((IDirectionalTile) tile).getFacing());
@@ -289,7 +289,7 @@ public abstract class BlockITTileProvider<E extends Enum<E> & BlockITBase.IBlock
 	}
 
 	@Override
-	public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
+	public BlockState getExtendedState(BlockState state, IBlockAccess world, BlockPos pos) {
 		state = super.getExtendedState(state, world, pos);
 		if(state instanceof IExtendedBlockState) {
 			IExtendedBlockState extended = (IExtendedBlockState) state;
@@ -319,11 +319,11 @@ public abstract class BlockITTileProvider<E extends Enum<E> & BlockITBase.IBlock
 	}
 
 	@Override
-	public void onITBlockPlacedBy(World world, BlockPos pos, IBlockState state, EnumFacing side, float hitX, float hitY, float hitZ, EntityLivingBase placer, ItemStack stack) {
+	public void onITBlockPlacedBy(World world, BlockPos pos, BlockState state, Direction side, float hitX, float hitY, float hitZ, EntityLivingBase placer, ItemStack stack) {
 		TileEntity tile = world.getTileEntity(pos);
 
 		if(tile instanceof IDirectionalTile) {
-			EnumFacing f = ((IDirectionalTile)tile).getFacingForPlacement(placer, pos, side, hitX, hitY, hitZ);
+			Direction f = ((IDirectionalTile)tile).getFacingForPlacement(placer, pos, side, hitX, hitY, hitZ);
 			((IDirectionalTile)tile).setFacing(f);
 			if(tile instanceof IAdvancedDirectionalTile) ((IAdvancedDirectionalTile)tile).onDirectionalPlacement(side, hitX, hitY, hitZ, placer);
 		}
@@ -333,7 +333,7 @@ public abstract class BlockITTileProvider<E extends Enum<E> & BlockITBase.IBlock
 	}
 
 	@Override
-	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+	public boolean onBlockActivated(World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand, Direction side, float hitX, float hitY, float hitZ) {
 		ItemStack heldItem = player.getHeldItem(hand);
 		TileEntity tile = world.getTileEntity(pos);
 		if(tile instanceof IConfigurableSides && Utils.isHammer(heldItem) && !world.isRemote) {
@@ -341,11 +341,11 @@ public abstract class BlockITTileProvider<E extends Enum<E> & BlockITBase.IBlock
 			if(((IConfigurableSides)tile).toggleSide(iSide, player)) return true;
 		}
 		if(tile instanceof IDirectionalTile && Utils.isHammer(heldItem) && ((IDirectionalTile)tile).canHammerRotate(side, hitX, hitY, hitZ, player) && !world.isRemote) {
-			EnumFacing f = ((IDirectionalTile)tile).getFacing();
-			EnumFacing oldF = f;
+			Direction f = ((IDirectionalTile)tile).getFacing();
+			Direction oldF = f;
 			int limit = ((IDirectionalTile)tile).getFacingLimitation();
 			if(limit == 0) { 
-				f = EnumFacing.VALUES[(f.ordinal()+1)%EnumFacing.VALUES.length];
+				f = Direction.VALUES[(f.ordinal()+1)%Direction.VALUES.length];
 			} else if(limit == 1) {
 				f = player.isSneaking() ? f.rotateAround(side.getAxis()).getOpposite() : f.rotateAround(side.getAxis());
 			} else if(limit == 2 || limit == 5) {
@@ -366,7 +366,7 @@ public abstract class BlockITTileProvider<E extends Enum<E> & BlockITBase.IBlock
 			boolean b = ((IPlayerInteraction)tile).interact(side, player, hand, heldItem, hitX, hitY, hitZ);
 			if(b) return b;
 		}
-		if(tile instanceof IGuiTile && hand == EnumHand.MAIN_HAND && !player.isSneaking()) {
+		if(tile instanceof IGuiTile && hand == Hand.MAIN_HAND && !player.isSneaking()) {
 			TileEntity master = ((IGuiTile)tile).getGuiMaster();
 			if(!world.isRemote && master != null && ((IGuiTile)master).canOpenGui(player)) CommonProxy.openGuiForTile(player, (TileEntity & IGuiTile)master);
 			return true;
@@ -375,7 +375,7 @@ public abstract class BlockITTileProvider<E extends Enum<E> & BlockITBase.IBlock
 	}
 
 	@Override
-	public void neighborChanged(IBlockState state, World world, BlockPos pos, Block block, BlockPos fromPos) {
+	public void neighborChanged(BlockState state, World world, BlockPos pos, Block block, BlockPos fromPos) {
 		if(!world.isRemote) {
 			Chunk posChunk = world.getChunkFromBlockCoords(pos);
 			ApiUtils.addFutureServerTask(world, () -> {
@@ -388,7 +388,7 @@ public abstract class BlockITTileProvider<E extends Enum<E> & BlockITBase.IBlock
 	}
 
 	@Override
-	public int getLightValue(IBlockState state, IBlockAccess world, BlockPos pos) {
+	public int getLightValue(BlockState state, IBlockAccess world, BlockPos pos) {
 		TileEntity te = world.getTileEntity(pos);
 		if(te instanceof ILightValue) return ((ILightValue) te).getLightValue();
 		return 0;
@@ -405,7 +405,7 @@ public abstract class BlockITTileProvider<E extends Enum<E> & BlockITBase.IBlock
 	}
 
 	@Override
-	public int getRenderColour(IBlockState state, @Nullable IBlockAccess worldIn, @Nullable BlockPos pos, int tintIndex) {
+	public int getRenderColour(BlockState state, @Nullable IBlockAccess worldIn, @Nullable BlockPos pos, int tintIndex) {
 		if(worldIn != null && pos != null) {
 			TileEntity tile = worldIn.getTileEntity(pos);
 			if(tile instanceof IColouredTile) return ((IColouredTile) tile).getRenderColour(tintIndex);
@@ -414,7 +414,7 @@ public abstract class BlockITTileProvider<E extends Enum<E> & BlockITBase.IBlock
 	}
 
 	@Override
-	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess world, BlockPos pos) {
+	public AxisAlignedBB getBoundingBox(BlockState state, IBlockAccess world, BlockPos pos) {
 		if(world.getBlockState(pos).getBlock() != this) {
 			return FULL_BLOCK_AABB;
 		} else {
@@ -428,7 +428,7 @@ public abstract class BlockITTileProvider<E extends Enum<E> & BlockITBase.IBlock
 	}
 
 	@Override
-	public void addCollisionBoxToList(IBlockState state, World world, BlockPos pos, AxisAlignedBB mask, 
+	public void addCollisionBoxToList(BlockState state, World world, BlockPos pos, AxisAlignedBB mask, 
 		List<AxisAlignedBB> list, @Nullable Entity ent, boolean p_185477_7_) {
 		TileEntity te = world.getTileEntity(pos);
 		if(te instanceof IAdvancedCollisionBounds) {
@@ -444,7 +444,7 @@ public abstract class BlockITTileProvider<E extends Enum<E> & BlockITBase.IBlock
 	}
 
 	@Override
-	public RayTraceResult collisionRayTrace(IBlockState state, World world, BlockPos pos, Vec3d start, Vec3d end) {
+	public RayTraceResult collisionRayTrace(BlockState state, World world, BlockPos pos, Vec3d start, Vec3d end) {
 		TileEntity te = world.getTileEntity(pos);
 		if(te instanceof IAdvancedSelectionBounds) {
 			List<AxisAlignedBB> list = ((IAdvancedSelectionBounds)te).getAdvancedSelectionBounds();
@@ -468,38 +468,38 @@ public abstract class BlockITTileProvider<E extends Enum<E> & BlockITBase.IBlock
 	}
 
 	@Override
-	public boolean hasComparatorInputOverride(IBlockState state) {
+	public boolean hasComparatorInputOverride(BlockState state) {
 		return true;
 	}
 
 	@Override
-	public int getComparatorInputOverride(IBlockState state, World world, BlockPos pos) {
+	public int getComparatorInputOverride(BlockState state, World world, BlockPos pos) {
 		TileEntity te = world.getTileEntity(pos);
 		if(te instanceof IEBlockInterfaces.IComparatorOverride) return ((IEBlockInterfaces.IComparatorOverride) te).getComparatorInputOverride();
 		return 0;
 	}
 
 	@Override
-	public int getWeakPower(IBlockState blockState, IBlockAccess world, BlockPos pos, EnumFacing side) {
+	public int getWeakPower(BlockState blockState, IBlockAccess world, BlockPos pos, Direction side) {
 		TileEntity te = world.getTileEntity(pos);
 		if(te instanceof IEBlockInterfaces.IRedstoneOutput) return ((IEBlockInterfaces.IRedstoneOutput) te).getWeakRSOutput(blockState, side);
 		return 0;
 	}
 
 	@Override
-	public int getStrongPower(IBlockState blockState, IBlockAccess world, BlockPos pos, EnumFacing side) {
+	public int getStrongPower(BlockState blockState, IBlockAccess world, BlockPos pos, Direction side) {
 		TileEntity te = world.getTileEntity(pos);
 		if(te instanceof IEBlockInterfaces.IRedstoneOutput) return ((IEBlockInterfaces.IRedstoneOutput) te).getStrongRSOutput(blockState, side);
 		return 0;
 	}
 
 	@Override
-	public boolean canProvidePower(IBlockState state) {
+	public boolean canProvidePower(BlockState state) {
 		return true;
 	}
 
 	@Override
-	public boolean canConnectRedstone(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
+	public boolean canConnectRedstone(BlockState state, IBlockAccess world, BlockPos pos, Direction side) {
 		TileEntity te = world.getTileEntity(pos);
 		if(te instanceof TileEntityMultiblockMetal) {
 			TileEntityMultiblockMetal<?, ?> multiblockTE = (TileEntityMultiblockMetal<?, ?>)te;
@@ -512,7 +512,7 @@ public abstract class BlockITTileProvider<E extends Enum<E> & BlockITBase.IBlock
 	}
 
 	@Override
-	public void onEntityCollidedWithBlock(World world, BlockPos pos, IBlockState state, Entity entity) {
+	public void onEntityCollidedWithBlock(World world, BlockPos pos, BlockState state, Entity entity) {
 		TileEntity te = world.getTileEntity(pos);
 		if(te instanceof TileEntityIEBase) ((TileEntityIEBase) te).onEntityCollision(world, entity);
 	}

@@ -6,19 +6,19 @@ import blusunrize.immersiveengineering.api.crafting.IngredientStack;
 import blusunrize.immersiveengineering.common.blocks.TileEntityMultiblockPart;
 import mctmods.immersivetechnology.api.ITUtils;
 import mctmods.immersivetechnology.common.ITContent;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public abstract class ITMultiblock<T extends TileEntityMultiblockPart<T>> implements MultiblockHandler.IMultiblock {
 
     public String uniqueName;
-    public IBlockState masterBlockState;
-    public IBlockState slaveBlockState;
+    public BlockState masterBlockState;
+    public BlockState slaveBlockState;
 
     public int height;
     public int length;
@@ -43,11 +43,11 @@ public abstract class ITMultiblock<T extends TileEntityMultiblockPart<T>> implem
     }
 
     @Override
-    public boolean isBlockTrigger(IBlockState state) {
+    public boolean isBlockTrigger(BlockState state) {
         return trigger.isEquals(new ItemStack(state.getBlock(), 1, state.getBlock().getMetaFromState(state)));
     }
 
-    public ITMultiblock(String structurePath, IBlockState master, IBlockState slave) {
+    public ITMultiblock(String structurePath, BlockState master, BlockState slave) {
         MultiblockJSONSchema data = MultiblockUtils.Load(structurePath);
         if(data == null) throw new IllegalArgumentException(String.format("Invalid or missing multiblock file %s", structurePath));
 
@@ -82,15 +82,15 @@ public abstract class ITMultiblock<T extends TileEntityMultiblockPart<T>> implem
     }
 
     @Override
-    public boolean createStructure(World world, BlockPos pos, EnumFacing side, EntityPlayer player) {
-        side = (side == EnumFacing.UP || side == EnumFacing.DOWN)? EnumFacing.fromAngle(player.rotationYaw) : side.getOpposite();
+    public boolean createStructure(World world, BlockPos pos, Direction side, PlayerEntity player) {
+        side = (side == Direction.UP || side == Direction.DOWN)? Direction.fromAngle(player.rotationYaw) : side.getOpposite();
 
         boolean mirror = false;
         if(isInvalid(world, pos, side, mirror)) {
             mirror = true;
             if(isInvalid(world, pos, side, mirror)) return false;
         }
-        BlockPos origin = pos.offset(side, -masterZ).offset(side.rotateY(), mirror ? width-1-masterX : -masterX).offset(EnumFacing.DOWN, masterY);
+        BlockPos origin = pos.offset(side, -masterZ).offset(side.rotateY(), mirror ? width-1-masterX : -masterX).offset(Direction.DOWN, masterY);
         ItemStack hammer = player.getHeldItemMainhand().getItem().getToolClasses(player.getHeldItemMainhand()).contains(Lib.TOOL_HAMMER)?player.getHeldItemMainhand(): player.getHeldItemOffhand();
         if(MultiblockHandler.fireMultiblockFormationEventPost(player, this, pos, hammer).isCanceled()) return false;
         for(int h = 0; h < height; h++) {
@@ -117,14 +117,14 @@ public abstract class ITMultiblock<T extends TileEntityMultiblockPart<T>> implem
         return true;
     }
 
-    boolean isInvalid(World world, BlockPos pos, EnumFacing side, boolean mirror) {
-        BlockPos origin = pos.offset(side, -masterZ).offset(side.rotateY(), mirror ? width-1-masterX : -masterX).offset(EnumFacing.DOWN, masterY);
+    boolean isInvalid(World world, BlockPos pos, Direction side, boolean mirror) {
+        BlockPos origin = pos.offset(side, -masterZ).offset(side.rotateY(), mirror ? width-1-masterX : -masterX).offset(Direction.DOWN, masterY);
         for(int h = 0; h < height; h++) {
             for(int l = 0; l < length; l++) {
                 for(int w = 0; w < width; w++) {
                     if (structure[h][l][w] == AirRef.instance) continue;
                     BlockPos blockPos = ITUtils.LocalOffsetToWorldBlockPos(origin, mirror ? -w : w, h, l, side);
-                    IBlockState state = world.getBlockState(blockPos);
+                    BlockState state = world.getBlockState(blockPos);
                     if(!structure[h][l][w].isEquals(new ItemStack(state.getBlock(), 1, state.getBlock().getMetaFromState(state)))) return true;
                 }
             }
@@ -132,7 +132,7 @@ public abstract class ITMultiblock<T extends TileEntityMultiblockPart<T>> implem
         return false;
     }
 
-    public boolean isPointOfInterest(EnumFacing accessSide, EnumFacing machineFacing, int position, String name) {
+    public boolean isPointOfInterest(Direction accessSide, Direction machineFacing, int position, String name) {
         for(PoIJSONSchema poi : pointsOfInterest) {
             if(    !poi.name.equals(name) ||
                     poi.position != position ||

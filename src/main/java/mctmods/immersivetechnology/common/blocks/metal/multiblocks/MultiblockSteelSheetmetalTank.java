@@ -12,13 +12,13 @@ import blusunrize.immersiveengineering.common.util.Utils;
 import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySteelSheetmetalTankSlave;
 import mctmods.immersivetechnology.common.blocks.metal.types.BlockType_MetalMultiblock;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -55,13 +55,13 @@ public class MultiblockSteelSheetmetalTank implements IMultiblock {
 	}
 
 	@Override
-	public boolean isBlockTrigger(IBlockState state) {
+	public boolean isBlockTrigger(BlockState state) {
 		return Utils.compareToOreName(new ItemStack(state.getBlock(), 1, state.getBlock().getMetaFromState(state)), "blockSheetmetalSteel");
 	}
 
 	@Override
-	public boolean createStructure(World world, BlockPos pos, EnumFacing side, EntityPlayer player) {
-		side = (side == EnumFacing.UP || side == EnumFacing.DOWN)? EnumFacing.fromAngle(player.rotationYaw) : side.getOpposite();
+	public boolean createStructure(World world, BlockPos pos, Direction side, PlayerEntity player) {
+		side = (side == Direction.UP || side == Direction.DOWN)? Direction.fromAngle(player.rotationYaw) : side.getOpposite();
 		pos = pos.offset(side).down();
 
 		if(!(Utils.isOreBlockAt(world, pos.offset(side, - 1).offset(side.rotateY()), "fenceTreatedWood") && Utils.isOreBlockAt(world, pos.offset(side, - 1).offset(side.rotateYCCW()), "fenceTreatedWood"))) {
@@ -98,16 +98,16 @@ public class MultiblockSteelSheetmetalTank implements IMultiblock {
 		return true;
 	}
 
-	private void createStructureInternal(World world, BlockPos pos, EnumFacing side) {
-		IBlockState master = ITContent.blockMetalMultiblock.getStateFromMeta(BlockType_MetalMultiblock.STEEL_TANK.getMeta());
-		IBlockState slave = ITContent.blockMetalMultiblock.getStateFromMeta(BlockType_MetalMultiblock.STEEL_TANK_SLAVE.getMeta());
+	private void createStructureInternal(World world, BlockPos pos, Direction side) {
+		BlockState master = ITContent.blockMetalMultiblock.getStateFromMeta(BlockType_MetalMultiblock.STEEL_TANK.getMeta());
+		BlockState slave = ITContent.blockMetalMultiblock.getStateFromMeta(BlockType_MetalMultiblock.STEEL_TANK_SLAVE.getMeta());
 		for(int h = 0; h <= 4; h ++) {
 			for(int l = - 1; l <= 1; l ++) {
 				for(int w = - 1; w <= 1; w ++) {
 					if(h == 0 && !((l == 0 && w == 0) || (Math.abs(l) == 1 && Math.abs(w) == 1))) continue;
 					if(h > 0 && h < 4 && l == 0 && w == 0) continue;
-					int xx = side == EnumFacing.EAST?l : side == EnumFacing.WEST? - l : side == EnumFacing.NORTH? - w : w;
-					int zz = side == EnumFacing.NORTH?l : side == EnumFacing.SOUTH? - l : side == EnumFacing.EAST?w : - w;
+					int xx = side == Direction.EAST?l : side == Direction.WEST? - l : side == Direction.NORTH? - w : w;
+					int zz = side == Direction.NORTH?l : side == Direction.SOUTH? - l : side == Direction.EAST?w : - w;
 					world.setBlockState(pos.add(xx, h, zz), (xx == 0 && h == 0 && zz == 0)? master : slave);
 					BlockPos pos2 = pos.add(xx, h, zz);
 					TileEntity curr = world.getTileEntity(pos2);

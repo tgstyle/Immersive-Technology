@@ -46,7 +46,7 @@ public class ITSoundHandler extends PositionedSound implements ITickableSound {
 		this.zPosF = pos.getZ() + 0.5f;
 		this.repeat = repeatIn;
 		this.attenuationType = AttenuationType.NONE;
-		Minecraft.getMinecraft().getSoundHandler().playSound(this);
+		Minecraft.getInstance().getSoundHandler().playSound(this);
 	}
 
 	@Override
@@ -59,7 +59,7 @@ public class ITSoundHandler extends PositionedSound implements ITickableSound {
 
 	private void stopSound(boolean keepOnList) {
 		if(!keepOnList) playingSounds.remove(pos);
-		Minecraft.getMinecraft().getSoundHandler().stopSound(this);
+		Minecraft.getInstance().getSoundHandler().stopSound(this);
 	}
 
 	private void stopSound() {

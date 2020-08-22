@@ -3,7 +3,7 @@ package mctmods.immersivetechnology.common.fluid;
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.util.ITLogger;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fluids.Fluid;
+import net.minecraft.fluid.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 
 public class FluidColored extends Fluid {

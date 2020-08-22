@@ -21,22 +21,22 @@ import mctmods.immersivetechnology.common.Config.ITConfig.Experimental;
 import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.util.IPipe;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -124,7 +124,7 @@ public class TileEntityFluidPipe extends blusunrize.immersiveengineering.common.
 					closedList.add(next);
 				IFluidTankProperties[] tankInfo;
 				for(int i = 0; i < 6; i ++ ) {
-					EnumFacing fd = EnumFacing.getFront(i);
+					Direction fd = Direction.byIndex(i);
 					if(((IFluidPipe)pipeTile).hasOutputConnection(fd)) {
 						BlockPos nextPos = next.offset(fd);
 						TileEntity adjacentTile = Utils.getExistingTileEntity(world, nextPos);
@@ -179,7 +179,7 @@ public class TileEntityFluidPipe extends blusunrize.immersiveengineering.common.
 			if(entity.motionZ > f5) entity.motionZ = f5;
 			entity.fallDistance = 0f;
 			if(entity.motionY < - .15) entity.motionY = - 0.15D;
-			if(entity.motionY < 0 && entity instanceof EntityPlayer && entity.isSneaking()) {
+			if(entity.motionY < 0 && entity instanceof PlayerEntity && entity.isSneaking()) {
 				entity.motionY = .05;
 				return;
 			}
@@ -188,27 +188,27 @@ public class TileEntityFluidPipe extends blusunrize.immersiveengineering.common.
 	}
 
 	@Override
-	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
+	public void readCustomNBT(CompoundNBT nbt, boolean descPacket) {
 		sideConfig = nbt.getIntArray("sideConfig");
 		if(sideConfig == null||sideConfig.length != 6) sideConfig = new int[]{0, 0, 0, 0, 0, 0};
-		pipeCover = new ItemStack(nbt.getCompoundTag("pipeCover"));
+		pipeCover = new ItemStack(nbt.getCompound("pipeCover"));
 		EnumDyeColor oldColor = color;
-		if(nbt.hasKey("color", NBT.TAG_INT)) color = EnumDyeColor.byMetadata(nbt.getInteger("color"));
+		if(nbt.hasKey("color", NBT.TAG_INT)) color = EnumDyeColor.byMetadata(nbt.getInt("color"));
 		else color = null;
 		byte oldConns = connections;
 		connections = nbt.getByte("connections");
 		if(world != null && world.isRemote && (connections != oldConns||color != oldColor)) {
-			IBlockState state = world.getBlockState(pos);
+			BlockState state = world.getBlockState(pos);
 			world.notifyBlockUpdate(pos, state, state, 3);
 		}
 	}
 
 	@Override
-	public void writeCustomNBT(NBTTagCompound nbt, boolean descPacket) {
+	public void writeCustomNBT(CompoundNBT nbt, boolean descPacket) {
 		nbt.setIntArray("sideConfig", sideConfig);
-		if(!pipeCover.isEmpty()) nbt.setTag("pipeCover", (pipeCover.writeToNBT(new NBTTagCompound())));
+		if(!pipeCover.isEmpty()) nbt.put("pipeCover", (pipeCover.writeToNBT(new CompoundNBT())));
 		nbt.setByte("connections", connections);
-		if(color != null) nbt.setInteger("color", color.getMetadata());
+		if(color != null) nbt.putInt("color", color.getMetadata());
 	}
 
 	boolean canOutputPressurized(TileEntity output, boolean consumePower) {
@@ -217,39 +217,39 @@ public class TileEntityFluidPipe extends blusunrize.immersiveengineering.common.
 	}
 
 	PipeFluidHandler[] sidedHandlers = { 
-			new PipeFluidHandler(this, EnumFacing.DOWN), 
-			new PipeFluidHandler(this, EnumFacing.UP), 
-			new PipeFluidHandler(this, EnumFacing.NORTH), 
-			new PipeFluidHandler(this, EnumFacing.SOUTH), 
-			new PipeFluidHandler(this, EnumFacing.WEST), 
-			new PipeFluidHandler(this, EnumFacing.EAST)
+			new PipeFluidHandler(this, Direction.DOWN), 
+			new PipeFluidHandler(this, Direction.UP), 
+			new PipeFluidHandler(this, Direction.NORTH), 
+			new PipeFluidHandler(this, Direction.SOUTH), 
+			new PipeFluidHandler(this, Direction.WEST), 
+			new PipeFluidHandler(this, Direction.EAST)
 	};
 
 	@Override
-	public boolean hasCapability(Capability< ? > capability, @Nullable EnumFacing facing) {
+	public boolean hasCapability(Capability< ? > capability, @Nullable Direction facing) {
 		if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null && sideConfig[facing.ordinal()] == 0) return true;
 		return super.hasCapability(capability, facing);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
+	public <T> T getCapability(Capability<T> capability, @Nullable Direction facing) {
 		if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null && sideConfig[facing.ordinal()] == 0) return (T)sidedHandlers[facing.ordinal()];
 		return super.getCapability(capability, facing);
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public List<BakedQuad> modifyQuads(IBlockState object, List<BakedQuad> quads) {
+	public List<BakedQuad> modifyQuads(BlockState object, List<BakedQuad> quads) {
 		if(!pipeCover.isEmpty()) {
 			Block b = Block.getBlockFromItem(pipeCover.getItem());
-			IBlockState state = b != null ? b.getStateFromMeta(pipeCover.getMetadata()) : Blocks.STONE.getDefaultState();
-			IBakedModel model = Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelShapes().getModelForState(state);
+			BlockState state = b != null ? b.getStateFromMeta(pipeCover.getMetadata()) : Blocks.STONE.getDefaultState();
+			IBakedModel model = Minecraft.getInstance().getBlockRendererDispatcher().getBlockModelShapes().getModelForState(state);
 			BlockRenderLayer curL = MinecraftForgeClient.getRenderLayer();
 			if(model != null) {
 				for(BlockRenderLayer layer : BlockRenderLayer.values()) {
 					ForgeHooksClient.setRenderLayer(layer);
-					for(EnumFacing facing : EnumFacing.VALUES) quads.addAll(model.getQuads(state, facing, 0));
+					for(Direction facing : Direction.VALUES) quads.addAll(model.getQuads(state, facing, 0));
 					quads.addAll(model.getQuads(state, null, 0));
 				}
 			}
@@ -260,25 +260,25 @@ public class TileEntityFluidPipe extends blusunrize.immersiveengineering.common.
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public String getCacheKey(IBlockState object) {
+	public String getCacheKey(BlockState object) {
 		return getRenderCacheKey();
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public Optional<TRSRTransformation> applyTransformations(IBlockState object, String group, Optional<TRSRTransformation> transform) {
+	public Optional<TRSRTransformation> applyTransformations(BlockState object, String group, Optional<TRSRTransformation> transform) {
 		return transform;
 	}
 
 	@Override
-	public Collection<ItemStack> getExtraDrops(EntityPlayer player, IBlockState state) {
+	public Collection<ItemStack> getExtraDrops(PlayerEntity player, BlockState state) {
 		if(!pipeCover.isEmpty()) return Lists.newArrayList(pipeCover);
 		return null;
 	}
 
 	@Override
 	public void onNeighborBlockChange(BlockPos otherPos) {
-		EnumFacing dir = EnumFacing.getFacingFromVector(otherPos.getX() - pos.getX(), otherPos.getY() - pos.getY(), otherPos.getZ() - pos.getZ());
+		Direction dir = Direction.getFacingFromVector(otherPos.getX() - pos.getX(), otherPos.getY() - pos.getY(), otherPos.getZ() - pos.getZ());
 		if(updateConnectionByte(dir)) ITUtils.improvedMarkBlockForUpdate(world, pos, null, EnumSet.complementOf(EnumSet.of(dir)));
 	}
 
@@ -286,16 +286,16 @@ public class TileEntityFluidPipe extends blusunrize.immersiveengineering.common.
 	public void onLoad() {
 		if(!world.isRemote) {
 			boolean changed = false;
-			for(EnumFacing f : EnumFacing.VALUES) if(world.isBlockLoaded(pos.offset(f))) changed |= updateConnectionByte(f);
+			for(Direction f : Direction.VALUES) if(world.isBlockLoaded(pos.offset(f))) changed |= updateConnectionByte(f);
 			if(changed) ITUtils.improvedMarkBlockForUpdate(world, pos, null);
 		}
 	}
 
 	static class PipeFluidHandler implements IFluidHandler {
 		TileEntityFluidPipe pipe;
-		EnumFacing facing;
+		Direction facing;
 
-		public PipeFluidHandler(TileEntityFluidPipe pipe, EnumFacing facing) {
+		public PipeFluidHandler(TileEntityFluidPipe pipe, Direction facing) {
 			this.pipe = pipe;
 			this.facing = facing;
 		}
@@ -368,17 +368,17 @@ public class TileEntityFluidPipe extends blusunrize.immersiveengineering.common.
 
 	public static class DirectionalFluidOutput {
 		IFluidHandler output;
-		EnumFacing direction;
+		Direction direction;
 		TileEntity containingTile;
 
-		public DirectionalFluidOutput(IFluidHandler output, TileEntity containingTile, EnumFacing direction) {
+		public DirectionalFluidOutput(IFluidHandler output, TileEntity containingTile, Direction direction) {
 			this.output = output;
 			this.direction = direction;
 			this.containingTile = containingTile;
 		}
 	}
 
-	public boolean updateConnectionByte(EnumFacing dir) {
+	public boolean updateConnectionByte(Direction dir) {
 		IFluidTankProperties[] tankInfo;
 		final byte oldConn = connections;
 		int i = dir.getIndex();
@@ -399,7 +399,7 @@ public class TileEntityFluidPipe extends blusunrize.immersiveengineering.common.
 		byte connections = 0;
 		IFluidTankProperties[] tankInfo;
 		for(int i = 5; i >= 0; i--) {
-			EnumFacing dir = EnumFacing.getFront(i);
+			Direction dir = Direction.byIndex(i);
 			TileEntity con = Utils.getExistingTileEntity(world, getPos().offset(dir));
 			connections <<= 1;
 			if(con != null && con.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, dir.getOpposite())) {
@@ -417,7 +417,7 @@ public class TileEntityFluidPipe extends blusunrize.immersiveengineering.common.
 		if(sideConfig[connection] == - 1) return 0;
 		if((connections & (1 << connection)) == 0) return 0;
 		if(connections != 3 && connections != 12 && connections != 48) return 1;
-		TileEntity con = world.getTileEntity(getPos().offset(EnumFacing.getFront(connection)));
+		TileEntity con = world.getTileEntity(getPos().offset(Direction.byIndex(connection)));
 		if(con instanceof TileEntityFluidPipe) {
 			byte tileConnections = ((TileEntityFluidPipe)con).connections;
 			if(connections == tileConnections) return 0;
@@ -435,7 +435,7 @@ public class TileEntityFluidPipe extends blusunrize.immersiveengineering.common.
 		if(sideConfig[side] > 0) sideConfig[side] = - 1;
 		markDirty();
 
-		EnumFacing fd = EnumFacing.getFront(side);
+		Direction fd = Direction.byIndex(side);
 		TileEntity connected = world.getTileEntity(getPos().offset(fd));
 		if(connected instanceof TileEntityFluidPipe) {
 			((TileEntityFluidPipe)connected).sideConfig[fd.getOpposite().ordinal()] = sideConfig[side];
@@ -501,7 +501,7 @@ public class TileEntityFluidPipe extends blusunrize.immersiveengineering.common.
 		for(int i = 0; i < 6; i++) {
 			double depth = getConnectionStyle(i) == 0 ? .25 : .125;
 			double size = getConnectionStyle(i) == 0 ? .25 : .125;
-			if((availableConnections & 0x1) == 1) list.add(new AdvancedAABB(new AxisAlignedBB(i == 4 ? 0 : i == 5 ? 1 - depth : size, i == 0 ? 0 : i == 1 ? 1 - depth : size, i == 2 ? 0 : i == 3 ? 1 - depth : size, i == 4 ? depth : i == 5 ? 1 : 1 - size, i == 0 ? depth : i == 1 ? 1 : 1 - size, i == 2 ? depth : i == 3 ? 1 : 1 - size).offset(getPos()), EnumFacing.getFront(i)));
+			if((availableConnections & 0x1) == 1) list.add(new AdvancedAABB(new AxisAlignedBB(i == 4 ? 0 : i == 5 ? 1 - depth : size, i == 0 ? 0 : i == 1 ? 1 - depth : size, i == 2 ? 0 : i == 3 ? 1 - depth : size, i == 4 ? depth : i == 5 ? 1 : 1 - size, i == 0 ? depth : i == 1 ? 1 : 1 - size, i == 2 ? depth : i == 3 ? 1 : 1 - size).offset(getPos()), Direction.byIndex(i)));
 			if((connections & (1 << i)) != 0) baseAABB[i] += i%2 == 1 ? .125 : - .125;
 			baseAABB[i] = Math.min(Math.max(baseAABB[i], 0), 1);
 			availableConnections = (byte)(availableConnections >> 1);
@@ -511,10 +511,10 @@ public class TileEntityFluidPipe extends blusunrize.immersiveengineering.common.
 	}
 
 	@Override
-	public boolean isOverrideBox(AxisAlignedBB box, EntityPlayer player, RayTraceResult mop, ArrayList<AxisAlignedBB> list) {
+	public boolean isOverrideBox(AxisAlignedBB box, PlayerEntity player, RayTraceResult mop, ArrayList<AxisAlignedBB> list) {
 		if(box instanceof AdvancedAABB) {
 			if(box.grow(.002).contains(mop.hitVec)) {
-				AxisAlignedBB changedBox = ((AdvancedAABB)box).fd != null ? box.grow(((AdvancedAABB)box).fd.getFrontOffsetX() != 0 ? 0 : .03125, ((AdvancedAABB)box).fd.getFrontOffsetY() != 0 ? 0 : .03125, ((AdvancedAABB)box).fd.getFrontOffsetZ() != 0 ? 0 : .03125) : box;
+				AxisAlignedBB changedBox = ((AdvancedAABB)box).fd != null ? box.grow(((AdvancedAABB)box).fd.byIndexOffsetX() != 0 ? 0 : .03125, ((AdvancedAABB)box).fd.byIndexOffsetY() != 0 ? 0 : .03125, ((AdvancedAABB)box).fd.byIndexOffsetZ() != 0 ? 0 : .03125) : box;
 				list.add(changedBox);
 				return true;
 			}
@@ -728,7 +728,7 @@ public class TileEntityFluidPipe extends blusunrize.immersiveengineering.common.
 	}
 
 	@Override
-	public boolean interact(EnumFacing side, EntityPlayer player, EnumHand hand, ItemStack heldItem, float hitX, float hitY, float hitZ) {
+	public boolean interact(Direction side, PlayerEntity player, Hand hand, ItemStack heldItem, float hitX, float hitY, float hitZ) {
 		if(heldItem.isEmpty() && player.isSneaking() && !pipeCover.isEmpty()) {
 			if(!world.isRemote && world.getGameRules().getBoolean("doTileDrops")) {
 				EntityItem entityitem = player.dropItem(pipeCover.copy(), false);
@@ -764,9 +764,9 @@ public class TileEntityFluidPipe extends blusunrize.immersiveengineering.common.
 	}
 
 	@Override
-	public boolean hammerUseSide(EnumFacing side, EntityPlayer player, float hitX, float hitY, float hitZ) {
+	public boolean hammerUseSide(Direction side, PlayerEntity player, float hitX, float hitY, float hitZ) {
 		if(world.isRemote) return true;
-		EnumFacing fd = side;
+		Direction fd = side;
 		List<AxisAlignedBB> boxes = this.getAdvancedSelectionBounds();
 		for(AxisAlignedBB box : boxes) {
 			if(box instanceof AdvancedAABB) {
@@ -785,9 +785,9 @@ public class TileEntityFluidPipe extends blusunrize.immersiveengineering.common.
 	}
 
 	@Override
-	public void onTilePlaced(World world, BlockPos pos, IBlockState state, EnumFacing side, float hitX, float hitY, float hitZ, EntityLivingBase placer, ItemStack stack) {
+	public void onTilePlaced(World world, BlockPos pos, BlockState state, Direction side, float hitX, float hitY, float hitZ, EntityLivingBase placer, ItemStack stack) {
 		TileEntity te;
-		for(EnumFacing dir : EnumFacing.values()) {
+		for(Direction dir : Direction.values()) {
 			if((te = world.getTileEntity(pos.offset(dir))) instanceof TileEntityFluidPipe) {
 				if(((TileEntityFluidPipe)te).color != this.color) {
 					this.toggleSide(dir.ordinal());
@@ -802,12 +802,12 @@ public class TileEntityFluidPipe extends blusunrize.immersiveengineering.common.
 	}
 
 	@Override
-	public boolean hasOutputConnection(EnumFacing side) {
+	public boolean hasOutputConnection(Direction side) {
 		return side != null && sideConfig[side.ordinal()] == 0;
 	}
 
 	@Override
-	public int getRenderColour(IBlockState object, String group) {
+	public int getRenderColour(BlockState object, String group) {
 		if(color != null) return color.getColorValue()|(0xff000000);
 		return 0xffffffff;
 	}

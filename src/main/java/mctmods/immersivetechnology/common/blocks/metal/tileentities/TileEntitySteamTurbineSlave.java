@@ -10,17 +10,17 @@ import mctmods.immersivetechnology.api.crafting.SteamTurbineRecipe;
 import mctmods.immersivetechnology.common.blocks.ITBlockInterfaces.IMechanicalEnergy;
 import mctmods.immersivetechnology.common.blocks.metal.TileEntityMultiblockNewSystem;
 import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockSteamTurbine;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTank;
+import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.IFluidTank;
 
 import java.util.ArrayList;
@@ -33,12 +33,12 @@ public class TileEntitySteamTurbineSlave extends TileEntityMultiblockNewSystem<T
 	}
 
 	@Override
-	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
+	public void readCustomNBT(CompoundNBT nbt, boolean descPacket) {
 		super.readCustomNBT(nbt, descPacket);
 	}
 
 	@Override
-	public void writeCustomNBT(NBTTagCompound nbt, boolean descPacket) {
+	public void writeCustomNBT(CompoundNBT nbt, boolean descPacket) {
 		super.writeCustomNBT(nbt, descPacket);
 	}
 
@@ -74,12 +74,12 @@ public class TileEntitySteamTurbineSlave extends TileEntityMultiblockNewSystem<T
 	}
 
 	@Override
-	public EnumFacing getMechanicalEnergyOutputFacing() {
+	public Direction getMechanicalEnergyOutputFacing() {
 		return facing;
 	}
 
 	@Override
-	public EnumFacing getMechanicalEnergyInputFacing() {
+	public Direction getMechanicalEnergyInputFacing() {
 		return null;
 	}
 
@@ -129,7 +129,7 @@ public class TileEntitySteamTurbineSlave extends TileEntityMultiblockNewSystem<T
 	}
 
 	@Override
-	protected SteamTurbineRecipe readRecipeFromNBT(NBTTagCompound tag) {
+	protected SteamTurbineRecipe readRecipeFromNBT(CompoundNBT tag) {
 		return SteamTurbineRecipe.loadFromNBT(tag);
 	}
 
@@ -196,7 +196,7 @@ public class TileEntitySteamTurbineSlave extends TileEntityMultiblockNewSystem<T
 	}
 
 	@Override
-	protected IFluidTank[] getAccessibleFluidTanks(EnumFacing side) {
+	protected IFluidTank[] getAccessibleFluidTanks(Direction side) {
 		TileEntitySteamTurbineMaster master = master();
 		if(master != null) {
 			if(pos == 30 && (side == null || side == facing.getOpposite())) return new FluidTank[] {master.tanks[0]};
@@ -206,7 +206,7 @@ public class TileEntitySteamTurbineSlave extends TileEntityMultiblockNewSystem<T
 	}
 
 	@Override
-	protected boolean canFillTankFrom(int iTank, EnumFacing side, FluidStack resource) {
+	protected boolean canFillTankFrom(int iTank, Direction side, FluidStack resource) {
 		TileEntitySteamTurbineMaster master = this.master();
 		if(master == null) return false;
 		if((pos == 30) && (side == null || side == facing.getOpposite())) {
@@ -218,7 +218,7 @@ public class TileEntitySteamTurbineSlave extends TileEntityMultiblockNewSystem<T
 	}
 
 	@Override
-	protected boolean canDrainTankFrom(int iTank, EnumFacing side) {
+	protected boolean canDrainTankFrom(int iTank, Direction side) {
 		return (pos == 112 && (side == null || side == facing));
 	}
 
@@ -235,8 +235,8 @@ public class TileEntitySteamTurbineSlave extends TileEntityMultiblockNewSystem<T
 	@Override
 	public List <AxisAlignedBB> getAdvancedSelectionBounds() {
 		double[] boundingArray = new double[6];
-		EnumFacing fl = facing;
-		EnumFacing fw = facing.rotateY();
+		Direction fl = facing;
+		Direction fw = facing.rotateY();
 		if(mirrored) fw = fw.getOpposite();
 		if(pos <= 2) {
 			boundingArray = ITUtils.smartBoundingBox(0, 0, 0, 0, 0, .5f, fl, fw);
@@ -410,7 +410,7 @@ public class TileEntitySteamTurbineSlave extends TileEntityMultiblockNewSystem<T
 	}
 
 	@Override
-	public boolean isOverrideBox(AxisAlignedBB box, EntityPlayer player, RayTraceResult mop, ArrayList <AxisAlignedBB> list) {
+	public boolean isOverrideBox(AxisAlignedBB box, PlayerEntity player, RayTraceResult mop, ArrayList <AxisAlignedBB> list) {
 		return false;
 	}
 

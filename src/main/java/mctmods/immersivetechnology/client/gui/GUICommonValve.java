@@ -5,7 +5,7 @@ import mctmods.immersivetechnology.common.tileentities.TileEntityCommonValve;
 import mctmods.immersivetechnology.common.util.network.MessageTileSync;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import org.lwjgl.input.Keyboard;
 
 import java.io.IOException;
@@ -55,7 +55,7 @@ public abstract class GUICommonValve extends GuiScreen {
 
 	@Override
 	public void onGuiClosed() {
-		NBTTagCompound tag = new NBTTagCompound();
+		CompoundNBT tag = new CompoundNBT();
 		tag.setInteger("packetLimit", !limitPacket.getText().equals("") ? safeStringToInt(limitPacket.getText()) : -1);
 		tag.setInteger("timeLimit", !limitTime.getText().equals("") ? safeStringToInt(limitTime.getText()) : -1);
 		tag.setInteger("keepSize", !destinationKeep.getText().equals("") ? safeStringToInt(destinationKeep.getText()) : -1);

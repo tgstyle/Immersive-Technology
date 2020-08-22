@@ -4,7 +4,7 @@ import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.client.ClientUtils;
 import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySteamTurbineMaster;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -21,9 +21,9 @@ public class TileRenderSteamTurbine extends TileEntitySpecialRenderer<TileEntity
 		if(!te.formed || te.isDummy() || !te.getWorld().isBlockLoaded(te.getPos(), false)) {
 			return;
 		}
-		final BlockRendererDispatcher blockRenderer = Minecraft.getMinecraft().getBlockRendererDispatcher();
+		final BlockRendererDispatcher blockRenderer = Minecraft.getInstance().getBlockRendererDispatcher();
 		BlockPos blockPos = te.getPos();
-		IBlockState state = getWorld().getBlockState(blockPos);
+		BlockState state = getWorld().getBlockState(blockPos);
 		if(state.getBlock() != ITContent.blockMetalMultiblock) {
 			return;
 		}
@@ -45,7 +45,7 @@ public class TileRenderSteamTurbine extends TileEntitySpecialRenderer<TileEntity
 		} else {
 			GlStateManager.shadeModel(7424);
 		}
-		GlStateManager.rotate(te.getAnimation().getAnimationRotation() + (te.getAnimation().getAnimationMomentum() * partialTicks), te.facing.getFrontOffsetX(), 0, te.facing.getFrontOffsetZ());
+		GlStateManager.rotate(te.getAnimation().getAnimationRotation() + (te.getAnimation().getAnimationMomentum() * partialTicks), te.facing.byIndexOffsetX(), 0, te.facing.byIndexOffsetZ());
 		worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
 		worldRenderer.setTranslation(- .5 - blockPos.getX(), - .5 - blockPos.getY(), - .5 - blockPos.getZ());
 		worldRenderer.color(255, 255, 255, 255);

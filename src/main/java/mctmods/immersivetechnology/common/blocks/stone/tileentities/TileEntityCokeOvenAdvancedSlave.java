@@ -11,18 +11,18 @@ import com.google.common.collect.Lists;
 import mctmods.immersivetechnology.api.ITLib;
 import mctmods.immersivetechnology.api.ITUtils;
 import mctmods.immersivetechnology.common.blocks.stone.multiblocks.MultiblockCokeOvenAdvanced;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTank;
+import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.IFluidTank;
 
 import java.util.ArrayList;
@@ -37,12 +37,12 @@ public class TileEntityCokeOvenAdvancedSlave extends TileEntityMultiblockPart<Ti
 	}
 
 	@Override
-	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
+	public void readCustomNBT(CompoundNBT nbt, boolean descPacket) {
 		super.readCustomNBT(nbt, descPacket);
 	}
 
 	@Override
-	public void writeCustomNBT(NBTTagCompound nbt, boolean descPacket) {
+	public void writeCustomNBT(CompoundNBT nbt, boolean descPacket) {
 		super.writeCustomNBT(nbt, descPacket);
 	}
 
@@ -76,14 +76,14 @@ public class TileEntityCokeOvenAdvancedSlave extends TileEntityMultiblockPart<Ti
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+	public <T> T getCapability(Capability<T> capability, Direction facing) {
 		if((pos == 1 || pos == 31) && capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
 			TileEntityCokeOvenAdvancedMaster master = master();
 			if(master == null) {
 				return null;
 			} else if(pos == 1 && facing == master.facing) {
 				return (T)master.outputHandler;
-			} else if(pos == 31 && facing == EnumFacing.UP) {
+			} else if(pos == 31 && facing == Direction.UP) {
 				return (T)master.inputHandler;
 			}
 		}
@@ -91,14 +91,14 @@ public class TileEntityCokeOvenAdvancedSlave extends TileEntityMultiblockPart<Ti
 	}
 
 	@Override
-	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+	public boolean hasCapability(Capability<?> capability, Direction facing) {
 		if((pos == 1 || pos == 31) && capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
 			TileEntityCokeOvenAdvancedMaster master = master();
 			if(master == null) {
 				return false;
 			} else if(pos == 1 && facing == master.facing) {
 				return true;
-			} else if(pos == 31 && facing == EnumFacing.UP) {
+			} else if(pos == 31 && facing == Direction.UP) {
 				return true;
 			}
 		}
@@ -141,7 +141,7 @@ public class TileEntityCokeOvenAdvancedSlave extends TileEntityMultiblockPart<Ti
 	}
 
 	@Override
-	protected IFluidTank[] getAccessibleFluidTanks(EnumFacing side) {
+	protected IFluidTank[] getAccessibleFluidTanks(Direction side) {
 		TileEntityCokeOvenAdvancedMaster master = master();
 		if(master != null) {
 			if(pos == 7 && (side == null || side == facing)) {
@@ -152,12 +152,12 @@ public class TileEntityCokeOvenAdvancedSlave extends TileEntityMultiblockPart<Ti
 	}
 
 	@Override
-	protected boolean canFillTankFrom(int iTank, EnumFacing side, FluidStack resource) {
+	protected boolean canFillTankFrom(int iTank, Direction side, FluidStack resource) {
 		return false;
 	}
 
 	@Override
-	protected boolean canDrainTankFrom(int iTank, EnumFacing side) {
+	protected boolean canDrainTankFrom(int iTank, Direction side) {
 		return (pos == 7 && (side == null || side == facing));
 	}
 
@@ -199,8 +199,8 @@ public class TileEntityCokeOvenAdvancedSlave extends TileEntityMultiblockPart<Ti
 	@Override
 	public List<AxisAlignedBB> getAdvancedSelectionBounds() {
 		double[] boundingArray = new double[6];
-		EnumFacing fl = facing;
-		EnumFacing fw = facing.rotateY();
+		Direction fl = facing;
+		Direction fw = facing.rotateY();
 		if(pos == 0 || pos == 2) {
 			if(pos == 2) fw = fw.getOpposite();
 			boundingArray = ITUtils.smartBoundingBox(0, .6875f, .6875f, 0, 0, 1, fl, fw);
@@ -269,7 +269,7 @@ public class TileEntityCokeOvenAdvancedSlave extends TileEntityMultiblockPart<Ti
 	}
 
 	@Override
-	public boolean isOverrideBox(AxisAlignedBB box, EntityPlayer player, RayTraceResult mop, ArrayList<AxisAlignedBB> list) {
+	public boolean isOverrideBox(AxisAlignedBB box, PlayerEntity player, RayTraceResult mop, ArrayList<AxisAlignedBB> list) {
 		return false;
 	}
 

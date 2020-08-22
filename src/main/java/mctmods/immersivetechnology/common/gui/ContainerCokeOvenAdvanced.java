@@ -4,13 +4,13 @@ import blusunrize.immersiveengineering.api.crafting.CokeOvenRecipe;
 import blusunrize.immersiveengineering.common.gui.ContainerIEBase;
 import blusunrize.immersiveengineering.common.gui.IESlot;
 import mctmods.immersivetechnology.common.blocks.stone.tileentities.TileEntityCokeOvenAdvancedMaster;
-import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
 public class ContainerCokeOvenAdvanced extends ContainerIEBase<TileEntityCokeOvenAdvancedMaster> {
-	public ContainerCokeOvenAdvanced(InventoryPlayer inventoryPlayer, TileEntityCokeOvenAdvancedMaster tile) {
-		super(inventoryPlayer, tile);
+	public ContainerCokeOvenAdvanced(PlayerInventory playerInventory, TileEntityCokeOvenAdvancedMaster tile) {
+		super(playerInventory, tile);
 
 		slotCount = TileEntityCokeOvenAdvancedMaster.slotCount;
 		this.addSlotToContainer(new IESlot(this, this.inv, 0, 30, 35) {
@@ -25,10 +25,10 @@ public class ContainerCokeOvenAdvanced extends ContainerIEBase<TileEntityCokeOve
 
 		for(int i = 0 ; i < 3 ; i++) {
 			for(int j = 0 ; j < 9 ; j++) {
-				addSlotToContainer(new Slot(inventoryPlayer, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
+				addSlotToContainer(new Slot(playerInventory, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
 			}
 		}
-		for(int i = 0 ; i < 9 ; i++) addSlotToContainer(new Slot(inventoryPlayer, i, 8 + i * 18, 142));
+		for(int i = 0 ; i < 9 ; i++) addSlotToContainer(new Slot(playerInventory, i, 8 + i * 18, 142));
 	}
 
 }

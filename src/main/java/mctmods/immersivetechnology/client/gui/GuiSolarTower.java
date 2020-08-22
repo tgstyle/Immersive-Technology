@@ -5,7 +5,7 @@ import blusunrize.immersiveengineering.client.gui.GuiIEContainerBase;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySolarTowerMaster;
 import mctmods.immersivetechnology.common.gui.ContainerSolarTower;
 import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.entity.player.PlayerInventory;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
@@ -13,7 +13,7 @@ import java.util.ArrayList;
 public class GuiSolarTower extends GuiIEContainerBase {
 	TileEntitySolarTowerMaster tile;
 
-	public GuiSolarTower(InventoryPlayer invPlayer, TileEntitySolarTowerMaster tile) {
+	public GuiSolarTower(PlayerInventory invPlayer, TileEntitySolarTowerMaster tile) {
 		super(new ContainerSolarTower(invPlayer, tile));
 		this.tile=tile;
 	}

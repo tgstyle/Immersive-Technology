@@ -4,12 +4,12 @@ import mctmods.immersivetechnology.common.tileentities.TileEntityITSlab;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.properties.PropertyInteger;
-import net.minecraft.block.state.BlockFaceShape;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.block.BlockFaceShape;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -26,7 +26,7 @@ public class BlockITSlab<E extends Enum<E> & BlockITBase.IBlockEnum> extends Blo
 	}
 
 	@Override
-	public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
+	public BlockState getActualState(BlockState state, IBlockAccess world, BlockPos pos) {
 		state = super.getActualState(state, world, pos);
 		TileEntity tile = world.getTileEntity(pos);
 		if(tile instanceof TileEntityITSlab) return state.withProperty(prop_SlabType, ((TileEntityITSlab)tile).slabType);
@@ -39,11 +39,11 @@ public class BlockITSlab<E extends Enum<E> & BlockITBase.IBlockEnum> extends Blo
 	}
 
 	@Override
-	public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
+	public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, BlockState state, int fortune) {
 	}
 
 	@Override
-	public void harvestBlock(World world, EntityPlayer player, BlockPos pos, IBlockState state, TileEntity tile, ItemStack stack) {
+	public void harvestBlock(World world, PlayerEntity player, BlockPos pos, BlockState state, TileEntity tile, ItemStack stack) {
 		if(tile instanceof TileEntityITSlab && !player.capabilities.isCreativeMode) {
 			spawnAsEntity(world, pos, new ItemStack(this, ((TileEntityITSlab)tile).slabType == 2 ? 2 : 1, this.getMetaFromState(state)));
 			return;
@@ -52,31 +52,31 @@ public class BlockITSlab<E extends Enum<E> & BlockITBase.IBlockEnum> extends Blo
 	}
 
 	@Override
-	public boolean isSideSolid(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
+	public boolean isSideSolid(BlockState state, IBlockAccess world, BlockPos pos, Direction side) {
 		TileEntity te = world.getTileEntity(pos);
 		if(te instanceof TileEntityITSlab) {
 			int type = ((TileEntityITSlab)te).slabType;
-			if(type  ==  0)	return side == EnumFacing.DOWN;
+			if(type  ==  0)	return side == Direction.DOWN;
 			else if(type == 1)
-				return side == EnumFacing.UP;
+				return side == Direction.UP;
 		}
 		return true;
 	}
 
 	@Override
-	public BlockFaceShape getBlockFaceShape(IBlockAccess world, IBlockState state, BlockPos pos, EnumFacing side) {
+	public BlockFaceShape getBlockFaceShape(IBlockAccess world, BlockState state, BlockPos pos, Direction side) {
 		TileEntity te = world.getTileEntity(pos);
 		if(te instanceof TileEntityITSlab) {
 			int type = ((TileEntityITSlab)te).slabType;
 			if(type == 2) return BlockFaceShape.SOLID;
-			else if((type == 0 && side == EnumFacing.DOWN) || (type == 1 && side == EnumFacing.UP)) return BlockFaceShape.SOLID;
+			else if((type == 0 && side == Direction.DOWN) || (type == 1 && side == Direction.UP)) return BlockFaceShape.SOLID;
 			else return BlockFaceShape.UNDEFINED;
 		}
 		return BlockFaceShape.SOLID;
 	}
 
 	@Override
-	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess world, BlockPos pos) {
+	public AxisAlignedBB getBoundingBox(BlockState state, IBlockAccess world, BlockPos pos) {
 		TileEntity te = world.getTileEntity(pos);
 		if(te instanceof TileEntityITSlab) {
 			int type = ((TileEntityITSlab)te).slabType;

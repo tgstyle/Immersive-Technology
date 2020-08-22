@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.common.util.compat.jei;
 
 import mezz.jei.api.gui.ITooltipCallback;
-import net.minecraftforge.fluids.Fluid;
+import net.minecraft.fluid.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
 import java.util.ArrayList;

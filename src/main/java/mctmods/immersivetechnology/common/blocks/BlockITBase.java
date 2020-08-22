@@ -11,16 +11,16 @@ import net.minecraft.block.material.EnumPushReaction;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
-import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockStateContainer;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
@@ -114,7 +114,7 @@ public class BlockITBase<E extends Enum<E> & BlockITBase.IBlockEnum> extends Blo
 	}
 
 	@Override
-	public IBlockState getInventoryState(int meta) {
+	public BlockState getInventoryState(int meta) {
 		return getStateFromMeta(meta);
 	}
 
@@ -217,7 +217,7 @@ public class BlockITBase<E extends Enum<E> & BlockITBase.IBlockEnum> extends Blo
 	}
 
 	@Override
-	public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer) {
+	public boolean canRenderInLayer(BlockState state, BlockRenderLayer layer) {
 		int meta = this.getMetaFromState(state);
 		if(meta >= 0 && meta < metaRenderLayers.length&&metaRenderLayers[meta]!=null) return metaRenderLayers[meta].contains(layer);
 		return renderLayers.contains(layer);
@@ -229,7 +229,7 @@ public class BlockITBase<E extends Enum<E> & BlockITBase.IBlockEnum> extends Blo
 	}
 
 	@Override
-	public int getLightOpacity(IBlockState state, IBlockAccess w, BlockPos pos) {
+	public int getLightOpacity(BlockState state, IBlockAccess w, BlockPos pos) {
 		int meta = getMetaFromState(state);
 		if(metaLightOpacities.containsKey(meta)) return metaLightOpacities.get(meta);
 		return super.getLightOpacity(state, w, pos);
@@ -241,11 +241,11 @@ public class BlockITBase<E extends Enum<E> & BlockITBase.IBlockEnum> extends Blo
 	}
 
 	/**
-	* @deprecated call via {@link IBlockState#getBlockHardness(World,BlockPos)} whenever possible. Implementing/overriding
+	* @deprecated call via {@link BlockState#getBlockHardness(World,BlockPos)} whenever possible. Implementing/overriding
 	* is fine.
 	**/
 	@Override
-	public float getBlockHardness(IBlockState state, World world, BlockPos pos) {
+	public float getBlockHardness(BlockState state, World world, BlockPos pos) {
 		int meta = getMetaFromState(state);
 		if(metaHardness.containsKey(meta))
 			return metaHardness.get(meta);
@@ -270,10 +270,10 @@ public class BlockITBase<E extends Enum<E> & BlockITBase.IBlockEnum> extends Blo
 	}
 
 	/**
-	* @deprecated call via {@link IBlockState#getMobilityFlag()} whenever possible. Implementing/overriding is fine.
+	* @deprecated call via {@link BlockState#getMobilityFlag()} whenever possible. Implementing/overriding is fine.
 	**/
 	@Override
-	public EnumPushReaction getMobilityFlag(IBlockState state) {
+	public EnumPushReaction getMobilityFlag(BlockState state) {
 		int meta = getMetaFromState(state);
 		if(metaMobilityFlags[meta]==null) return EnumPushReaction.NORMAL;
 		return metaMobilityFlags[meta];
@@ -291,7 +291,7 @@ public class BlockITBase<E extends Enum<E> & BlockITBase.IBlockEnum> extends Blo
 		return this;
 	}
 
-	protected boolean normalBlockCheck(IBlockState state) {
+	protected boolean normalBlockCheck(BlockState state) {
 		if(metaNotNormalBlock == null) return true;
 		int meta = getMetaFromState(state);
 		return (meta < 0 || meta >= metaNotNormalBlock.length) || !metaNotNormalBlock[meta];
@@ -299,35 +299,35 @@ public class BlockITBase<E extends Enum<E> & BlockITBase.IBlockEnum> extends Blo
 
 	/**
 	* @return true if the state occupies all of its 1x1x1 cube
-	* @deprecated prefer calling {@link IBlockState#isFullBlock()}
+	* @deprecated prefer calling {@link BlockState#isFullBlock()}
 	**/
 	@Override
-	public boolean isFullBlock(IBlockState state) {
+	public boolean isFullBlock(BlockState state) {
 		return normalBlockCheck(state);
 	}
 
 	/**
-	* @deprecated call via {@link IBlockState#isFullCube()} whenever possible. Implementing/overriding is fine.
+	* @deprecated call via {@link BlockState#isFullCube()} whenever possible. Implementing/overriding is fine.
 	**/
 	@Override
-	public boolean isFullCube(IBlockState state) {
+	public boolean isFullCube(BlockState state) {
 		return normalBlockCheck(state);
 	}
 
 	/**
 	* Used to determine ambient occlusion and culling when rebuilding chunks forrender
-	* @deprecated call via {@link IBlockState#isOpaqueCube()} whenever possible. Implementing/overriding is fine.
+	* @deprecated call via {@link BlockState#isOpaqueCube()} whenever possible. Implementing/overriding is fine.
 	**/
 	@Override
-	public boolean isOpaqueCube(IBlockState state) {
+	public boolean isOpaqueCube(BlockState state) {
 		return normalBlockCheck(state);
 	}
 
 	/**
-	* @deprecated call via {@link IBlockState#causesSuffocation()} whenever possible. Implementing/overriding is fine.
+	* @deprecated call via {@link BlockState#causesSuffocation()} whenever possible. Implementing/overriding is fine.
 	**/
 	@Override
-	public boolean causesSuffocation(IBlockState state)	{
+	public boolean causesSuffocation(BlockState state)	{
 		if(metaNotNormalBlock==null) return true;
 		int majority = 0;
 		for(boolean b : metaNotNormalBlock) {
@@ -339,7 +339,7 @@ public class BlockITBase<E extends Enum<E> & BlockITBase.IBlockEnum> extends Blo
 	}
 
 	@Override
-	public boolean isNormalCube(IBlockState state, IBlockAccess world, BlockPos pos) {
+	public boolean isNormalCube(BlockState state, IBlockAccess world, BlockPos pos) {
 		return normalBlockCheck(state);
 	}
 
@@ -352,8 +352,8 @@ public class BlockITBase<E extends Enum<E> & BlockITBase.IBlockEnum> extends Blo
 	}
 
 	@SuppressWarnings("unchecked")
-	protected IBlockState getInitDefaultState() {
-		IBlockState state = this.blockState.getBaseState().withProperty(this.property, enumValues[0]);
+	protected BlockState getInitDefaultState() {
+		BlockState state = this.blockState.getBaseState().withProperty(this.property, enumValues[0]);
 		for(int i = 0; i < this.additionalProperties.length; i++) {
 			if(this.additionalProperties[i] != null && !this.additionalProperties[i].getAllowedValues().isEmpty()) {
 				state = applyProperty(state, additionalProperties[i], additionalProperties[i].getAllowedValues().iterator().next());
@@ -363,14 +363,14 @@ public class BlockITBase<E extends Enum<E> & BlockITBase.IBlockEnum> extends Blo
 	}
 
 	@SuppressWarnings("unchecked")
-	protected <V extends Comparable<V>> IBlockState applyProperty(IBlockState in, IProperty<V> prop, Object val) {
+	protected <V extends Comparable<V>> BlockState applyProperty(BlockState in, IProperty<V> prop, Object val) {
 		return in.withProperty(prop, (V) val);
 	}
 
-	public void onITBlockPlacedBy(World world, BlockPos pos, IBlockState state, EnumFacing side, float hitX, float hitY, float hitZ, EntityLivingBase placer, ItemStack stack) {
+	public void onITBlockPlacedBy(World world, BlockPos pos, BlockState state, Direction side, float hitX, float hitY, float hitZ, EntityLivingBase placer, ItemStack stack) {
 	}
 
-	public boolean canITBlockBePlaced(World world, BlockPos pos, IBlockState newState, EnumFacing side, float hitX, float hitY, float hitZ, EntityPlayer player, ItemStack stack) {
+	public boolean canITBlockBePlaced(World world, BlockPos pos, BlockState newState, Direction side, float hitX, float hitY, float hitZ, PlayerEntity player, ItemStack stack) {
 		return true;
 	}
 
@@ -382,12 +382,12 @@ public class BlockITBase<E extends Enum<E> & BlockITBase.IBlockEnum> extends Blo
 	}
 
 	@Override
-	public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
+	public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, EntityLivingBase placer, ItemStack stack) {
 		super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
 	}
 
 	@Override
-	public int getMetaFromState(IBlockState state) {
+	public int getMetaFromState(BlockState state) {
 		if(state == null || !this.equals(state.getBlock())) return 0;
 		return state.getValue(this.property).getMeta();
 	}
@@ -399,12 +399,12 @@ public class BlockITBase<E extends Enum<E> & BlockITBase.IBlockEnum> extends Blo
 	}
 
 	@Override
-	public IBlockState getStateFromMeta(int meta) {
+	public BlockState getStateFromMeta(int meta) {
 		return this.getDefaultState().withProperty(this.property, fromMeta(meta));
 	}
 
 	@Override
-	public int damageDropped(IBlockState state) {
+	public int damageDropped(BlockState state) {
 		return getMetaFromState(state);
 	}
 
@@ -429,7 +429,7 @@ public class BlockITBase<E extends Enum<E> & BlockITBase.IBlockEnum> extends Blo
 
 	@SuppressWarnings("deprecation")
 	@Override
-	public boolean eventReceived(IBlockState state, World worldIn, BlockPos pos, int eventID, int eventParam) {
+	public boolean eventReceived(BlockState state, World worldIn, BlockPos pos, int eventID, int eventParam) {
 		if(worldIn.isRemote && eventID == 255) {
 			worldIn.notifyBlockUpdate(pos, state, state, 3);
 			return true;
@@ -448,13 +448,13 @@ public class BlockITBase<E extends Enum<E> & BlockITBase.IBlockEnum> extends Blo
 		return this;
 	}
 
-	public boolean allowHammerHarvest(IBlockState blockState) {
+	public boolean allowHammerHarvest(BlockState blockState) {
 		int meta = getMetaFromState(blockState);
 		if(meta >= 0 && meta < canHammerHarvest.length) return canHammerHarvest[meta];
 		return false;
 	}
 
-	public boolean allowWirecutterHarvest(IBlockState blockState) {
+	public boolean allowWirecutterHarvest(BlockState blockState) {
 		return false;
 	}
 
@@ -469,7 +469,7 @@ public class BlockITBase<E extends Enum<E> & BlockITBase.IBlockEnum> extends Blo
 	}
 
 	@Override
-	public boolean isToolEffective(String type, IBlockState state) {
+	public boolean isToolEffective(String type, BlockState state) {
 		if(allowHammerHarvest(state) && type.equals(Lib.TOOL_HAMMER)) return true;
 		if(allowWirecutterHarvest(state) && type.equals(Lib.TOOL_WIRECUTTER)) return true;
 		return super.isToolEffective(type, state);
@@ -490,7 +490,7 @@ public class BlockITBase<E extends Enum<E> & BlockITBase.IBlockEnum> extends Blo
 		}
 
 		@Override
-		public void onEntityCollidedWithBlock(World worldIn, BlockPos pos, IBlockState state, Entity entityIn) {
+		public void onEntityCollidedWithBlock(World worldIn, BlockPos pos, BlockState state, Entity entityIn) {
 			super.onEntityCollidedWithBlock(worldIn, pos, state, entityIn);
 			if(entityIn instanceof EntityLivingBase && !((EntityLivingBase) entityIn).isOnLadder() && isLadder(state, worldIn, pos, (EntityLivingBase) entityIn)) {
 				float f5 = 0.15F;
@@ -500,7 +500,7 @@ public class BlockITBase<E extends Enum<E> & BlockITBase.IBlockEnum> extends Blo
 				if(entityIn.motionZ > f5) entityIn.motionZ = f5;
 				entityIn.fallDistance = 0.0F;
 				if(entityIn.motionY < -0.15D) entityIn.motionY = -0.15D;
-				if(entityIn.motionY < 0 && entityIn instanceof EntityPlayer && entityIn.isSneaking()) {
+				if(entityIn.motionY < 0 && entityIn instanceof PlayerEntity && entityIn.isSneaking()) {
 					entityIn.motionY = .05;
 					return;
 				}

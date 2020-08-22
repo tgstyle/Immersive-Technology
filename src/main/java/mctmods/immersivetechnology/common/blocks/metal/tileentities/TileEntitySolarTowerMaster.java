@@ -11,17 +11,17 @@ import mctmods.immersivetechnology.common.util.network.MessageStopSound;
 import mctmods.immersivetechnology.common.util.network.MessageTileSync;
 import mctmods.immersivetechnology.common.util.sound.ITSoundHandler;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTank;
+import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
@@ -54,25 +54,25 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
 	public int[] reflectors = new int[4];
 
 	@Override
-	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
+	public void readCustomNBT(CompoundNBT nbt, boolean descPacket) {
 		super.readCustomNBT(nbt, descPacket);
-		tanks[0].readFromNBT(nbt.getCompoundTag("tank0"));
-		tanks[1].readFromNBT(nbt.getCompoundTag("tank1"));
+		tanks[0].readFromNBT(nbt.getCompound("tank0"));
+		tanks[1].readFromNBT(nbt.getCompound("tank1"));
 		reflectors = nbt.getIntArray("reflectors");
 		processTime = nbt.getFloat("processTime");
 		isProcessing = nbt.getBoolean("isProcessing");
 		if(reflectors.length != 4) reflectors = new int[4];
-		if(!descPacket) inventory = Utils.readInventory(nbt.getTagList("inventory", 10), slotCount);
+		if(!descPacket) inventory = Utils.readInventory(nbt.getList("inventory", 10), slotCount);
 	}
 
 	@Override
-	public void writeCustomNBT(NBTTagCompound nbt, boolean descPacket) {
+	public void writeCustomNBT(CompoundNBT nbt, boolean descPacket) {
 		super.writeCustomNBT(nbt, descPacket);
-		nbt.setTag("tank0", tanks[0].writeToNBT(new NBTTagCompound()));
-		nbt.setTag("tank1", tanks[1].writeToNBT(new NBTTagCompound()));
+		nbt.put("tank0", tanks[0].writeToNBT(new CompoundNBT()));
+		nbt.put("tank1", tanks[1].writeToNBT(new CompoundNBT()));
 		nbt.setIntArray("reflectors", reflectors);
-		nbt.setBoolean("isProcessing", isProcessing);
-		if(!descPacket) nbt.setTag("inventory", Utils.writeInventory(inventory));
+		nbt.putBoolean("isProcessing", isProcessing);
+		if(!descPacket) nbt.put("inventory", Utils.writeInventory(inventory));
 	}
 
 	private void pumpOutputOut() {
@@ -96,7 +96,7 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
 		for(int reflector : reflectors) if(reflector > 0) activeReflectors++;
 		if(soundVolume == 0 || activeReflectors == 0) ITSoundHandler.StopSound(center);
 		else {
-			EntityPlayerSP player = Minecraft.getMinecraft().player;
+			ClientPlayerEntity player = Minecraft.getInstance().player;
 			float attenuation = Math.max((float) player.getDistanceSq(center.getX(), center.getY(), center.getZ()) / 8, 1);
 			ITSoundHandler.PlaySound(center, ITSounds.solarTower, SoundCategory.BLOCKS, true, (soundVolume / attenuation) / activeReflectors, 1);
 		}
@@ -119,14 +119,14 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
 	}
 
 	public void notifyNearbyClients() {
-		NBTTagCompound tag = new NBTTagCompound();
-		tag.setBoolean("isProcessing", isProcessing);
+		CompoundNBT tag = new CompoundNBT();
+		tag.putBoolean("isProcessing", isProcessing);
 		BlockPos center = getPos();
 		ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageTileSync(this, tag), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 0));
 	}
 
 	@Override
-	public void receiveMessageFromServer(NBTTagCompound message) {
+	public void receiveMessageFromServer(CompoundNBT message) {
 		isProcessing = message.getBoolean("isProcessing");
 	}
 
@@ -222,8 +222,8 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
 			}
 			return ver;
 		}
-		EnumFacing fw;
-		EnumFacing fr;
+		Direction fw;
+		Direction fr;
 		BlockPos pos;
 		TileEntity tile;
 		int maxRange = solarMaxRange;
@@ -250,8 +250,8 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
 					tile = world.getTileEntity(pos);
 					if(tile instanceof TileEntitySolarReflectorMaster) {
 						fr = ((TileEntitySolarReflectorMaster) tile).facing;
-						if((cont % 2 == 0 && (facing == EnumFacing.NORTH || facing == EnumFacing.SOUTH)) || (cont % 2 != 0 && (facing == EnumFacing.EAST || facing == EnumFacing.WEST))) {
-							if(fr == EnumFacing.NORTH || fr == EnumFacing.SOUTH) {
+						if((cont % 2 == 0 && (facing == Direction.NORTH || facing == Direction.SOUTH)) || (cont % 2 != 0 && (facing == Direction.EAST || facing == Direction.WEST))) {
+							if(fr == Direction.NORTH || fr == Direction.SOUTH) {
 								if(((TileEntitySolarReflectorMaster) tile).getSunState()) {
 									ver = true;
 									reflectors[cont] = 1;
@@ -259,7 +259,7 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
 								break;
 							}
 						} else {
-							if(fr == EnumFacing.EAST || fr == EnumFacing.WEST) {
+							if(fr == Direction.EAST || fr == Direction.WEST) {
 								if(((TileEntitySolarReflectorMaster) tile).getSunState()) {
 									ver = true;
 									reflectors[cont] = 1;

@@ -4,10 +4,10 @@ import mctmods.immersivetechnology.common.Config;
 import mctmods.immersivetechnology.common.tileentities.TileEntityCommonOSD;
 import mctmods.immersivetechnology.common.util.ITrashCanBounds;
 import mctmods.immersivetechnology.common.util.TranslationKey;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTankInfo;
+import net.minecraftforge.fluids.IFluidTankInfo;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.FluidTankProperties;
@@ -19,14 +19,14 @@ import javax.annotation.Nullable;
 public class TileEntityTrashFluid extends TileEntityCommonOSD implements IFluidTank, IFluidHandler, ITrashCanBounds {
 
 	@Override
-	public boolean hasCapability(final Capability<?> capability, final EnumFacing facing) {
+	public boolean hasCapability(final Capability<?> capability, final Direction facing) {
 		if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) return true;
 		return false;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T getCapability(final Capability<T> capability, final EnumFacing facing) {
+	public <T> T getCapability(final Capability<T> capability, final Direction facing) {
 		if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) return (T) this;
 		return super.getCapability(capability, facing);
 	}

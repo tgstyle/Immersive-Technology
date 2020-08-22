@@ -3,8 +3,8 @@ package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 import blusunrize.immersiveengineering.common.util.Utils;
 import mctmods.immersivetechnology.common.Config.ITConfig.Machines.SteelTank;
 import mctmods.immersivetechnology.common.util.ITFluidTank;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
@@ -38,7 +38,7 @@ public class TileEntitySteelSheetmetalTankMaster extends TileEntitySteelSheetmet
 		if(world.isBlockIndirectlyGettingPowered(getPos()) > 0) {
 			for(int index = 0; index < 6; index++) {
 				if(index != 1) {
-					EnumFacing face = EnumFacing.getFront(index);
+					Direction face = Direction.byIndex(index);
 					IFluidHandler output = FluidUtil.getFluidHandler(world, getPos().offset(face), face.getOpposite());
 					if(output != null) {
 						if(sleep == 0) {
@@ -96,15 +96,15 @@ public class TileEntitySteelSheetmetalTankMaster extends TileEntitySteelSheetmet
 	}
 
 	@Override
-	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
+	public void readCustomNBT(CompoundNBT nbt, boolean descPacket) {
 		super.readCustomNBT(nbt, descPacket);
-		tank.readFromNBT(nbt.getCompoundTag("tank"));
+		tank.readFromNBT(nbt.getCompound("tank"));
 	}
 
 	@Override
-	public void writeCustomNBT(NBTTagCompound nbt, boolean descPacket) {
+	public void writeCustomNBT(CompoundNBT nbt, boolean descPacket) {
 		super.writeCustomNBT(nbt, descPacket);
-		NBTTagCompound tankTag = tank.writeToNBT(new NBTTagCompound());
-		nbt.setTag("tank", tankTag);
+		CompoundNBT tankTag = tank.writeToNBT(new CompoundNBT());
+		nbt.put("tank", tankTag);
 	}
 }

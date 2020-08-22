@@ -8,7 +8,7 @@ import mctmods.immersivetechnology.client.gui.GuiFluidValve;
 import mctmods.immersivetechnology.common.util.TranslationKey;
 import net.minecraft.client.Minecraft;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
@@ -37,14 +37,14 @@ public class TileEntityFluidValve extends TileEntityCommonValve implements IFlui
 	}
 
 	@Override
-	public boolean hasOutputConnection(EnumFacing side) {
+	public boolean hasOutputConnection(Direction side) {
 		return side == facing;
 	}
 
 	@SideOnly(Side.CLIENT)
 	@Override
 	public void showGui() {
-		Minecraft.getMinecraft().displayGuiScreen(new GuiFluidValve(this));
+		Minecraft.getInstance().displayGuiScreen(new GuiFluidValve(this));
 	}
 
 	public static class DummyTank implements IFluidHandler, IFluidTankProperties {
@@ -106,7 +106,7 @@ public class TileEntityFluidValve extends TileEntityCommonValve implements IFlui
 	}
 
 	@Override
-	public boolean hasCapability(final Capability<?> capability, final EnumFacing facing) {
+	public boolean hasCapability(final Capability<?> capability, final Direction facing) {
 		if(facing == null) return false;
 		if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing.getAxis() == this.facing.getAxis()) return true;
 		return false;
@@ -114,7 +114,7 @@ public class TileEntityFluidValve extends TileEntityCommonValve implements IFlui
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T getCapability(final Capability<T> capability, final EnumFacing facing) {
+	public <T> T getCapability(final Capability<T> capability, final Direction facing) {
 		if(facing == null) return null;
 		if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
 			if(facing == this.facing) return (T)this;
@@ -184,15 +184,15 @@ public class TileEntityFluidValve extends TileEntityCommonValve implements IFlui
 	}
 
 	public float isX(float ifTrue, float ifFalse) {
-		return (facing.getAxis() == EnumFacing.Axis.X)? ifTrue : ifFalse;
+		return (facing.getAxis() == Direction.Axis.X)? ifTrue : ifFalse;
 	}
 
 	public float isY(float ifTrue, float ifFalse) {
-		return (facing.getAxis() == EnumFacing.Axis.Y)? ifTrue : ifFalse;
+		return (facing.getAxis() == Direction.Axis.Y)? ifTrue : ifFalse;
 	}
 
 	public float isZ(float ifTrue, float ifFalse) {
-		return (facing.getAxis() == EnumFacing.Axis.Z)? ifTrue : ifFalse;
+		return (facing.getAxis() == Direction.Axis.Z)? ifTrue : ifFalse;
 	}
 
 	@Override

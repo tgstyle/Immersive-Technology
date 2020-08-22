@@ -14,11 +14,11 @@ import mctmods.immersivetechnology.api.ITUtils;
 import mctmods.immersivetechnology.api.client.MechanicalEnergyAnimation;
 import mctmods.immersivetechnology.common.blocks.ITBlockInterfaces.IMechanicalEnergy;
 import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockAlternator;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -39,12 +39,12 @@ public class TileEntityAlternatorSlave extends TileEntityMultiblockPart <TileEnt
 	}
 
 	@Override
-	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
+	public void readCustomNBT(CompoundNBT nbt, boolean descPacket) {
 		super.readCustomNBT(nbt, descPacket);
 	}
 
 	@Override
-	public void writeCustomNBT(NBTTagCompound nbt, boolean descPacket) {
+	public void writeCustomNBT(CompoundNBT nbt, boolean descPacket) {
 		super.writeCustomNBT(nbt, descPacket);
 	}
 
@@ -68,21 +68,21 @@ public class TileEntityAlternatorSlave extends TileEntityMultiblockPart <TileEnt
 		return master;
 	}
 
-	public boolean isEnergyPos(@Nullable EnumFacing enumFacing) {
-		if(!this.formed || enumFacing == null || enumFacing == EnumFacing.DOWN || enumFacing == EnumFacing.UP) return false;
+	public boolean isEnergyPos(@Nullable Direction Direction) {
+		if(!this.formed || Direction == null || Direction == Direction.DOWN || Direction == Direction.UP) return false;
 		if(master() == null) return false;
-		return (enumFacing.rotateY() == master.facing) && (pos == 0 || pos == 12 || pos == 24) ||
-				(enumFacing.rotateYCCW() == master.facing) && (pos == 2 || pos == 14 || pos == 26);
+		return (Direction.rotateY() == master.facing) && (pos == 0 || pos == 12 || pos == 24) ||
+				(Direction.rotateYCCW() == master.facing) && (pos == 2 || pos == 14 || pos == 26);
 	}
 
 	@Nonnull
 	@Override
-	public SideConfig getEnergySideConfig(@Nullable EnumFacing enumFacing) {
-		return this.formed && this.isEnergyPos(enumFacing)? SideConfig.OUTPUT: SideConfig.NONE;
+	public SideConfig getEnergySideConfig(@Nullable Direction Direction) {
+		return this.formed && this.isEnergyPos(Direction)? SideConfig.OUTPUT: SideConfig.NONE;
 	}
 
 	@Override
-	public IEForgeEnergyWrapper getCapabilityWrapper(EnumFacing facing) {
+	public IEForgeEnergyWrapper getCapabilityWrapper(Direction facing) {
 		if(this.formed && this.isEnergyPos(facing) && master() != null) return master.wrapper;
 		return null;
 	}
@@ -95,28 +95,28 @@ public class TileEntityAlternatorSlave extends TileEntityMultiblockPart <TileEnt
 	}
 
 	@Override
-	public int receiveEnergy(@Nullable EnumFacing fd, int amount, boolean simulate) {
+	public int receiveEnergy(@Nullable Direction fd, int amount, boolean simulate) {
 		return 0;
 	}
 
 	@Override
-	public boolean canConnectEnergy(@Nullable EnumFacing from) {
+	public boolean canConnectEnergy(@Nullable Direction from) {
 		return isEnergyPos(from);
 	}
 
 	@Override
-	public int extractEnergy(@Nullable EnumFacing from, int energy, boolean simulate) {
+	public int extractEnergy(@Nullable Direction from, int energy, boolean simulate) {
 		if(!isEnergyPos(from)) return 0;
 		return master() == null ? 0 : master.energyStorage.extractEnergy(energy, simulate);
 	}
 
 	@Override
-	public int getEnergyStored(@Nullable EnumFacing from) {
+	public int getEnergyStored(@Nullable Direction from) {
 		return master() == null ? 0 : master.energyStorage.getEnergyStored();
 	}
 
 	@Override
-	public int getMaxEnergyStored(@Nullable EnumFacing from) {
+	public int getMaxEnergyStored(@Nullable Direction from) {
 		return master() == null ? 0 : master.energyStorage.getMaxEnergyStored();
 	}
 
@@ -135,12 +135,12 @@ public class TileEntityAlternatorSlave extends TileEntityMultiblockPart <TileEnt
 	}
 
 	@Override
-	public EnumFacing getMechanicalEnergyOutputFacing() {
+	public Direction getMechanicalEnergyOutputFacing() {
 		return null;
 	}
 
 	@Override
-	public EnumFacing getMechanicalEnergyInputFacing() {
+	public Direction getMechanicalEnergyInputFacing() {
 		return facing;
 	}
 
@@ -164,17 +164,17 @@ public class TileEntityAlternatorSlave extends TileEntityMultiblockPart <TileEnt
 	}
 
 	@Override
-	protected IFluidTank[] getAccessibleFluidTanks(EnumFacing side) {
+	protected IFluidTank[] getAccessibleFluidTanks(Direction side) {
 		return new IFluidTank[0];
 	}
 
 	@Override
-	protected boolean canFillTankFrom(int iTank, EnumFacing side, FluidStack resource) {
+	protected boolean canFillTankFrom(int iTank, Direction side, FluidStack resource) {
 		return false;
 	}
 
 	@Override
-	protected boolean canDrainTankFrom(int iTank, EnumFacing side) {
+	protected boolean canDrainTankFrom(int iTank, Direction side) {
 		return false;
 	}
 
@@ -203,8 +203,8 @@ public class TileEntityAlternatorSlave extends TileEntityMultiblockPart <TileEnt
 	@Override
 	public List <AxisAlignedBB> getAdvancedSelectionBounds() {
 		double[] boundingArray = new double[6];
-		EnumFacing fl = facing;
-		EnumFacing fw = facing.rotateY();
+		Direction fl = facing;
+		Direction fw = facing.rotateY();
 		if(pos == 0 || pos == 2 || pos == 12 || pos == 14 || pos == 24 || pos == 26) {
 			if(pos == 2 || pos == 14 || pos == 26) fw = fw.getOpposite();
 			boundingArray = ITUtils.smartBoundingBox(.25f, .25f, 0, .875f, .25f, .75f, fl, fw);
@@ -324,7 +324,7 @@ public class TileEntityAlternatorSlave extends TileEntityMultiblockPart <TileEnt
 	}
 
 	@Override
-	public boolean isOverrideBox(AxisAlignedBB box, EntityPlayer player, RayTraceResult mop, 
+	public boolean isOverrideBox(AxisAlignedBB box, PlayerEntity player, RayTraceResult mop, 
 		ArrayList <AxisAlignedBB> list) {
 		return false;
 	}

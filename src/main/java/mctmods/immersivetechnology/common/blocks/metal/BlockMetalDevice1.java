@@ -22,14 +22,14 @@ import net.minecraft.block.material.EnumPushReaction;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
-import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockStateContainer;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -101,7 +101,7 @@ public class BlockMetalDevice1 extends BlockIETileProvider<BlockTypes_MetalDevic
 	}
 
 	@Override
-	public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
+	public BlockState getExtendedState(BlockState state, IBlockAccess world, BlockPos pos) {
 		state = super.getExtendedState(state, world, pos);
 		TileEntity tile = world.getTileEntity(pos);
 		if(tile instanceof TileEntityImmersiveConnectable&&state instanceof IExtendedBlockState) state = ((IExtendedBlockState)state).withProperty(IEProperties.CONNECTIONS, ((TileEntityImmersiveConnectable)tile).genConnBlockstate());
@@ -111,7 +111,7 @@ public class BlockMetalDevice1 extends BlockIETileProvider<BlockTypes_MetalDevic
 	}
 
 	@Override
-	public boolean canIEBlockBePlaced(World world, BlockPos pos, IBlockState newState, EnumFacing side, float hitX, float hitY, float hitZ, EntityPlayer player, ItemStack stack) {
+	public boolean canIEBlockBePlaced(World world, BlockPos pos, BlockState newState, Direction side, float hitX, float hitY, float hitZ, PlayerEntity player, ItemStack stack) {
 		if(stack.getItemDamage()==BlockTypes_MetalDevice1.BLAST_FURNACE_PREHEATER.getMeta()||stack.getItemDamage()==BlockTypes_MetalDevice1.SAMPLE_DRILL.getMeta()||stack.getItemDamage()==BlockTypes_MetalDevice1.BELLJAR.getMeta()) {
 			for(int hh = 1; hh <= 2; hh++) {
 				BlockPos pos2 = pos.add(0, hh, 0);
@@ -128,12 +128,12 @@ public class BlockMetalDevice1 extends BlockIETileProvider<BlockTypes_MetalDevic
 	}
 
 	@Override
-	public boolean isSideSolid(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
+	public boolean isSideSolid(BlockState state, IBlockAccess world, BlockPos pos, Direction side) {
 		TileEntity tile = world.getTileEntity(pos);
 		if(tile instanceof TileEntityTeslaCoil) return !((TileEntityTeslaCoil)tile).dummy;
 		else if(tile instanceof TileEntityTurret) return !((TileEntityTurret)tile).dummy;
 		else if(tile instanceof TileEntityFluidPipe) return !((TileEntityFluidPipe)tile).pipeCover.isEmpty();
-		else if(tile instanceof TileEntityElectricLantern||tile instanceof TileEntityChargingStation||tile instanceof TileEntityFloodlight) return side==EnumFacing.DOWN;
+		else if(tile instanceof TileEntityElectricLantern||tile instanceof TileEntityChargingStation||tile instanceof TileEntityFloodlight) return side==Direction.DOWN;
 		return true;
 	}
 
@@ -182,41 +182,41 @@ public class BlockMetalDevice1 extends BlockIETileProvider<BlockTypes_MetalDevic
 	}
 
 	@Override
-	public boolean allowHammerHarvest(IBlockState state) {
+	public boolean allowHammerHarvest(BlockState state) {
 		return true;
 	}
 
 	@SuppressWarnings("deprecation")
 	@Override
-	public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
+	public BlockState getStateForPlacement(World worldIn, BlockPos pos, Direction facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
 		if(!Config.ITConfig.Experimental.replace_pipe_algorithm)
 			mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityFluidPipe.indirectConnections.clear();
 		return super.getStateForPlacement(worldIn, pos, facing, hitX, hitY, hitZ, meta, placer);
 	}
 
 	@Override
-	public void neighborChanged(IBlockState state, World world, BlockPos pos, Block block, BlockPos fromPos) {
+	public void neighborChanged(BlockState state, World world, BlockPos pos, Block block, BlockPos fromPos) {
 		super.neighborChanged(state, world, pos, block, fromPos);
 		if(!Config.ITConfig.Experimental.replace_pipe_algorithm && world.getBlockState(pos).getValue(property)==BlockTypes_MetalDevice1.FLUID_PIPE)
 			mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityFluidPipe.indirectConnections.clear();
 	}
 
 	@Override
-	public void breakBlock(World world, BlockPos pos, IBlockState state) {
+	public void breakBlock(World world, BlockPos pos, BlockState state) {
 		if(state.getValue(property)==BlockTypes_MetalDevice1.FLUID_PIPE) {
 			TileEntity te = world.getTileEntity(pos);
 			if(te instanceof IPipe) {
 				IPipe here = (IPipe)te;
 				for(int i = 0; i < 6; i++) {
 					if(here.getSideConfig()[i]==-1) {
-						EnumFacing f = EnumFacing.VALUES[i];
+						Direction f = Direction.VALUES[i];
 						TileEntity there = world.getTileEntity(pos.offset(f));
 						if(there instanceof IPipe) ((IPipe)there).toggleSide(f.getOpposite().ordinal());
 					}
 				}
 			}
 			if(te instanceof TileEntityFluidPipeAlternative) {
-				for(EnumFacing neighborDirection : EnumFacing.values()) {
+				for(Direction neighborDirection : Direction.values()) {
 					TileEntity neighbor = world.getTileEntity(pos.offset(neighborDirection));
 					if(!(neighbor instanceof TileEntityFluidPipeAlternative)) continue;
 					((TileEntityFluidPipeAlternative)neighbor).neighborPipeRemoved(neighborDirection.getOpposite());

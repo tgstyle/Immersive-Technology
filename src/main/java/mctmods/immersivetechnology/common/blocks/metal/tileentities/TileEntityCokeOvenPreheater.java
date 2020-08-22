@@ -8,17 +8,17 @@ import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
 import blusunrize.immersiveengineering.common.util.EnergyHelper.IEForgeEnergyWrapper;
 import blusunrize.immersiveengineering.common.util.EnergyHelper.IIEInternalFluxHandler;
 import mctmods.immersivetechnology.common.Config.ITConfig.Machines.CokeOvenPreheater;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 
 import javax.annotation.Nonnull;
 
 public class TileEntityCokeOvenPreheater extends TileEntityIEBase implements IIEInternalFluxHandler, IDirectionalTile, IHasDummyBlocks {
-	public EnumFacing facing = EnumFacing.NORTH;
+	public Direction facing = Direction.NORTH;
 
 	private static int cokeOvenConsumption = CokeOvenPreheater.cokeOvenPreheater_energy_consumption;
 
@@ -30,19 +30,19 @@ public class TileEntityCokeOvenPreheater extends TileEntityIEBase implements IIE
 	public BlockPos masterPos;
 
 	@Override
-	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
+	public void readCustomNBT(CompoundNBT nbt, boolean descPacket) {
 		dummy = nbt.getBoolean("dummy");
-		facing = EnumFacing.getFront(nbt.getInteger("facing"));
+		facing = Direction.byIndex(nbt.getInt("facing"));
 		energyStorage.readFromNBT(nbt);
 		active = nbt.getBoolean("active");
 		if(descPacket) this.markContainingBlockForUpdate(null);
 	}
 
 	@Override
-	public void writeCustomNBT(NBTTagCompound nbt, boolean descPacket) {
-		nbt.setBoolean("dummy", dummy);
-		nbt.setInteger("facing", facing.ordinal());
-		nbt.setBoolean("active", active);
+	public void writeCustomNBT(CompoundNBT nbt, boolean descPacket) {
+		nbt.putBoolean("dummy", dummy);
+		nbt.putInt("facing", facing.ordinal());
+		nbt.putBoolean("active", active);
 		energyStorage.writeToNBT(nbt);
 	}
 	
@@ -65,22 +65,22 @@ public class TileEntityCokeOvenPreheater extends TileEntityIEBase implements IIE
 
 	@Nonnull
 	@Override
-	public SideConfig getEnergySideConfig(EnumFacing facing) {
-		return !dummy && facing == EnumFacing.UP ? SideConfig.INPUT : SideConfig.NONE;
+	public SideConfig getEnergySideConfig(Direction facing) {
+		return !dummy && facing == Direction.UP ? SideConfig.INPUT : SideConfig.NONE;
 	}
 
-	IEForgeEnergyWrapper wrapper = new IEForgeEnergyWrapper(this, EnumFacing.UP);
+	IEForgeEnergyWrapper wrapper = new IEForgeEnergyWrapper(this, Direction.UP);
 
 	@Override
-	public IEForgeEnergyWrapper getCapabilityWrapper(EnumFacing facing) {
-		if(!dummy && facing == EnumFacing.UP) {
+	public IEForgeEnergyWrapper getCapabilityWrapper(Direction facing) {
+		if(!dummy && facing == Direction.UP) {
 			return wrapper;
 		}
 		return null;
 	}
 
 	@Override
-	public void placeDummies(BlockPos pos, IBlockState state, EnumFacing side, float hitX, float hitY, float hitZ) {
+	public void placeDummies(BlockPos pos, BlockState state, Direction side, float hitX, float hitY, float hitZ) {
 		BlockPos dummyPos = pos.offset(facing.rotateY());
 		world.setBlockState(dummyPos, state);
 		TileEntityCokeOvenPreheater dummyTE = (TileEntityCokeOvenPreheater) world.getTileEntity(dummyPos);
@@ -95,7 +95,7 @@ public class TileEntityCokeOvenPreheater extends TileEntityIEBase implements IIE
 	}
 
 	@Override
-	public void breakDummies(BlockPos unused, IBlockState unused2) {
+	public void breakDummies(BlockPos unused, BlockState unused2) {
 		if(dummy) {
 			if(masterPos == null) findMaster();
 			TileEntity tile = world.getTileEntity(masterPos);
@@ -117,12 +117,12 @@ public class TileEntityCokeOvenPreheater extends TileEntityIEBase implements IIE
 	}
 
 	@Override
-	public EnumFacing getFacing() {
+	public Direction getFacing() {
 		return facing;
 	}
 
 	@Override
-	public void setFacing(EnumFacing facing) {
+	public void setFacing(Direction facing) {
 		this.facing = facing;
 	}
 
@@ -137,12 +137,12 @@ public class TileEntityCokeOvenPreheater extends TileEntityIEBase implements IIE
 	}
 
 	@Override
-	public boolean canHammerRotate(EnumFacing side, float hitX, float hitY, float hitZ, EntityLivingBase entity) {
+	public boolean canHammerRotate(Direction side, float hitX, float hitY, float hitZ, EntityLivingBase entity) {
 		return false;
 	}
 
 	@Override
-	public boolean canRotate(EnumFacing axis) {
+	public boolean canRotate(Direction axis) {
 		return false;
 	}
 

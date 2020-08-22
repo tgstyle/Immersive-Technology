@@ -5,12 +5,12 @@ import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -67,12 +67,12 @@ public class ItemBlockITBase extends ItemBlock {
 
 		if(ItemNBTHelper.hasKey(stack, "energyStorage")) list.add(I18n.format("desc.immersiveengineering.info.energyStored", ItemNBTHelper.getInt(stack, "energyStorage")));
 		if(ItemNBTHelper.hasKey(stack, "tank")) {FluidStack fs = FluidStack.loadFluidStackFromNBT(ItemNBTHelper.getTagCompound(stack, "tank"));
-		if(fs != null) list.add(fs.getLocalizedName() + ": " + fs.amount + "mB");
+		if(fs != null) list.add(fs.getTranslationKey() + ": " + fs.amount + "mB");
 		}
 	}
 
 	@Override
-	public boolean placeBlockAt(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, IBlockState newState) {
+	public boolean placeBlockAt(ItemStack stack, PlayerEntity player, World world, BlockPos pos, Direction side, float hitX, float hitY, float hitZ, BlockState newState) {
 		if(!((BlockITBase<?>) this.block).canITBlockBePlaced(world, pos, newState, side, hitX, hitY, hitZ, player, stack)) return false;
 
 		boolean ret = super.placeBlockAt(stack, player, world, pos, side, hitX, hitY, hitZ, newState);
@@ -82,9 +82,9 @@ public class ItemBlockITBase extends ItemBlock {
 	}
 
 	@Override
-	public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+	public EnumActionResult onItemUse(PlayerEntity player, World world, BlockPos pos, Hand hand, Direction side, float hitX, float hitY, float hitZ) {
 		ItemStack stack = player.getHeldItem(hand);
-		IBlockState iblockstate = world.getBlockState(pos);
+		BlockState iblockstate = world.getBlockState(pos);
 		Block block = iblockstate.getBlock();
 
 		if(!block.isReplaceable(world, pos)) pos = pos.offset(side);
@@ -92,7 +92,7 @@ public class ItemBlockITBase extends ItemBlock {
 		if(stack.getCount() > 0 && player.canPlayerEdit(pos, side, stack) && canBlockBePlaced(world, pos, side, stack)) {
 			int i = this.getMetadata(stack.getMetadata());
 			@SuppressWarnings("deprecation")
-			IBlockState iblockstate1 = this.block.getStateForPlacement(world, pos, side, hitX, hitY, hitZ, i, player);
+			BlockState iblockstate1 = this.block.getStateForPlacement(world, pos, side, hitX, hitY, hitZ, i, player);
 
 			if(placeBlockAt(stack, player, world, pos, side, hitX, hitY, hitZ, iblockstate1)) {
 				SoundType soundtype = world.getBlockState(pos).getBlock().getSoundType(world.getBlockState(pos), world, 	pos, player);
@@ -105,18 +105,18 @@ public class ItemBlockITBase extends ItemBlock {
 	}
 
 	@Override
-	public boolean canPlaceBlockOnSide(World worldIn, BlockPos pos, EnumFacing side, EntityPlayer player, ItemStack stack) {
+	public boolean canPlaceBlockOnSide(World worldIn, BlockPos pos, Direction side, PlayerEntity player, ItemStack stack) {
 		Block block = worldIn.getBlockState(pos).getBlock();
 
 		if(block == Blocks.SNOW_LAYER && block.isReplaceable(worldIn, pos)) {
-			side = EnumFacing.UP;
+			side = Direction.UP;
 		} else if(!block.isReplaceable(worldIn, pos)) {
 			pos = pos.offset(side);
 		}
 		return canBlockBePlaced(worldIn, pos, side, stack);
 	}
 
-	private boolean canBlockBePlaced(World w, BlockPos pos, EnumFacing side, ItemStack stack) {
+	private boolean canBlockBePlaced(World w, BlockPos pos, Direction side, ItemStack stack) {
 		BlockITBase<?> blockIn = (BlockITBase<?>) this.block;
 		Block block = w.getBlockState(pos).getBlock();
 		@SuppressWarnings("deprecation")

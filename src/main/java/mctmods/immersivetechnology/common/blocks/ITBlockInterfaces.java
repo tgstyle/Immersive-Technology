@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.common.blocks;
 
 import mctmods.immersivetechnology.api.client.MechanicalEnergyAnimation;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 
 public class ITBlockInterfaces {
 
@@ -9,8 +9,8 @@ public class ITBlockInterfaces {
 		boolean isMechanicalEnergyTransmitter();
 		boolean isMechanicalEnergyReceiver();
 
-		EnumFacing getMechanicalEnergyOutputFacing();
-		EnumFacing getMechanicalEnergyInputFacing();
+		Direction getMechanicalEnergyOutputFacing();
+		Direction getMechanicalEnergyInputFacing();
 
 		int inputToCenterDistance();
 		int outputToCenterDistance();

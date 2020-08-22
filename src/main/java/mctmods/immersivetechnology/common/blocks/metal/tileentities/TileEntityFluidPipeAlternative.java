@@ -7,7 +7,7 @@ import mctmods.immersivetechnology.common.Config.ITConfig.Experimental;
 import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.util.IPipe;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
@@ -27,23 +27,23 @@ public class TileEntityFluidPipeAlternative extends blusunrize.immersiveengineer
 	private boolean busy = false;
 
 	PipeFluidHandler[] sidedHandlers = {
-			new PipeFluidHandler(EnumFacing.DOWN),
-			new PipeFluidHandler(EnumFacing.UP),
-			new PipeFluidHandler(EnumFacing.NORTH),
-			new PipeFluidHandler(EnumFacing.SOUTH),
-			new PipeFluidHandler(EnumFacing.WEST),
-			new PipeFluidHandler(EnumFacing.EAST)
+			new PipeFluidHandler(Direction.DOWN),
+			new PipeFluidHandler(Direction.UP),
+			new PipeFluidHandler(Direction.NORTH),
+			new PipeFluidHandler(Direction.SOUTH),
+			new PipeFluidHandler(Direction.WEST),
+			new PipeFluidHandler(Direction.EAST)
 	};
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
+	public <T> T getCapability(Capability<T> capability, @Nullable Direction facing) {
 		return (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null && sideConfig[facing.ordinal()] == 0)? (T)sidedHandlers[facing.ordinal()] : null;
 	}
 
 	@Override
 	public void onNeighborBlockChange(BlockPos otherPos) {
-		EnumFacing dir = EnumFacing.getFacingFromVector(otherPos.getX() - pos.getX(), otherPos.getY() - pos.getY(), otherPos.getZ() - pos.getZ());
+		Direction dir = Direction.getFacingFromVector(otherPos.getX() - pos.getX(), otherPos.getY() - pos.getY(), otherPos.getZ() - pos.getZ());
 		if(updateConnectionByte(dir)) ITUtils.improvedMarkBlockForUpdate(world, pos, null, EnumSet.complementOf(EnumSet.of(dir)));
 	}
 
@@ -51,7 +51,7 @@ public class TileEntityFluidPipeAlternative extends blusunrize.immersiveengineer
 	public void onLoad() {
 		if(!world.isRemote) {
 			boolean changed = false;
-			for(EnumFacing f : EnumFacing.VALUES) if(world.isBlockLoaded(pos.offset(f))) changed |= updateConnectionByte(f);
+			for(Direction f : Direction.VALUES) if(world.isBlockLoaded(pos.offset(f))) changed |= updateConnectionByte(f);
 			if(changed) ITUtils.improvedMarkBlockForUpdate(world, pos, null);
 		}
 	}
@@ -62,13 +62,13 @@ public class TileEntityFluidPipeAlternative extends blusunrize.immersiveengineer
 	}
 
 	class PipeFluidHandler implements IFluidHandler {
-		EnumFacing origin;
-		ArrayList<EnumFacing> outputs = new ArrayList<>();
-		HashMap<EnumFacing, PipeFluidHandler> fastFillOutputs = new HashMap<>();
+		Direction origin;
+		ArrayList<Direction> outputs = new ArrayList<>();
+		HashMap<Direction, PipeFluidHandler> fastFillOutputs = new HashMap<>();
 
-		public PipeFluidHandler(EnumFacing facing) {
+		public PipeFluidHandler(Direction facing) {
 			origin = facing;
-			for(EnumFacing destination : EnumSet.complementOf(EnumSet.of(facing))) {
+			for(Direction destination : EnumSet.complementOf(EnumSet.of(facing))) {
 				if(hasOutputConnection(facing)) outputs.add(destination);
 			}
 		}
@@ -82,7 +82,7 @@ public class TileEntityFluidPipeAlternative extends blusunrize.immersiveengineer
 			if(busy) return 0;
 			int remaining = resource.amount;
 
-			for(EnumFacing facing : outputs) {
+			for(Direction facing : outputs) {
 				PipeFluidHandler fastFillOutput = fastFillOutputs.get(facing);
 				if(fastFillOutput != null) {
 					busy = true;
@@ -123,16 +123,16 @@ public class TileEntityFluidPipeAlternative extends blusunrize.immersiveengineer
 			return (resource.tag != null && resource.tag.hasKey("pressurized") || ITContent.normallyPressurized.contains(resource.getFluid())) ? transferRatePressurized : transferRate;
 		}
 
-		public void disableSide(EnumFacing side) {
+		public void disableSide(Direction side) {
 			if(outputs.contains(side)) outputs.remove(side);
 			removeFastFill(side);
 		}
 
-		public void enableSide(EnumFacing side) {
+		public void enableSide(Direction side) {
 			if(!outputs.contains(side) && side != origin) outputs.add(side);
 		}
 
-		public void removeFastFill(EnumFacing side) {
+		public void removeFastFill(Direction side) {
 			fastFillOutputs.put(side, null);
 		}
 
@@ -149,7 +149,7 @@ public class TileEntityFluidPipeAlternative extends blusunrize.immersiveengineer
 		}
 	}
 
-	public void neighborPipeRemoved(EnumFacing direction) {
+	public void neighborPipeRemoved(Direction direction) {
 		for(PipeFluidHandler handler : sidedHandlers) handler.removeFastFill(direction);
 	}
 
@@ -158,7 +158,7 @@ public class TileEntityFluidPipeAlternative extends blusunrize.immersiveengineer
 		if(sideConfig[side] > 0) sideConfig[side] = - 1;
 		markDirty();
 
-		EnumFacing fd = EnumFacing.getFront(side);
+		Direction fd = Direction.byIndex(side);
 		TileEntity connected = world.getTileEntity(getPos().offset(fd));
 
 		if(sideConfig[side] == 0) for(PipeFluidHandler handler : sidedHandlers) handler.enableSide(fd);

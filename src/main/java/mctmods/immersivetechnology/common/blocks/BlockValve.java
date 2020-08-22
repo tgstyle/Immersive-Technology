@@ -6,9 +6,9 @@ import mctmods.immersivetechnology.common.tileentities.TileEntityLoadController;
 import mctmods.immersivetechnology.common.tileentities.TileEntityStackLimiter;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -60,7 +60,7 @@ public class BlockValve extends BlockITTileProvider<BlockValve.BlockType_Valve> 
 	}
 
 	@Override
-	public boolean canConnectRedstone(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
+	public boolean canConnectRedstone(BlockState state, IBlockAccess world, BlockPos pos, Direction side) {
 		return true;
 	}
 }

@@ -13,14 +13,14 @@ import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.blocks.stone.tileentities.TileEntityCokeOvenAdvancedSlave;
 import mctmods.immersivetechnology.common.blocks.stone.types.BlockType_StoneDecoration;
 import mctmods.immersivetechnology.common.blocks.stone.types.BlockType_StoneMultiblock;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -54,15 +54,15 @@ public class MultiblockCokeOvenAdvanced implements IMultiblock {
 	}
 
 	@Override
-	public boolean isBlockTrigger(IBlockState state) {
+	public boolean isBlockTrigger(BlockState state) {
 		return state.getBlock() == ITContent.blockStoneDecoration && (state.getBlock().getMetaFromState(state) == BlockType_StoneDecoration.COKEBRICK_REINFORCED.getMeta());
 	}
 
 	@Override
-	public boolean createStructure(World world, BlockPos pos, EnumFacing side, EntityPlayer player) {
-		side = (side == EnumFacing.UP || side == EnumFacing.DOWN)? side = EnumFacing.fromAngle(player.rotationYaw) : side.getOpposite();
-		IBlockState master = ITContent.blockStoneMultiblock.getStateFromMeta(BlockType_StoneMultiblock.COKE_OVEN_ADVANCED.getMeta());
-		IBlockState slave = ITContent.blockStoneMultiblock.getStateFromMeta(BlockType_StoneMultiblock.COKE_OVEN_ADVANCED_SLAVE.getMeta());
+	public boolean createStructure(World world, BlockPos pos, Direction side, PlayerEntity player) {
+		side = (side == Direction.UP || side == Direction.DOWN)? side = Direction.fromAngle(player.rotationYaw) : side.getOpposite();
+		BlockState master = ITContent.blockStoneMultiblock.getStateFromMeta(BlockType_StoneMultiblock.COKE_OVEN_ADVANCED.getMeta());
+		BlockState slave = ITContent.blockStoneMultiblock.getStateFromMeta(BlockType_StoneMultiblock.COKE_OVEN_ADVANCED_SLAVE.getMeta());
 		if(!structureCheck(world, pos, side)) return false;
 		if(player != null) {
 			ItemStack hammer = player.getHeldItemMainhand().getItem().getToolClasses(player.getHeldItemMainhand()).contains(Lib.TOOL_HAMMER)?player.getHeldItemMainhand(): player.getHeldItemOffhand();
@@ -73,7 +73,7 @@ public class MultiblockCokeOvenAdvanced implements IMultiblock {
 				for(int w = - 1 ; w <= 1 ;w ++) {
 					if(h != 2 || (w == 0 && l == 1)) {
 						BlockPos pos2 = pos.offset(side, l).offset(side.rotateY(), w).add(0, h, 0);
-						int[] offset = new int[] {(side == EnumFacing.WEST ? - l : side == EnumFacing.EAST ? l : side == EnumFacing.NORTH ? w : - w), h, (side == EnumFacing.NORTH ? - l : side == EnumFacing.SOUTH ? l : side == EnumFacing.EAST ? w : - w)};
+						int[] offset = new int[] {(side == Direction.WEST ? - l : side == Direction.EAST ? l : side == Direction.NORTH ? w : - w), h, (side == Direction.NORTH ? - l : side == Direction.SOUTH ? l : side == Direction.EAST ? w : - w)};
 						world.setBlockState(pos2, (offset[0]==0&&offset[1]==0&&offset[2]==0)? master : slave);
 						TileEntity curr = world.getTileEntity(pos2);
 						if(curr instanceof TileEntityCokeOvenAdvancedSlave) {
@@ -91,7 +91,7 @@ public class MultiblockCokeOvenAdvanced implements IMultiblock {
 		}
 		return true;
 	}
-	boolean structureCheck(World world, BlockPos startPos, EnumFacing dir) {
+	boolean structureCheck(World world, BlockPos startPos, Direction dir) {
 		for(int h = - 1 ; h <= 2 ; h ++) {
 			for(int l = 0 ; l <= 2 ; l ++) {
 				for(int w = - 1 ; w <=1 ;w ++) {

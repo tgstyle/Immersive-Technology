@@ -4,7 +4,7 @@ import mctmods.immersivetechnology.common.Config;
 import mctmods.immersivetechnology.common.tileentities.TileEntityCommonOSD;
 import mctmods.immersivetechnology.common.util.ITrashCanBounds;
 import mctmods.immersivetechnology.common.util.TranslationKey;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
@@ -12,14 +12,14 @@ import net.minecraftforge.energy.IEnergyStorage;
 public class TileEntityTrashEnergy extends TileEntityCommonOSD implements IEnergyStorage, ITrashCanBounds {
 
 	@Override
-	public boolean hasCapability(final Capability<?> capability, final EnumFacing facing) {
+	public boolean hasCapability(final Capability<?> capability, final Direction facing) {
 		if(capability == CapabilityEnergy.ENERGY) return true;
 		return false;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T getCapability(final Capability<T> capability, final EnumFacing facing) {
+	public <T> T getCapability(final Capability<T> capability, final Direction facing) {
 		if(capability == CapabilityEnergy.ENERGY) return (T) this;
 		return super.getCapability(capability, facing);
 	}

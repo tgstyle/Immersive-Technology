@@ -1,8 +1,8 @@
 package mctmods.immersivetechnology.common.util;
 
-import net.minecraftforge.fluids.Fluid;
+import net.minecraft.fluid.Fluid;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTank;
+import net.minecraftforge.fluids.capability.templates.FluidTank;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -20,7 +20,7 @@ public class ITFluidTank extends FluidTank {
 	}
 
 	public ITFluidTank(@Nullable FluidStack fluidStack, int capacity, @Nonnull TankListener listener) {
-		super(fluidStack, capacity);
+		super(capacity);
 		this.listener = listener;
 	}
 

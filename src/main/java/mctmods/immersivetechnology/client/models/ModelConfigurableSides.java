@@ -15,13 +15,13 @@ import blusunrize.immersiveengineering.api.IEEnums;
 import blusunrize.immersiveengineering.api.IEEnums.SideConfig;
 import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.client.ClientUtils;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.block.model.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.resources.IResourceManager;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ICustomModelLoader;
 import net.minecraftforge.client.model.IModel;
@@ -40,39 +40,39 @@ public class ModelConfigurableSides implements IBakedModel {
 		});
 		TYPES.put("s_", new ITextureNamer()	{
 			@Override
-			public String nameFromSide(EnumFacing side, SideConfig cfg) {
+			public String nameFromSide(Direction side, SideConfig cfg) {
 				return "side";
 			}
 		});
 		TYPES.put("hud_", new ITextureNamer() {
 			@Override
-			public String nameFromSide(EnumFacing side, SideConfig cfg) {
+			public String nameFromSide(Direction side, SideConfig cfg) {
 				return side.ordinal() < 2?side.getName() : "side";
 			}
 		});
 		TYPES.put("hv_", new ITextureNamer() {
 			@Override
-			public String nameFromSide(EnumFacing side, SideConfig cfg) {
+			public String nameFromSide(Direction side, SideConfig cfg) {
 				return side.ordinal() < 2?"up" : "side";
 			}
 		});
 		TYPES.put("ud_", new ITextureNamer() {
 			@Override
-			public String nameFromSide(EnumFacing side, SideConfig cfg) {
+			public String nameFromSide(Direction side, SideConfig cfg) {
 				return side.ordinal() < 2?side.getName() : "side";
 			}
 			@Override
-			public String nameFromCfg(EnumFacing side, SideConfig cfg) {
+			public String nameFromCfg(Direction side, SideConfig cfg) {
 				return side.ordinal() < 2?cfg.getTextureName() : null;
 			}
 		});
 		TYPES.put("v_", new ITextureNamer() {
 			@Override
-			public String nameFromSide(EnumFacing side, SideConfig cfg) {
+			public String nameFromSide(Direction side, SideConfig cfg) {
 				return side.ordinal() < 2?"up" : "side";
 			}
 			@Override
-			public String nameFromCfg(EnumFacing side, SideConfig cfg) {
+			public String nameFromCfg(Direction side, SideConfig cfg) {
 				return side.ordinal() < 2?cfg.getTextureName() : null;
 			}
 		});
@@ -89,7 +89,7 @@ public class ModelConfigurableSides implements IBakedModel {
 	}
 
 	@Override
-	public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
+	public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, long rand) {
 		TextureAtlasSprite[] tex = new TextureAtlasSprite[6];
 		for(int i = 0; i < tex.length; i++) tex[i] = this.textures[i][0];
 		char[] keyArray = "000000".toCharArray();
@@ -115,17 +115,17 @@ public class ModelConfigurableSides implements IBakedModel {
 		List<BakedQuad> quads = Lists.newArrayListWithExpectedSize(6);
 		float[] colour = {1, 1, 1, 1};
 		Vector3f[] vertices = {new Vector3f(0, 0, 0), new Vector3f(0, 0, 1), new Vector3f(1, 0, 1), new Vector3f(1, 0, 0)};
-		quads.add(ClientUtils.createBakedQuad(DefaultVertexFormats.ITEM, vertices, EnumFacing.DOWN, sprites[0], new double[]{0, 16, 16, 0}, colour, true));
+		quads.add(ClientUtils.createBakedQuad(DefaultVertexFormats.ITEM, vertices, Direction.DOWN, sprites[0], new double[]{0, 16, 16, 0}, colour, true));
 		vertices = new Vector3f[]{new Vector3f(0, 1, 0), new Vector3f(0, 1, 1), new Vector3f(1, 1, 1), new Vector3f(1, 1, 0)};
-		quads.add(ClientUtils.createBakedQuad(DefaultVertexFormats.ITEM, vertices, EnumFacing.UP, sprites[1], new double[]{0, 0, 16, 16}, colour, false));
+		quads.add(ClientUtils.createBakedQuad(DefaultVertexFormats.ITEM, vertices, Direction.UP, sprites[1], new double[]{0, 0, 16, 16}, colour, false));
 		vertices = new Vector3f[]{new Vector3f(1, 0, 0), new Vector3f(1, 1, 0), new Vector3f(0, 1, 0), new Vector3f(0, 0, 0)};
-		quads.add(ClientUtils.createBakedQuad(DefaultVertexFormats.ITEM, vertices, EnumFacing.NORTH, sprites[2], new double[]{0, 16, 16, 0}, colour, true));
+		quads.add(ClientUtils.createBakedQuad(DefaultVertexFormats.ITEM, vertices, Direction.NORTH, sprites[2], new double[]{0, 16, 16, 0}, colour, true));
 		vertices = new Vector3f[]{new Vector3f(1, 0, 1), new Vector3f(1, 1, 1), new Vector3f(0, 1, 1), new Vector3f(0, 0, 1)};
-		quads.add(ClientUtils.createBakedQuad(DefaultVertexFormats.ITEM, vertices, EnumFacing.SOUTH, sprites[3], new double[]{16, 16, 0, 0}, colour, false));
+		quads.add(ClientUtils.createBakedQuad(DefaultVertexFormats.ITEM, vertices, Direction.SOUTH, sprites[3], new double[]{16, 16, 0, 0}, colour, false));
 		vertices = new Vector3f[]{new Vector3f(0, 0, 0), new Vector3f(0, 1, 0), new Vector3f(0, 1, 1), new Vector3f(0, 0, 1)};
-		quads.add(ClientUtils.createBakedQuad(DefaultVertexFormats.ITEM, vertices, EnumFacing.WEST, sprites[4], new double[]{0, 16, 16, 0}, colour, true));
+		quads.add(ClientUtils.createBakedQuad(DefaultVertexFormats.ITEM, vertices, Direction.WEST, sprites[4], new double[]{0, 16, 16, 0}, colour, true));
 		vertices = new Vector3f[]{new Vector3f(1, 0, 0), new Vector3f(1, 1, 0), new Vector3f(1, 1, 1), new Vector3f(1, 0, 1)};
-		quads.add(ClientUtils.createBakedQuad(DefaultVertexFormats.ITEM, vertices, EnumFacing.EAST, sprites[5], new double[]{16, 16, 0, 0}, colour, false));
+		quads.add(ClientUtils.createBakedQuad(DefaultVertexFormats.ITEM, vertices, Direction.EAST, sprites[5], new double[]{16, 16, 0, 0}, colour, false));
 		return quads;
 	}
 
@@ -195,7 +195,7 @@ public class ModelConfigurableSides implements IBakedModel {
 					if(sub.startsWith(e.getKey())) {
 						type = e.getKey();
 						name = sub.substring(type.length());
-						for(EnumFacing f : EnumFacing.VALUES) {
+						for(Direction f : Direction.VALUES) {
 							for(SideConfig cfg : SideConfig.values()) {
 								String key = f.getName() + "_" + cfg.getTextureName();
 								String tex = name + "_" + e.getValue().getTextureName(f, cfg);
@@ -234,7 +234,7 @@ public class ModelConfigurableSides implements IBakedModel {
 		@Override
 		public IBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) {
 			TextureAtlasSprite[][] tex = new TextureAtlasSprite[6][3];
-			for(EnumFacing f : EnumFacing.VALUES) {
+			for(Direction f : Direction.VALUES) {
 				for(SideConfig cfg : SideConfig.values()) {
 					ResourceLocation rl = textures.get(f.getName() + "_" + cfg.getTextureName());
 					if(rl != null) tex[f.ordinal()][cfg.ordinal()] = ApiUtils.getRegisterSprite(ClientUtils.mc().getTextureMapBlocks(), rl);
@@ -247,7 +247,7 @@ public class ModelConfigurableSides implements IBakedModel {
 		public IModel retexture(ImmutableMap<String, String> textures) {
 			String newName = this.name;
 			ImmutableMap.Builder<String, ResourceLocation> builder = ImmutableMap.builder();
-			for(EnumFacing f : EnumFacing.VALUES) {
+			for(Direction f : Direction.VALUES) {
 				for(SideConfig cfg : SideConfig.values()) {
 					String key = f.getName() + "_" + cfg.getTextureName();
 					ResourceLocation rl = this.textures.get(key);
@@ -272,7 +272,7 @@ public class ModelConfigurableSides implements IBakedModel {
 	}
 
 	interface ITextureNamer {
-		default String getTextureName(EnumFacing side, SideConfig cfg) {
+		default String getTextureName(Direction side, SideConfig cfg) {
 			String s = nameFromSide(side, cfg);
 			String c = nameFromCfg(side, cfg);
 			if(s != null && c != null) return s + "_" + c;
@@ -280,10 +280,10 @@ public class ModelConfigurableSides implements IBakedModel {
 			else if(c != null) return c;
 			return "";
 		}
-		default String nameFromSide(EnumFacing side, SideConfig cfg) {
+		default String nameFromSide(Direction side, SideConfig cfg) {
 			return side.getName();
 		}
-		default String nameFromCfg(EnumFacing side, SideConfig cfg) {
+		default String nameFromCfg(Direction side, SideConfig cfg) {
 			return cfg.getTextureName();
 		}
 	}

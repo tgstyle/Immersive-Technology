@@ -8,8 +8,8 @@ import mctmods.immersivetechnology.common.Config.ITConfig.MechanicalEnergy;
 import mctmods.immersivetechnology.common.blocks.ITBlockInterfaces.IMechanicalEnergy;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.*;
 import mctmods.immersivetechnology.common.util.compat.ITCompatModule;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.event.FMLInterModComms;
@@ -55,7 +55,7 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
 			return ImmersiveTechnology.MODID + ":" + "MiscInfo";
 		}
 		@Override
-		public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+		public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, PlayerEntity player, World world, BlockState blockState, IProbeHitData data) {
 			TileEntity te = world.getTileEntity(data.getPos());
 			if(te instanceof TileEntityBoilerSlave) {
 				TileEntityBoilerMaster master = ((TileEntityBoilerSlave)te).master();
@@ -72,7 +72,7 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
 			return ImmersiveTechnology.MODID + ":" + "MechanicalEnergyInfo";
 		}
 		@Override
-		public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+		public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, PlayerEntity player, World world, BlockState blockState, IProbeHitData data) {
 			TileEntity te = world.getTileEntity(data.getPos());
 			if(te instanceof IMechanicalEnergy) {
 				TileEntityMultiblockPart<?> master = ((TileEntityMultiblockPart<?>)te).master();
@@ -89,7 +89,7 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
 			return ImmersiveTechnology.MODID + ":" + "FluidInfo";
 		}
 		@Override
-		public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+		public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, PlayerEntity player, World world, BlockState blockState, IProbeHitData data) {
 			TileEntity te = world.getTileEntity(data.getPos());
 			if(te instanceof TileEntitySteelSheetmetalTankSlave) {
 				TileEntitySteelSheetmetalTankSlave master = ((TileEntitySteelSheetmetalTankSlave)te).master();

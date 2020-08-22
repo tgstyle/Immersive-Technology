@@ -6,7 +6,7 @@ import mctmods.immersivetechnology.common.Config.ITConfig.Machines.Boiler;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBoilerMaster;
 import mctmods.immersivetechnology.common.gui.ContainerBoiler;
 import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.opengl.GL11;
 
@@ -17,8 +17,8 @@ public class GuiBoiler extends GuiIEContainerBase {
 
 	private static double workingHeatLevel = Boiler.boiler_heat_workingLevel;
 	
-	public GuiBoiler(InventoryPlayer inventoryPlayer, TileEntityBoilerMaster tile) {
-		super(new ContainerBoiler(inventoryPlayer, tile));
+	public GuiBoiler(PlayerInventory playerInventory, TileEntityBoilerMaster tile) {
+		super(new ContainerBoiler(playerInventory, tile));
 		this.tile=tile;
 	}
 

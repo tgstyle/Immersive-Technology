@@ -49,7 +49,7 @@ public class Boiler {
 
 		@Override
 		public String describe() {
-			return "Adding Boiler Recipe for " + recipe.fluidInput.getLocalizedName() + " -> " + recipe.fluidOutput.getLocalizedName();
+			return "Adding Boiler Recipe for " + recipe.fluidInput.getTranslationKey() + " -> " + recipe.fluidOutput.getTranslationKey();
 		}
 	}
 
@@ -66,7 +66,7 @@ public class Boiler {
 
 		@Override
 		public String describe() {
-			return "Adding Boiler Fuel Recipe for " + recipe.fluidInput.getLocalizedName();
+			return "Adding Boiler Fuel Recipe for " + recipe.fluidInput.getTranslationKey();
 		}
 	}
 
@@ -102,7 +102,7 @@ public class Boiler {
 
 		@Override
 		public String describe() {
-			return "Removing Boiler Input Recipe for " + inputFluid.getLocalizedName();
+			return "Removing Boiler Input Recipe for " + inputFluid.getTranslationKey();
 		}
 	}
 
@@ -128,7 +128,7 @@ public class Boiler {
 
 		@Override
 		public String describe() {
-			return "Removing Boiler Fuel Recipe for " + inputFluid.getLocalizedName();
+			return "Removing Boiler Fuel Recipe for " + inputFluid.getTranslationKey();
 		}
 	}
 

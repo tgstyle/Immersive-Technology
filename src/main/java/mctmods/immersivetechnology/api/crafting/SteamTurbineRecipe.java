@@ -2,8 +2,8 @@ package mctmods.immersivetechnology.api.crafting;
 
 import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import com.google.common.collect.Lists;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.fluids.Fluid;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.fluid.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
 import java.util.ArrayList;
@@ -54,13 +54,13 @@ public class SteamTurbineRecipe extends MultiblockRecipe {
 	}
 
 	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
-		nbt.setTag("input", fluidInput.writeToNBT(new NBTTagCompound()));
+	public CompoundNBT writeToNBT(CompoundNBT nbt) {
+		nbt.put("input", fluidInput.writeToNBT(new CompoundNBT()));
 		return nbt;
 	}
 
-	public static SteamTurbineRecipe loadFromNBT(NBTTagCompound nbt) {
-		FluidStack fluidInput = FluidStack.loadFluidStackFromNBT(nbt.getCompoundTag("input"));
+	public static SteamTurbineRecipe loadFromNBT(CompoundNBT nbt) {
+		FluidStack fluidInput = FluidStack.loadFluidStackFromNBT(nbt.getCompound("input"));
 		return findFuel(fluidInput);
 	}
 	

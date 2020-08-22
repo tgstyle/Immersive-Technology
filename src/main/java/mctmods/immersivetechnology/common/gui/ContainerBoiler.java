@@ -3,7 +3,7 @@ package mctmods.immersivetechnology.common.gui;
 import blusunrize.immersiveengineering.common.gui.ContainerIEBase;
 import blusunrize.immersiveengineering.common.gui.IESlot;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBoilerMaster;
-import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
@@ -11,8 +11,8 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
 public class ContainerBoiler extends ContainerIEBase<TileEntityBoilerMaster> {
-	public ContainerBoiler(InventoryPlayer inventoryPlayer, TileEntityBoilerMaster tile) {
-		super(inventoryPlayer, tile);
+	public ContainerBoiler(PlayerInventory playerInventory, TileEntityBoilerMaster tile) {
+		super(playerInventory, tile);
 
 		slotCount = TileEntityBoilerMaster.slotCount;
 		final TileEntityBoilerMaster tileF = tile;
@@ -52,11 +52,11 @@ public class ContainerBoiler extends ContainerIEBase<TileEntityBoilerMaster> {
 
 		for(int i = 0 ; i < 3 ; i++) {
 			for(int j = 0 ; j < 9 ; j++) {
-				addSlotToContainer(new Slot(inventoryPlayer, j + i * 9 + 9, 8 + j * 18, 85 + i * 18));
+				addSlotToContainer(new Slot(playerInventory, j + i * 9 + 9, 8 + j * 18, 85 + i * 18));
 			}
 		}
 		for(int i = 0 ; i < 9 ; i++)
-			addSlotToContainer(new Slot(inventoryPlayer, i, 8 + i * 18, 143));
+			addSlotToContainer(new Slot(playerInventory, i, 8 + i * 18, 143));
 	}
 
 }

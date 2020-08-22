@@ -8,17 +8,17 @@ import mctmods.immersivetechnology.api.ITUtils;
 import mctmods.immersivetechnology.api.crafting.SolarTowerRecipe;
 import mctmods.immersivetechnology.common.blocks.metal.TileEntityMultiblockNewSystem;
 import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockSolarTower;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTank;
+import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.IFluidTank;
 
 import java.util.ArrayList;
@@ -31,12 +31,12 @@ public class TileEntitySolarTowerSlave extends TileEntityMultiblockNewSystem<Til
 	}
 
 	@Override
-	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
+	public void readCustomNBT(CompoundNBT nbt, boolean descPacket) {
 		super.readCustomNBT(nbt, descPacket);
 	}
 
 	@Override
-	public void writeCustomNBT(NBTTagCompound nbt, boolean descPacket) {
+	public void writeCustomNBT(CompoundNBT nbt, boolean descPacket) {
 		super.writeCustomNBT(nbt, descPacket);
 	}
 
@@ -88,7 +88,7 @@ public class TileEntitySolarTowerSlave extends TileEntityMultiblockNewSystem<Til
 	}
 
 	@Override
-	protected SolarTowerRecipe readRecipeFromNBT(NBTTagCompound tag) {
+	protected SolarTowerRecipe readRecipeFromNBT(CompoundNBT tag) {
 		return SolarTowerRecipe.loadFromNBT(tag);
 	}
 
@@ -159,7 +159,7 @@ public class TileEntitySolarTowerSlave extends TileEntityMultiblockNewSystem<Til
 	}
 
 	@Override
-	protected IFluidTank[] getAccessibleFluidTanks(EnumFacing side) {
+	protected IFluidTank[] getAccessibleFluidTanks(Direction side) {
 		if(master() != null) {
 			if((pos == 3 || pos == 5) && (side == null || side.getAxis() == facing.rotateYCCW().getAxis())) {
 				return new FluidTank[] { master.tanks[0] };
@@ -171,7 +171,7 @@ public class TileEntitySolarTowerSlave extends TileEntityMultiblockNewSystem<Til
 	}
 
 	@Override
-	protected boolean canFillTankFrom(int iTank, EnumFacing side, FluidStack resource) {
+	protected boolean canFillTankFrom(int iTank, Direction side, FluidStack resource) {
 		if(master() == null) return false;
 		if((pos == 3 || pos == 5) && (side == null || side.getAxis() == facing.rotateYCCW().getAxis())) {
 			if(master.tanks[iTank].getFluidAmount() >= master.tanks[iTank].getCapacity()) return false;
@@ -182,7 +182,7 @@ public class TileEntitySolarTowerSlave extends TileEntityMultiblockNewSystem<Til
 	}
 
 	@Override
-	protected boolean canDrainTankFrom(int iTank, EnumFacing side) {
+	protected boolean canDrainTankFrom(int iTank, Direction side) {
 		return (pos == 7 && (side == null || side == facing));
 	}
 
@@ -222,8 +222,8 @@ public class TileEntitySolarTowerSlave extends TileEntityMultiblockNewSystem<Til
 
 	@Override
 	public List<AxisAlignedBB> getAdvancedSelectionBounds() {
-		EnumFacing fl = facing;
-		EnumFacing fw = facing.rotateY();
+		Direction fl = facing;
+		Direction fw = facing.rotateY();
 		int h = (pos - (pos % 9)) / 9;
 		if(pos == 0 || pos == 2 || pos == 6 || pos == 8 || pos == 62 || pos == 60 || pos == 56 || pos == 54) {
 			float minY = 0;
@@ -236,10 +236,10 @@ public class TileEntitySolarTowerSlave extends TileEntityMultiblockNewSystem<Til
 					.offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			if(pos == 6 || pos == 8 || pos == 60 || pos == 62) fl = fl.getOpposite();
 			if(pos == 2 || pos == 8 || pos == 56 || pos == 62) fw = fw.getOpposite();
-			float minX = fl == EnumFacing.WEST ? .6875f : fl == EnumFacing.EAST ? .0625f : fw == EnumFacing.EAST ? .0625f : .6875f;
-			float maxX = fl == EnumFacing.EAST ? .3125f : fl == EnumFacing.WEST ? .9375f : fw == EnumFacing.EAST ? .3125f : .9375f;
-			float minZ = fl == EnumFacing.NORTH ? .6875f : fl == EnumFacing.SOUTH ? .0625f : fw == EnumFacing.SOUTH ? .0625f : .6875f;
-			float maxZ = fl == EnumFacing.SOUTH ? .3125f : fl == EnumFacing.NORTH ? .9375f : fw == EnumFacing.SOUTH ? .3125f : .9375f;
+			float minX = fl == Direction.WEST ? .6875f : fl == Direction.EAST ? .0625f : fw == Direction.EAST ? .0625f : .6875f;
+			float maxX = fl == Direction.EAST ? .3125f : fl == Direction.WEST ? .9375f : fw == Direction.EAST ? .3125f : .9375f;
+			float minZ = fl == Direction.NORTH ? .6875f : fl == Direction.SOUTH ? .0625f : fw == Direction.SOUTH ? .0625f : .6875f;
+			float maxZ = fl == Direction.SOUTH ? .3125f : fl == Direction.NORTH ? .9375f : fw == Direction.SOUTH ? .3125f : .9375f;
 			minY = .5f;
 			maxY = 1;
 			if(pos > 8) {
@@ -247,71 +247,71 @@ public class TileEntitySolarTowerSlave extends TileEntityMultiblockNewSystem<Til
 				maxY = .5f;
 			}
 			list.add(new AxisAlignedBB(minX, minY, minZ, maxX, maxY, maxZ).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
-			minX = fl == EnumFacing.EAST ? .5f : fl == EnumFacing.WEST ? 0 : fw == EnumFacing.EAST ? .5f : 0;
-			maxX = fl == EnumFacing.EAST ? 1 : fl == EnumFacing.WEST ? .5f : fw == EnumFacing.EAST ? 1 : .5f;
+			minX = fl == Direction.EAST ? .5f : fl == Direction.WEST ? 0 : fw == Direction.EAST ? .5f : 0;
+			maxX = fl == Direction.EAST ? 1 : fl == Direction.WEST ? .5f : fw == Direction.EAST ? 1 : .5f;
 			list.add(new AxisAlignedBB(minX, minY, 0, maxX, maxY, 1).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
-			minZ = fl == EnumFacing.NORTH ? 0 : fl == EnumFacing.SOUTH ? .5f : fw == EnumFacing.NORTH ? 0 : .5f;
-			maxZ = fl == EnumFacing.NORTH ? .5f : fl == EnumFacing.SOUTH ? 1 : fw == EnumFacing.NORTH ? .5f : 1;
+			minZ = fl == Direction.NORTH ? 0 : fl == Direction.SOUTH ? .5f : fw == Direction.NORTH ? 0 : .5f;
+			maxZ = fl == Direction.NORTH ? .5f : fl == Direction.SOUTH ? 1 : fw == Direction.NORTH ? .5f : 1;
 			list.add(new AxisAlignedBB(0, minY, minZ, 1, maxY, maxZ).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			return list;
 		}
 		if((pos != 0 && pos != 54 && (pos % 9 == 0))) {
-			float minX = fl == EnumFacing.WEST ? .6875f : fl == EnumFacing.EAST ? .0625f : fw == EnumFacing.EAST ? .0625f : .6875f;
-			float maxX = fl == EnumFacing.EAST ? .3125f : fl == EnumFacing.WEST ? .9375f : fw == EnumFacing.EAST ? .3125f : .9375f;
-			float minZ = fl == EnumFacing.NORTH ? .6875f : fl == EnumFacing.SOUTH ? .0625f : fw == EnumFacing.SOUTH ? .0625f : .6875f;
-			float maxZ = fl == EnumFacing.SOUTH ? .3125f : fl == EnumFacing.NORTH ? .9375f : fw == EnumFacing.SOUTH ? .3125f : .9375f;
+			float minX = fl == Direction.WEST ? .6875f : fl == Direction.EAST ? .0625f : fw == Direction.EAST ? .0625f : .6875f;
+			float maxX = fl == Direction.EAST ? .3125f : fl == Direction.WEST ? .9375f : fw == Direction.EAST ? .3125f : .9375f;
+			float minZ = fl == Direction.NORTH ? .6875f : fl == Direction.SOUTH ? .0625f : fw == Direction.SOUTH ? .0625f : .6875f;
+			float maxZ = fl == Direction.SOUTH ? .3125f : fl == Direction.NORTH ? .9375f : fw == Direction.SOUTH ? .3125f : .9375f;
 			List<AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(minX, 0, minZ, maxX, 1, maxZ).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
-			minX = fl == EnumFacing.EAST ? .5f : fl == EnumFacing.WEST ? 0 : fw == EnumFacing.EAST ? .5f : 0;
-			maxX = fl == EnumFacing.EAST ? 1 : fl == EnumFacing.WEST ? .5f : fw == EnumFacing.EAST ? 1 : .5f;
+			minX = fl == Direction.EAST ? .5f : fl == Direction.WEST ? 0 : fw == Direction.EAST ? .5f : 0;
+			maxX = fl == Direction.EAST ? 1 : fl == Direction.WEST ? .5f : fw == Direction.EAST ? 1 : .5f;
 			list.add(new AxisAlignedBB(minX, 0, 0, maxX, 1, 1).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
-			minZ = fl == EnumFacing.NORTH ? 0 : fl == EnumFacing.SOUTH ? .5f : fw == EnumFacing.NORTH ? 0 : .5f;
-			maxZ = fl == EnumFacing.NORTH ? .5f : fl == EnumFacing.SOUTH ? 1 : fw == EnumFacing.NORTH ? .5f : 1;
+			minZ = fl == Direction.NORTH ? 0 : fl == Direction.SOUTH ? .5f : fw == Direction.NORTH ? 0 : .5f;
+			maxZ = fl == Direction.NORTH ? .5f : fl == Direction.SOUTH ? 1 : fw == Direction.NORTH ? .5f : 1;
 			list.add(new AxisAlignedBB(0, 0, minZ, 1, 1, maxZ).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			return list;
 		}
 		if(pos == 2 + 9 * h) {
 			fw = fw.getOpposite();
-			float minX = fl == EnumFacing.WEST ? .6875f : fl == EnumFacing.EAST ? .0625f : fw == EnumFacing.EAST ? .0625f : .6875f;
-			float maxX = fl == EnumFacing.EAST ? .3125f : fl == EnumFacing.WEST ? .9375f : fw == EnumFacing.EAST ? .3125f : .9375f;
-			float minZ = fl == EnumFacing.NORTH ? .6875f : fl == EnumFacing.SOUTH ? .0625f : fw == EnumFacing.SOUTH ? .0625f : .6875f;
-			float maxZ = fl == EnumFacing.SOUTH ? .3125f : fl == EnumFacing.NORTH ? .9375f : fw == EnumFacing.SOUTH ? .3125f : .9375f;
+			float minX = fl == Direction.WEST ? .6875f : fl == Direction.EAST ? .0625f : fw == Direction.EAST ? .0625f : .6875f;
+			float maxX = fl == Direction.EAST ? .3125f : fl == Direction.WEST ? .9375f : fw == Direction.EAST ? .3125f : .9375f;
+			float minZ = fl == Direction.NORTH ? .6875f : fl == Direction.SOUTH ? .0625f : fw == Direction.SOUTH ? .0625f : .6875f;
+			float maxZ = fl == Direction.SOUTH ? .3125f : fl == Direction.NORTH ? .9375f : fw == Direction.SOUTH ? .3125f : .9375f;
 			List<AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(minX, 0, minZ, maxX, 1, maxZ).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
-			minX = fl == EnumFacing.EAST ? .5f : fl == EnumFacing.WEST ? 0 : fw == EnumFacing.EAST ? .5f : 0;
-			maxX = fl == EnumFacing.EAST ? 1 : fl == EnumFacing.WEST ? .5f : fw == EnumFacing.EAST ? 1 : .5f;
+			minX = fl == Direction.EAST ? .5f : fl == Direction.WEST ? 0 : fw == Direction.EAST ? .5f : 0;
+			maxX = fl == Direction.EAST ? 1 : fl == Direction.WEST ? .5f : fw == Direction.EAST ? 1 : .5f;
 			list.add(new AxisAlignedBB(minX, 0, 0, maxX, 1, 1).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
-			minZ = fl == EnumFacing.NORTH ? 0 : fl == EnumFacing.SOUTH ? .5f : fw == EnumFacing.NORTH ? 0 : .5f;
-			maxZ = fl == EnumFacing.NORTH ? .5f : fl == EnumFacing.SOUTH ? 1 : fw == EnumFacing.NORTH ? .5f : 1;
+			minZ = fl == Direction.NORTH ? 0 : fl == Direction.SOUTH ? .5f : fw == Direction.NORTH ? 0 : .5f;
+			maxZ = fl == Direction.NORTH ? .5f : fl == Direction.SOUTH ? 1 : fw == Direction.NORTH ? .5f : 1;
 			list.add(new AxisAlignedBB(0, 0, minZ, 1, 1, maxZ).offset(getPos().getX(), getPos().getY(), 	getPos().getZ()));
 			return list;
 		}
 		if(pos == 6 + 9 * h) {
 			fl = fl.getOpposite();
-			float minX = fl == EnumFacing.WEST ? .6875f	: fl == EnumFacing.EAST ? .0625f : fw == EnumFacing.EAST ? .0625f : .6875f;
-			float maxX = fl == EnumFacing.EAST ? .3125f	: fl == EnumFacing.WEST ? .9375f : fw == EnumFacing.EAST ? .3125f : .9375f;
-			float minZ = fl == EnumFacing.NORTH ? .6875f : fl == EnumFacing.SOUTH ? .0625f : fw == EnumFacing.SOUTH ? .0625f : .6875f;
-			float maxZ = fl == EnumFacing.SOUTH ? .3125f : fl == EnumFacing.NORTH ? .9375f : fw == EnumFacing.SOUTH ? .3125f : .9375f;
+			float minX = fl == Direction.WEST ? .6875f	: fl == Direction.EAST ? .0625f : fw == Direction.EAST ? .0625f : .6875f;
+			float maxX = fl == Direction.EAST ? .3125f	: fl == Direction.WEST ? .9375f : fw == Direction.EAST ? .3125f : .9375f;
+			float minZ = fl == Direction.NORTH ? .6875f : fl == Direction.SOUTH ? .0625f : fw == Direction.SOUTH ? .0625f : .6875f;
+			float maxZ = fl == Direction.SOUTH ? .3125f : fl == Direction.NORTH ? .9375f : fw == Direction.SOUTH ? .3125f : .9375f;
 			List<AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(minX, 0, minZ, maxX, 1, maxZ).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
-			minX = fl == EnumFacing.EAST ? .5f : fl == EnumFacing.WEST ? 0 : fw == EnumFacing.EAST ? .5f : 0;
-			maxX = fl == EnumFacing.EAST ? 1 : fl == EnumFacing.WEST ? .5f : fw == EnumFacing.EAST ? 1 : .5f;
+			minX = fl == Direction.EAST ? .5f : fl == Direction.WEST ? 0 : fw == Direction.EAST ? .5f : 0;
+			maxX = fl == Direction.EAST ? 1 : fl == Direction.WEST ? .5f : fw == Direction.EAST ? 1 : .5f;
 			list.add(new AxisAlignedBB(minX, 0, 0, maxX, 1, 1).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
-			minZ = fl == EnumFacing.NORTH ? 0 : fl == EnumFacing.SOUTH ? .5f : fw == EnumFacing.NORTH ? 0 : .5f;
-			maxZ = fl == EnumFacing.NORTH ? .5f : fl == EnumFacing.SOUTH ? 1 : fw == EnumFacing.NORTH ? .5f : 1;
+			minZ = fl == Direction.NORTH ? 0 : fl == Direction.SOUTH ? .5f : fw == Direction.NORTH ? 0 : .5f;
+			maxZ = fl == Direction.NORTH ? .5f : fl == Direction.SOUTH ? 1 : fw == Direction.NORTH ? .5f : 1;
 			list.add(new AxisAlignedBB(0, 0, minZ, 1, 1, maxZ).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			return list;
 		}
 		if(pos == 8 + 9 * h) {
 			fl = fl.getOpposite();
 			fw = fw.getOpposite();
-			float minX = fl == EnumFacing.WEST ? .6875f : fl == EnumFacing.EAST ? .0625f : fw == EnumFacing.EAST ? .0625f : .6875f;
-			float maxX = fl == EnumFacing.EAST ? .3125f : fl == EnumFacing.WEST ? .9375f : fw == EnumFacing.EAST ? .3125f : .9375f;
-			float minZ = fl == EnumFacing.NORTH ? .6875f : fl == EnumFacing.SOUTH ? .0625f : fw == EnumFacing.SOUTH ? .0625f : .6875f;
-			float maxZ = fl == EnumFacing.SOUTH ? .3125f : fl == EnumFacing.NORTH ? .9375f : fw == EnumFacing.SOUTH ? .3125f : .9375f;
+			float minX = fl == Direction.WEST ? .6875f : fl == Direction.EAST ? .0625f : fw == Direction.EAST ? .0625f : .6875f;
+			float maxX = fl == Direction.EAST ? .3125f : fl == Direction.WEST ? .9375f : fw == Direction.EAST ? .3125f : .9375f;
+			float minZ = fl == Direction.NORTH ? .6875f : fl == Direction.SOUTH ? .0625f : fw == Direction.SOUTH ? .0625f : .6875f;
+			float maxZ = fl == Direction.SOUTH ? .3125f : fl == Direction.NORTH ? .9375f : fw == Direction.SOUTH ? .3125f : .9375f;
 			List<AxisAlignedBB> list = Lists.newArrayList(new AxisAlignedBB(minX, 0, minZ, maxX, 1, maxZ).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
-			minX = fl == EnumFacing.EAST ? .5f : fl == EnumFacing.WEST ? 0 : fw == EnumFacing.EAST ? .5f : 0;
-			maxX = fl == EnumFacing.EAST ? 1 : fl == EnumFacing.WEST ? .5f : fw == EnumFacing.EAST ? 1 : .5f;
+			minX = fl == Direction.EAST ? .5f : fl == Direction.WEST ? 0 : fw == Direction.EAST ? .5f : 0;
+			maxX = fl == Direction.EAST ? 1 : fl == Direction.WEST ? .5f : fw == Direction.EAST ? 1 : .5f;
 			list.add(new AxisAlignedBB(minX, 0, 0, maxX, 1, 1).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
-			minZ = fl == EnumFacing.NORTH ? 0 : fl == EnumFacing.SOUTH ? .5f : fw == EnumFacing.NORTH ? 0 : .5f;
-			maxZ = fl == EnumFacing.NORTH ? .5f : fl == EnumFacing.SOUTH ? 1 : fw == EnumFacing.NORTH ? .5f : 1;
+			minZ = fl == Direction.NORTH ? 0 : fl == Direction.SOUTH ? .5f : fw == Direction.NORTH ? 0 : .5f;
+			maxZ = fl == Direction.NORTH ? .5f : fl == Direction.SOUTH ? 1 : fw == Direction.NORTH ? .5f : 1;
 			list.add(new AxisAlignedBB(0, 0, minZ, 1, 1, maxZ).offset(getPos().getX(), getPos().getY(), getPos().getZ()));
 			return list;
 		}
@@ -319,7 +319,7 @@ public class TileEntitySolarTowerSlave extends TileEntityMultiblockNewSystem<Til
 	}
 
 	@Override
-	public boolean isOverrideBox(AxisAlignedBB box, EntityPlayer player, RayTraceResult mop, ArrayList<AxisAlignedBB> list) {
+	public boolean isOverrideBox(AxisAlignedBB box, PlayerEntity player, RayTraceResult mop, ArrayList<AxisAlignedBB> list) {
 		return false;
 	}
 

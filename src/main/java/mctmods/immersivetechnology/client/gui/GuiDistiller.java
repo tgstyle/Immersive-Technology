@@ -5,7 +5,7 @@ import blusunrize.immersiveengineering.client.gui.GuiIEContainerBase;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityDistillerMaster;
 import mctmods.immersivetechnology.common.gui.ContainerDistiller;
 import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.entity.player.PlayerInventory;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
@@ -13,7 +13,7 @@ import java.util.ArrayList;
 public class GuiDistiller extends GuiIEContainerBase {
 	TileEntityDistillerMaster tile;
 
-	public GuiDistiller(InventoryPlayer invPlayer, TileEntityDistillerMaster tile) {
+	public GuiDistiller(PlayerInventory invPlayer, TileEntityDistillerMaster tile) {
 		super(new ContainerDistiller(invPlayer, tile));
 		this.tile=tile;
 	}

@@ -6,9 +6,9 @@ import blusunrize.immersiveengineering.common.blocks.TileEntityMultiblockPart;
 import blusunrize.immersiveengineering.common.util.inventory.IIEInventory;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.NonNullList;
@@ -30,13 +30,13 @@ public abstract class BlockITMultiblock<E extends Enum<E> & BlockITBase.IBlockEn
 	}
 
 	@Override
-	public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
+	public BlockState getActualState(BlockState state, IBlockAccess world, BlockPos pos) {
 		state = super.getActualState(state, world, pos);
 		return state;
 	}
 
 	@Override
-	public void breakBlock(World world, BlockPos pos, IBlockState state) {
+	public void breakBlock(World world, BlockPos pos, BlockState state) {
 		TileEntity tileEntity = world.getTileEntity(pos);
 		if(tileEntity instanceof TileEntityMultiblockPart && world.getGameRules().getBoolean("doTileDrops")) {
 			TileEntityMultiblockPart<?> tile = (TileEntityMultiblockPart<?>)tileEntity;
@@ -58,13 +58,13 @@ public abstract class BlockITMultiblock<E extends Enum<E> & BlockITBase.IBlockEn
 	}
 
 	@Override
-	public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
+	public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, BlockState state, int fortune) {
 		int meta = this.getMetaFromState(state);
 		if(meta >= 0 && meta < this.hasMultiblockTile.length && !this.hasMultiblockTile[meta]) super.getDrops(drops, world, pos, state, fortune);
 	}
 
 	@Override
-	public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {	
+	public ItemStack getPickBlock(BlockState state, RayTraceResult target, World world, BlockPos pos, PlayerEntity player) {	
 		ItemStack stack = getOriginalBlock(world, pos);
 			
 		if(!stack.isEmpty()) return stack;

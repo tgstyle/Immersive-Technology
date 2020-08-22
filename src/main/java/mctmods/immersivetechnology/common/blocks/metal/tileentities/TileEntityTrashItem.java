@@ -6,11 +6,11 @@ import mctmods.immersivetechnology.common.Config;
 import mctmods.immersivetechnology.common.tileentities.TileEntityCommonOSD;
 import mctmods.immersivetechnology.common.util.ITrashCanBounds;
 import mctmods.immersivetechnology.common.util.TranslationKey;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -64,15 +64,15 @@ public class TileEntityTrashItem extends TileEntityCommonOSD implements IItemHan
 		public void markDirty() {}
 
 		@Override
-		public boolean isUsableByPlayer(EntityPlayer entityPlayer) {
+		public boolean isUsableByPlayer(PlayerEntity entityPlayer) {
 			return true;
 		}
 
 		@Override
-		public void openInventory(EntityPlayer entityPlayer) {}
+		public void openInventory(PlayerEntity entityPlayer) {}
 
 		@Override
-		public void closeInventory(EntityPlayer entityPlayer) {}
+		public void closeInventory(PlayerEntity entityPlayer) {}
 
 		@Override
 		public boolean isItemValidForSlot(int i, ItemStack itemStack) {
@@ -112,14 +112,14 @@ public class TileEntityTrashItem extends TileEntityCommonOSD implements IItemHan
 	}
 
 	@Override
-	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+	public boolean hasCapability(Capability<?> capability, Direction facing) {
 		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) return true;
 		return false;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+	public <T> T getCapability(Capability<T> capability, Direction facing) {
 		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) return (T)this;
 		return super.getCapability(capability, facing);
 	}

@@ -63,7 +63,7 @@ public class Distiller {
 
 		@Override
 		public String describe() {
-			return "Adding Distiller Recipe for " + recipe.fluidInput.getLocalizedName() + " -> " + recipe.fluidOutput.getLocalizedName();
+			return "Adding Distiller Recipe for " + recipe.fluidInput.getTranslationKey() + " -> " + recipe.fluidOutput.getTranslationKey();
 		}
 	}
 
@@ -96,8 +96,8 @@ public class Distiller {
 
 		@Override
 		public String describe() {
-			if(this.outputItem.getItem() == Items.AIR) return "Removing Distiller Input Recipe for " + inputFluid.getLocalizedName();
-			return "Removing Distiller Input Recipe for " + inputFluid.getLocalizedName() + " -> " + outputItem.getDisplayName();
+			if(this.outputItem.getItem() == Items.AIR) return "Removing Distiller Input Recipe for " + inputFluid.getTranslationKey();
+			return "Removing Distiller Input Recipe for " + inputFluid.getTranslationKey() + " -> " + outputItem.getDisplayName();
 		}
 	}
 

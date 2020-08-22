@@ -8,12 +8,12 @@ import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityCo
 import mctmods.immersivetechnology.common.blocks.metal.types.BlockType_MetalDevice;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.Axis;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Direction.Axis;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -42,9 +42,9 @@ public class BlockMetalDevice extends BlockITTileProvider<BlockType_MetalDevice>
 	}
 
 	@Override
-	public boolean canITBlockBePlaced(World world, BlockPos pos, IBlockState newState, EnumFacing side, float hitX, float hitY, float hitZ, EntityPlayer player, ItemStack stack) {
+	public boolean canITBlockBePlaced(World world, BlockPos pos, BlockState newState, Direction side, float hitX, float hitY, float hitZ, PlayerEntity player, ItemStack stack) {
 		if(stack.getItemDamage() == BlockType_MetalDevice.COKE_OVEN_PREHEATER.getMeta()) {
-			EnumFacing f = EnumFacing.fromAngle(player.rotationYaw);
+			Direction f = Direction.fromAngle(player.rotationYaw);
 			if(f.getAxis() == Axis.Z) {
 				return world.getBlockState(pos.add(1, 0, 0)).getBlock().isReplaceable(world, pos.add(1, 0, 0)) && world.getBlockState(pos.add(-1, 0, 0)).getBlock().isReplaceable(world, pos.add(-1, 0, 0));
 			} else {
@@ -55,13 +55,13 @@ public class BlockMetalDevice extends BlockITTileProvider<BlockType_MetalDevice>
 	}
 
 	@Override
-	public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
+	public BlockState getExtendedState(BlockState state, IBlockAccess world, BlockPos pos) {
 		state = super.getExtendedState(state, world, pos);
 		return state;
 	}
 
 	@Override
-	public boolean allowHammerHarvest(IBlockState state) {
+	public boolean allowHammerHarvest(BlockState state) {
 		return true;
 	}
 

@@ -14,13 +14,13 @@ import blusunrize.immersiveengineering.common.util.Utils;
 import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityDistillerSlave;
 import mctmods.immersivetechnology.common.blocks.metal.types.BlockType_MetalMultiblock;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -71,15 +71,15 @@ public class MultiblockDistiller implements IMultiblock {
 	}
 
 	@Override
-	public boolean isBlockTrigger(IBlockState state) {
+	public boolean isBlockTrigger(BlockState state) {
 		return Utils.compareToOreName(new ItemStack(state.getBlock(), 1, state.getBlock().getMetaFromState(state)), "blockSheetmetalIron");
 	}
 
 	@Override
-	public boolean createStructure(World world, BlockPos pos, EnumFacing side, EntityPlayer player) {
-		side = (side == EnumFacing.UP || side == EnumFacing.DOWN)? EnumFacing.fromAngle(player.rotationYaw) : side.getOpposite();
-		IBlockState master = ITContent.blockMetalMultiblock.getStateFromMeta(BlockType_MetalMultiblock.DISTILLER.getMeta());
-		IBlockState slave = ITContent.blockMetalMultiblock.getStateFromMeta(BlockType_MetalMultiblock.DISTILLER_SLAVE.getMeta());
+	public boolean createStructure(World world, BlockPos pos, Direction side, PlayerEntity player) {
+		side = (side == Direction.UP || side == Direction.DOWN)? Direction.fromAngle(player.rotationYaw) : side.getOpposite();
+		BlockState master = ITContent.blockMetalMultiblock.getStateFromMeta(BlockType_MetalMultiblock.DISTILLER.getMeta());
+		BlockState slave = ITContent.blockMetalMultiblock.getStateFromMeta(BlockType_MetalMultiblock.DISTILLER_SLAVE.getMeta());
 		boolean mirror = false;
 		if(!this.structureCheck(world, pos, side, mirror)) {
 			mirror = true;
@@ -95,7 +95,7 @@ public class MultiblockDistiller implements IMultiblock {
 					if((h == 0 && w == 0 && l == - 1) || (h == 1 && l < 0)) continue;
 					int ww = mirror ? - w : w;
 					BlockPos pos2 = pos.offset(side, l).offset(side.rotateY(), ww).add(0, h, 0);
-					int[] offset = new int[] {(side == EnumFacing.WEST ? - l : side == EnumFacing.EAST ? l : side == EnumFacing.NORTH ? ww : - ww), h, (side == EnumFacing.NORTH ? - l : side == EnumFacing.SOUTH ? l : side == EnumFacing.EAST ? ww : - ww)};
+					int[] offset = new int[] {(side == Direction.WEST ? - l : side == Direction.EAST ? l : side == Direction.NORTH ? ww : - ww), h, (side == Direction.NORTH ? - l : side == Direction.SOUTH ? l : side == Direction.EAST ? ww : - ww)};
 					world.setBlockState(pos2, (offset[0]==0&&offset[1]==0&&offset[2]==0)? master : slave);
 					TileEntity curr = world.getTileEntity(pos2);
 					if(curr instanceof TileEntityDistillerSlave) {
@@ -112,7 +112,7 @@ public class MultiblockDistiller implements IMultiblock {
 		return true;
 	}
 
-	boolean structureCheck(World world, BlockPos startPos, EnumFacing dir, boolean mirror) {
+	boolean structureCheck(World world, BlockPos startPos, Direction dir, boolean mirror) {
 		for(int h = - 1 ; h < 2 ; h ++) {
 			for(int l = - 1 ; l < 2 ; l ++) {
 				for(int w = - 1 ; w < 2 ; w ++) {

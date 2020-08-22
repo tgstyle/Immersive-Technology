@@ -7,7 +7,7 @@ import mctmods.immersivetechnology.common.util.TranslationKey;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -30,7 +30,7 @@ public class TileEntityStackLimiter extends TileEntityCommonValve implements IIt
 	@SideOnly(Side.CLIENT)
 	@Override
 	public void showGui() {
-		Minecraft.getMinecraft().displayGuiScreen(new GuiStackLimiter(this));
+		Minecraft.getInstance().displayGuiScreen(new GuiStackLimiter(this));
 	}
 
 	public static class DummyInventory implements IItemHandler {
@@ -65,13 +65,13 @@ public class TileEntityStackLimiter extends TileEntityCommonValve implements IIt
 	}
 
 	@Override
-	public boolean hasCapability(final Capability<?> capability, final EnumFacing facing) {
+	public boolean hasCapability(final Capability<?> capability, final Direction facing) {
 		return (facing != null && capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing.getAxis() == this.facing.getAxis());
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T getCapability(final Capability<T> capability, final EnumFacing facing) {
+	public <T> T getCapability(final Capability<T> capability, final Direction facing) {
 		if(facing == null) return null;
 		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
 			if(facing == this.facing) return (T)this;

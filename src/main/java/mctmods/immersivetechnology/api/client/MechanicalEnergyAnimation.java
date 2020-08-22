@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.api.client;
 
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 
 public class MechanicalEnergyAnimation {
 	protected float animationRotation;
@@ -16,15 +16,15 @@ public class MechanicalEnergyAnimation {
 		this.animationMomentum = momentum;
 	}
 
-	public MechanicalEnergyAnimation readFromNBT(NBTTagCompound nbt) {
+	public MechanicalEnergyAnimation readFromNBT(CompoundNBT nbt) {
 		this.animationRotation = nbt.getFloat("animationRotation");
 		this.animationMomentum = nbt.getFloat("animationMomentum");
 		return this;
 	}
 
-	public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
-		nbt.setFloat("animationRotation", animationRotation);
-		nbt.setFloat("animationMomentum", animationMomentum);
+	public CompoundNBT writeToNBT(CompoundNBT nbt) {
+		nbt.putFloat("animationRotation", animationRotation);
+		nbt.putFloat("animationMomentum", animationMomentum);
 		return nbt;
 	}
 

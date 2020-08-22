@@ -6,10 +6,10 @@ import mctmods.immersivetechnology.common.CommonProxy;
 import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockSolarReflector;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySolarReflectorSlave;
 import mctmods.immersivetechnology.common.util.TemporaryTileEntityRequest;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 
 //REMOVE THIS AFTER PORTING!!!
@@ -56,19 +56,19 @@ public class TileEntitySolarReflector extends TileEntitySolarReflectorSlave {
 
 	int pos;
 	BlockPos worldPosition;
-	IBlockState changeTo;
+	BlockState changeTo;
 	boolean master;
-	EnumFacing facing;
-	NBTTagCompound thisNbt;
+	Direction facing;
+	CompoundNBT thisNbt;
 
 	@Override
-	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
-		pos = nbt.getInteger("pos");
-		int x = nbt.getInteger("x");
-		int y = nbt.getInteger("y");
-		int z = nbt.getInteger("z");
+	public void readCustomNBT(CompoundNBT nbt, boolean descPacket) {
+		pos = nbt.getInt("pos");
+		int x = nbt.getInt("x");
+		int y = nbt.getInt("y");
+		int z = nbt.getInt("z");
 		int[] offset = nbt.getIntArray("offset");
-		facing = EnumFacing.VALUES[nbt.getInteger("facing")];
+		facing = Direction.VALUES[nbt.getInt("facing")];
 		thisNbt = nbt;
 		if(offset[0] == 0 && offset[1] == 0 && offset[2] == 0) master = true;
 		worldPosition = new BlockPos(x, y, z);

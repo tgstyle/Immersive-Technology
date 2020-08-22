@@ -6,7 +6,7 @@ import blusunrize.immersiveengineering.common.blocks.metal.TileEntityMultiblockM
 import blusunrize.immersiveengineering.common.util.Utils;
 import mctmods.immersivetechnology.common.util.multiblock.ITMultiblock;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
@@ -35,7 +35,7 @@ public abstract class TileEntityMultiblockNewSystem<T extends TileEntityMultiblo
 	}
 
 	@Override
-	public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
+	public boolean hasCapability(Capability<?> capability, @Nullable Direction facing) {
 		if(capability== CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY&&this.getAccessibleFluidTanks(facing).length > 0)
 			return true;
 		return super.hasCapability(capability, facing);
@@ -43,7 +43,7 @@ public abstract class TileEntityMultiblockNewSystem<T extends TileEntityMultiblo
 
 	@SuppressWarnings({ "unchecked", "hiding" })
 	@Override
-	public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
+	public <T> T getCapability(Capability<T> capability, @Nullable Direction facing) {
 		if(capability==CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY&&this.getAccessibleFluidTanks(facing).length > 0)
 			return (T)new MultiblockFluidWrapper(this, facing);
 		return super.getCapability(capability, facing);

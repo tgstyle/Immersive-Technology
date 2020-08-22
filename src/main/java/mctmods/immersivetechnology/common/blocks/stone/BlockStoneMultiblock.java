@@ -8,9 +8,9 @@ import mctmods.immersivetechnology.common.blocks.stone.tileentities.TileEntityCo
 import mctmods.immersivetechnology.common.blocks.stone.types.BlockType_StoneMultiblock;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -26,7 +26,7 @@ public class BlockStoneMultiblock extends BlockITMultiblock<BlockType_StoneMulti
 	}
 
 	@Override
-	public boolean isSideSolid(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
+	public boolean isSideSolid(BlockState state, IBlockAccess world, BlockPos pos, Direction side) {
 		TileEntity te = world.getTileEntity(pos);
 		if(te instanceof TileEntityCokeOvenAdvancedSlave) return ((TileEntityCokeOvenAdvancedSlave)te).pos == 1 || ((TileEntityCokeOvenAdvancedSlave)te).pos == 4 || ((TileEntityCokeOvenAdvancedSlave)te).pos == 7 || (((TileEntityCokeOvenAdvancedSlave)te).pos == 31);
 		return true;

@@ -8,15 +8,15 @@ import mctmods.immersivetechnology.common.blocks.connectors.tileentities.TileEnt
 import mctmods.immersivetechnology.common.gui.ContainerTimer;
 import mctmods.immersivetechnology.common.util.network.MessageTileSync;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.nbt.CompoundNBT;
 import org.lwjgl.opengl.GL11;
 
 public class GuiTimer extends GuiIEContainerBase {
 	TileEntityTimer tile;
 
-	public GuiTimer(InventoryPlayer inventoryPlayer, TileEntityTimer tile) {
-		super(new ContainerTimer(inventoryPlayer, tile));
+	public GuiTimer(PlayerInventory playerInventory, TileEntityTimer tile) {
+		super(new ContainerTimer(playerInventory, tile));
 		this.tile=tile;
 	}
 
@@ -30,7 +30,7 @@ public class GuiTimer extends GuiIEContainerBase {
 
 	@Override
 	protected void actionPerformed(GuiButton button) {
-		NBTTagCompound tag = new NBTTagCompound();
+		CompoundNBT tag = new CompoundNBT();
 		tag.setInteger("buttonId", button.id);
 		ImmersiveTechnology.packetHandler.sendToServer(new MessageTileSync(tile, tag));
 		this.initGui();

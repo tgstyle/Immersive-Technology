@@ -12,12 +12,12 @@ import mctmods.immersivetechnology.common.util.ITSounds;
 import mctmods.immersivetechnology.common.util.network.MessageStopSound;
 import mctmods.immersivetechnology.common.util.sound.ITSoundHandler;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.client.entity.player.ClientPlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTank;
+import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
@@ -47,23 +47,23 @@ public class TileEntitySteamTurbineMaster extends TileEntitySteamTurbineSlave im
 	MechanicalEnergyAnimation animation = new MechanicalEnergyAnimation();
 
 	@Override
-	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
+	public void readCustomNBT(CompoundNBT nbt, boolean descPacket) {
 		super.readCustomNBT(nbt, descPacket);
-		tanks[0].readFromNBT(nbt.getCompoundTag("tank0"));
-		tanks[1].readFromNBT(nbt.getCompoundTag("tank1"));
-		speed = nbt.getInteger("speed");
+		tanks[0].readFromNBT(nbt.getCompound("tank0"));
+		tanks[1].readFromNBT(nbt.getCompound("tank1"));
+		speed = nbt.getInt("speed");
 		animation.readFromNBT(nbt);
-		burnRemaining = nbt.getInteger("burnRemaining");
+		burnRemaining = nbt.getInt("burnRemaining");
 	}
 
 	@Override
-	public void writeCustomNBT(NBTTagCompound nbt, boolean descPacket) {
+	public void writeCustomNBT(CompoundNBT nbt, boolean descPacket) {
 		super.writeCustomNBT(nbt, descPacket);
-		nbt.setTag("tank0", tanks[0].writeToNBT(new NBTTagCompound()));
-		nbt.setTag("tank1", tanks[1].writeToNBT(new NBTTagCompound()));
-		nbt.setInteger("speed", speed);
+		nbt.put("tank0", tanks[0].writeToNBT(new CompoundNBT()));
+		nbt.put("tank1", tanks[1].writeToNBT(new CompoundNBT()));
+		nbt.putInt("speed", speed);
 		animation.writeToNBT(nbt);
-		nbt.setInteger("burnRemaining", burnRemaining);
+		nbt.putInt("burnRemaining", burnRemaining);
 	}
 
 	private void speedUp() {
@@ -91,7 +91,7 @@ public class TileEntitySteamTurbineMaster extends TileEntitySteamTurbineSlave im
 		BlockPos center = getPos().offset(facing, 5);
 		if(level == 0) ITSoundHandler.StopSound(center);
 		else {
-			EntityPlayerSP player = Minecraft.getMinecraft().player;
+			ClientPlayerEntity player = Minecraft.getInstance().player;
 			float attenuation = Math.max((float) player.getDistanceSq(center.getX(), center.getY(), center.getZ()) / 8, 1);
 			ITSoundHandler.PlaySound(center, ITSounds.turbine, SoundCategory.BLOCKS, true, (10 * level) / attenuation, level);
 		}

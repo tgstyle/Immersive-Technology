@@ -14,14 +14,14 @@ import li.cil.oc.api.network.ManagedEnvironment;
 import li.cil.oc.api.prefab.DriverSidedTileEntity;
 
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 
 public class SteamTurbineDriver extends DriverSidedTileEntity {
 	@Override
-	public ManagedEnvironment createEnvironment(World world, BlockPos pos, EnumFacing facing) {
+	public ManagedEnvironment createEnvironment(World world, BlockPos pos, Direction facing) {
 		TileEntity tile = world.getTileEntity(pos);
 
 		if(tile instanceof TileEntitySteamTurbineSlave) {

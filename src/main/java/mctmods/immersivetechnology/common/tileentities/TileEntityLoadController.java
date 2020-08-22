@@ -7,7 +7,7 @@ import mctmods.immersivetechnology.client.gui.GuiLoadController;
 import mctmods.immersivetechnology.common.util.TranslationKey;
 import net.minecraft.client.Minecraft;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
@@ -28,17 +28,17 @@ public class TileEntityLoadController extends TileEntityCommonValve implements I
 	public static class DummyBattery implements IEnergyHandler, IEnergyStorage {
 
 		@Override
-		public int getEnergyStored(EnumFacing enumFacing) {
+		public int getEnergyStored(Direction Direction) {
 			return 0;
 		}
 
 		@Override
-		public int getMaxEnergyStored(EnumFacing enumFacing) {
+		public int getMaxEnergyStored(Direction Direction) {
 			return 0;
 		}
 
 		@Override
-		public boolean canConnectEnergy(EnumFacing enumFacing) {
+		public boolean canConnectEnergy(Direction Direction) {
 			return true;
 		}
 
@@ -76,11 +76,11 @@ public class TileEntityLoadController extends TileEntityCommonValve implements I
 	@SideOnly(Side.CLIENT)
 	@Override
 	public void showGui() {
-		Minecraft.getMinecraft().displayGuiScreen(new GuiLoadController(this));
+		Minecraft.getInstance().displayGuiScreen(new GuiLoadController(this));
 	}
 
 	@Override
-	public boolean hasCapability(final Capability<?> capability, final EnumFacing facing) {
+	public boolean hasCapability(final Capability<?> capability, final Direction facing) {
 		if(facing == null) return false;
 		if(capability == CapabilityEnergy.ENERGY && facing.getAxis() == this.facing.getAxis()) return true;
 		return false;
@@ -88,7 +88,7 @@ public class TileEntityLoadController extends TileEntityCommonValve implements I
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T getCapability(final Capability<T> capability, final EnumFacing facing) {
+	public <T> T getCapability(final Capability<T> capability, final Direction facing) {
 		if(facing == null) return null;
 		if(capability == CapabilityEnergy.ENERGY) {
 			if(facing == this.facing) return (T)this;
@@ -151,22 +151,22 @@ public class TileEntityLoadController extends TileEntityCommonValve implements I
 	}
 
 	@Override
-	public int getEnergyStored(EnumFacing enumFacing) {
+	public int getEnergyStored(Direction Direction) {
 		IEnergyStorage dest = getDestination();
 		if(dest == null) return 0;
-		return enumFacing == facing? dest.getEnergyStored() : 0;
+		return Direction == facing? dest.getEnergyStored() : 0;
 	}
 
 	@Override
-	public int getMaxEnergyStored(EnumFacing enumFacing) {
+	public int getMaxEnergyStored(Direction Direction) {
 		IEnergyStorage dest = getDestination();
 		if(dest == null) return 0;
-		return enumFacing == facing? dest.getMaxEnergyStored() : 0;
+		return Direction == facing? dest.getMaxEnergyStored() : 0;
 	}
 
 	@Override
-	public boolean canConnectEnergy(EnumFacing enumFacing) {
-		return enumFacing.getAxis() == facing.getAxis();
+	public boolean canConnectEnergy(Direction Direction) {
+		return Direction.getAxis() == facing.getAxis();
 	}
 
 	public IEnergyStorage getDestination() {

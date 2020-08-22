@@ -40,7 +40,7 @@ public class CoolingTower {
 
         @Override
         public String describe() {
-            return "Adding Cooling Tower recipe for " + recipe.fluidInput0.getLocalizedName();
+            return "Adding Cooling Tower recipe for " + recipe.fluidInput0.getTranslationKey();
         }
     }
 
@@ -77,8 +77,8 @@ public class CoolingTower {
 
         @Override
         public String describe() {
-            return inputFluid2 == null? "Removing Cooling Tower Recipe for " + inputFluid1.getLocalizedName() :
-                    "Removing Cooling Tower Recipe for " + inputFluid1.getLocalizedName() + " and " + inputFluid2.getLocalizedName();
+            return inputFluid2 == null? "Removing Cooling Tower Recipe for " + inputFluid1.getTranslationKey() :
+                    "Removing Cooling Tower Recipe for " + inputFluid1.getTranslationKey() + " and " + inputFluid2.getTranslationKey();
         }
     }
 }

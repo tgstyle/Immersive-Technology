@@ -3,7 +3,7 @@ package mctmods.immersivetechnology.common.util.network;
 import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -17,9 +17,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class MessageTileSync implements IMessage {
 	BlockPos pos;
-	NBTTagCompound nbt;
+	CompoundNBT nbt;
 
-	public MessageTileSync(TileEntityIEBase tile, NBTTagCompound nbt) {
+	public MessageTileSync(TileEntityIEBase tile, CompoundNBT nbt) {
 		this.pos = tile.getPos();
 		this.nbt = nbt;
 	}
@@ -58,8 +58,8 @@ public class MessageTileSync implements IMessage {
 	public static class HandlerClient implements IMessageHandler<MessageTileSync, IMessage>	{
 		@Override
 		public IMessage onMessage(MessageTileSync message, MessageContext ctx) {
-			Minecraft.getMinecraft().addScheduledTask(() -> {
-				World world = Minecraft.getMinecraft().world;
+			Minecraft.getInstance().addScheduledTask(() -> {
+				World world = Minecraft.getInstance().world;
 				if(world!=null) {
 					TileEntity tile = world.getTileEntity(message.pos);
 					if(tile instanceof TileEntityIEBase)

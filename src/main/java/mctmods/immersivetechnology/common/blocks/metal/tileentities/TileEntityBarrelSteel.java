@@ -9,14 +9,14 @@ import blusunrize.immersiveengineering.common.util.Utils;
 import mctmods.immersivetechnology.common.Config.ITConfig.Barrels;
 import mctmods.immersivetechnology.common.util.ITFluidTank;
 import mctmods.immersivetechnology.common.util.TranslationKey;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.util.EnumHand;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Direction.Axis;
+import net.minecraft.util.Hand;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.common.capabilities.Capability;
@@ -37,7 +37,7 @@ public class TileEntityBarrelSteel extends TileEntityIEBase implements ITickable
 
 	private int sleep = 0;
 
-	SidedFluidHandler[] sidedFluidHandler = {new SidedFluidHandler(this, EnumFacing.DOWN), new SidedFluidHandler(this, EnumFacing.UP)};
+	SidedFluidHandler[] sidedFluidHandler = {new SidedFluidHandler(this, Direction.DOWN), new SidedFluidHandler(this, Direction.UP)};
 	SidedFluidHandler nullsideFluidHandler = new SidedFluidHandler(this, null);
 
 	public void createTank() {
@@ -49,26 +49,26 @@ public class TileEntityBarrelSteel extends TileEntityIEBase implements ITickable
 	}
 
 	@Override
-	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
+	public void readCustomNBT(CompoundNBT nbt, boolean descPacket) {
 		sideConfig = nbt.getIntArray("sideConfig");
 		if(sideConfig == null || sideConfig.length < 2) sideConfig = new int[]{-1, 0};
 		this.readTank(nbt);
 	}
 
-	public void readTank(NBTTagCompound nbt) {
-		tank.readFromNBT(nbt.getCompoundTag("tank"));
+	public void readTank(CompoundNBT nbt) {
+		tank.readFromNBT(nbt.getCompound("tank"));
 	}
 
 	@Override
-	public void writeCustomNBT(NBTTagCompound nbt, boolean descPacket) {
+	public void writeCustomNBT(CompoundNBT nbt, boolean descPacket) {
 		nbt.setIntArray("sideConfig", sideConfig);
 		this.writeTank(nbt, false);
 	}
 
-	public void writeTank(NBTTagCompound nbt, boolean toItem) {
+	public void writeTank(CompoundNBT nbt, boolean toItem) {
 		boolean write = tank.getFluidAmount() > 0;
-		NBTTagCompound tankTag = tank.writeToNBT(new NBTTagCompound());
-		if(!toItem || write) nbt.setTag("tank", tankTag);
+		CompoundNBT tankTag = tank.writeToNBT(new CompoundNBT());
+		if(!toItem || write) nbt.put("tank", tankTag);
 	}
 
 	@Override
@@ -76,7 +76,7 @@ public class TileEntityBarrelSteel extends TileEntityIEBase implements ITickable
 		if(world.isRemote) return;
 		for(int index = 0; index < 2; index++) {
 			if(tank.getFluidAmount() > 0 && sideConfig[index] == 1) {
-				EnumFacing face = EnumFacing.getFront(index);
+				Direction face = Direction.byIndex(index);
 				IFluidHandler output = FluidUtil.getFluidHandler(world, getPos().offset(face), face.getOpposite());
 				if(output != null) {
 					if(sleep == 0) {
@@ -107,30 +107,30 @@ public class TileEntityBarrelSteel extends TileEntityIEBase implements ITickable
 	}
 
 	@Override
-	public String[] getOverlayText(EntityPlayer player, RayTraceResult mop, boolean hammer) {
-		if(Utils.isFluidRelatedItemStack(player.getHeldItem(EnumHand.MAIN_HAND))) {
+	public String[] getOverlayText(PlayerEntity player, RayTraceResult mop, boolean hammer) {
+		if(Utils.isFluidRelatedItemStack(player.getHeldItem(Hand.MAIN_HAND))) {
 			FluidStack fluid = tank.getFluid();
 			return (fluid != null)?
-					new String[]{TranslationKey.OVERLAY_OSD_BARREL_NORMAL_FIRST_LINE.format(fluid.getLocalizedName(), fluid.amount)}:
+					new String[]{TranslationKey.OVERLAY_OSD_BARREL_NORMAL_FIRST_LINE.format(fluid.getTranslationKey(), fluid.amount)}:
 					new String[]{TranslationKey.GUI_EMPTY.text()};
 		}
 		return null;
 	}
 
 	@Override
-	public boolean useNixieFont(EntityPlayer player, RayTraceResult mop) {
+	public boolean useNixieFont(PlayerEntity player, RayTraceResult mop) {
 		return false;
 	}
 
 	@Override
-	public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
+	public boolean hasCapability(Capability<?> capability, @Nullable Direction facing) {
 		if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && (facing == null || facing.getAxis() == Axis.Y)) return true;
 		return super.hasCapability(capability, facing);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
+	public <T> T getCapability(Capability<T> capability, @Nullable Direction facing) {
 		if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && (facing == null || facing.getAxis() == Axis.Y)) return (T)(facing == null ? nullsideFluidHandler : sidedFluidHandler[facing.ordinal()]);
 		return super.getCapability(capability, facing);
 	}
@@ -147,7 +147,7 @@ public class TileEntityBarrelSteel extends TileEntityIEBase implements ITickable
 	}
 
 	@Override
-	public boolean toggleSide(int side, EntityPlayer p) {
+	public boolean toggleSide(int side, PlayerEntity p) {
 		if(side != 0 && side != 1) return false;
 		sideConfig[side]++;
 		if(sideConfig[side] > 1) sideConfig[side] = -1;
@@ -172,9 +172,9 @@ public class TileEntityBarrelSteel extends TileEntityIEBase implements ITickable
 
 	public static class SidedFluidHandler implements IFluidHandler {
 		public TileEntityBarrelSteel barrel;
-		EnumFacing facing;
+		Direction facing;
 
-		SidedFluidHandler(TileEntityBarrelSteel barrel, EnumFacing facing) {
+		SidedFluidHandler(TileEntityBarrelSteel barrel, Direction facing) {
 			this.barrel = barrel;
 			this.facing = facing;
 		}
@@ -206,7 +206,7 @@ public class TileEntityBarrelSteel extends TileEntityIEBase implements ITickable
 	}
 
 	@Override
-	public boolean interact(EnumFacing side, EntityPlayer player, EnumHand hand, ItemStack heldItem, float hitX, float hitY, float hitZ) {
+	public boolean interact(Direction side, PlayerEntity player, Hand hand, ItemStack heldItem, float hitX, float hitY, float hitZ) {
 		if(FluidUtil.interactWithFluidHandler(player, hand, tank)) {
 			return true;
 		}
@@ -214,9 +214,9 @@ public class TileEntityBarrelSteel extends TileEntityIEBase implements ITickable
 	}
 
 	@Override
-	public ItemStack getTileDrop(EntityPlayer player, IBlockState state) {
+	public ItemStack getTileDrop(PlayerEntity player, BlockState state) {
 		ItemStack stack = new ItemStack(state.getBlock(), 1, state.getBlock().getMetaFromState(state));
-		NBTTagCompound tag = new NBTTagCompound();
+		CompoundNBT tag = new CompoundNBT();
 		writeTank(tag, true);
 		if(!tag.hasNoTags()) stack.setTagCompound(tag);
 		return stack;

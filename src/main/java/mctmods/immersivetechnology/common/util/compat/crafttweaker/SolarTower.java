@@ -38,7 +38,7 @@ public class SolarTower {
 
 		@Override
 		public String describe() {
-			return "Adding Solar Tower Recipe for " + recipe.fluidInput.getLocalizedName() + " -> " + recipe.fluidOutput.getLocalizedName();
+			return "Adding Solar Tower Recipe for " + recipe.fluidInput.getTranslationKey() + " -> " + recipe.fluidOutput.getTranslationKey();
 		}
 	}
 
@@ -69,7 +69,7 @@ public class SolarTower {
 
 		@Override
 		public String describe() {
-			return "Removing Solar Tower Input Recipe for " + inputFluid.getLocalizedName();
+			return "Removing Solar Tower Input Recipe for " + inputFluid.getTranslationKey();
 		}
 	}
 

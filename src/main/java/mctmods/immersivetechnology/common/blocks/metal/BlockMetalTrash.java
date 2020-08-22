@@ -8,7 +8,7 @@ import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityTr
 import mctmods.immersivetechnology.common.blocks.metal.types.BlockType_MetalTrash;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -24,13 +24,13 @@ public class BlockMetalTrash extends BlockITTileProvider<BlockType_MetalTrash> {
 	}
 
 	@Override
-	public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
+	public BlockState getExtendedState(BlockState state, IBlockAccess world, BlockPos pos) {
 		state = super.getExtendedState(state, world, pos);
 		return state;
 	}
 
 	@Override
-	public boolean allowHammerHarvest(IBlockState state) {
+	public boolean allowHammerHarvest(BlockState state) {
 		return true;
 	}
 

@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.common.util.multiblock;
 
 import com.google.gson.annotations.SerializedName;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 
 public enum LocalFacing {
 
@@ -24,7 +24,7 @@ public enum LocalFacing {
         this.index = index;
     }
 
-    public EnumFacing LocalToGlobal(EnumFacing origin) {
+    public Direction LocalToGlobal(Direction origin) {
         if(origin == null) return null;
         switch(this.index) {
             case 0: return RotateDown(origin);
@@ -37,19 +37,19 @@ public enum LocalFacing {
         return null;
     }
 
-    private EnumFacing RotateDown(EnumFacing origin) {
+    private Direction RotateDown(Direction origin) {
         switch(origin) {
-            case UP: return EnumFacing.SOUTH;
-            case DOWN: return EnumFacing.NORTH;
-            default: return EnumFacing.DOWN;
+            case UP: return Direction.SOUTH;
+            case DOWN: return Direction.NORTH;
+            default: return Direction.DOWN;
         }
     }
 
-    private EnumFacing RotateUp(EnumFacing origin) {
+    private Direction RotateUp(Direction origin) {
         switch(origin) {
-            case UP: return EnumFacing.NORTH;
-            case DOWN: return EnumFacing.SOUTH;
-            default: return EnumFacing.UP;
+            case UP: return Direction.NORTH;
+            case DOWN: return Direction.SOUTH;
+            default: return Direction.UP;
         }
     }
 }

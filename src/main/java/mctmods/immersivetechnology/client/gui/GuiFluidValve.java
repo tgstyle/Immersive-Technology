@@ -29,7 +29,7 @@ public class GuiFluidValve extends GUICommonValve {
 
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-		ScaledResolution resolution = new ScaledResolution(Minecraft.getMinecraft());
+		ScaledResolution resolution = new ScaledResolution(Minecraft.getInstance());
 		drawDefaultBackground();
 		ClientUtils.bindTexture("immersivetech:textures/gui/gui_fluid_valve.png");
 		drawModalRectWithCustomSizedTexture((resolution.getScaledWidth() - 216) / 2, (resolution.getScaledHeight() - 82) / 2, 0, 0, 216, 88, 216, 88);

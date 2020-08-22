@@ -4,13 +4,13 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IPlayerIn
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.ITileDrop;
 import mctmods.immersivetechnology.common.tileentities.TileEntityCommonOSD;
 import mctmods.immersivetechnology.common.util.TranslationKey;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.*;
@@ -25,18 +25,18 @@ public class TileEntityBarrel extends TileEntityCommonOSD implements IFluidTank,
 	public FluidStack infiniteFluid;
 
 	@Override
-	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
+	public void readCustomNBT(CompoundNBT nbt, boolean descPacket) {
 		super.readCustomNBT(nbt, descPacket);
 		Fluid fluid = FluidRegistry.getFluid(nbt.getString("fluid"));
 		if(fluid != null) infiniteFluid = new FluidStack(fluid, Integer.MAX_VALUE);
-		else if(nbt.hasKey("tank") && nbt.getCompoundTag("tank").hasKey("FluidName")) {
-			fluid = FluidRegistry.getFluid(nbt.getCompoundTag("tank").getString("FluidName"));
+		else if(nbt.hasKey("tank") && nbt.getCompound("tank").hasKey("FluidName")) {
+			fluid = FluidRegistry.getFluid(nbt.getCompound("tank").getString("FluidName"));
 			if(fluid != null) infiniteFluid = new FluidStack(fluid, Integer.MAX_VALUE);
 		}
 	}
 
 	@Override
-	public void writeCustomNBT(NBTTagCompound nbt, boolean descPacket) {
+	public void writeCustomNBT(CompoundNBT nbt, boolean descPacket) {
 		super.writeCustomNBT(nbt, descPacket);
 		if(infiniteFluid != null) nbt.setString("fluid", infiniteFluid.getFluid().getName());
 	}
@@ -46,21 +46,21 @@ public class TileEntityBarrel extends TileEntityCommonOSD implements IFluidTank,
 		super.update();
 		if(world.isRemote || infiniteFluid == null) return;
 		for(int index = 0; index < 6; index++) {
-			EnumFacing face = EnumFacing.getFront(index);
+			Direction face = Direction.byIndex(index);
 			IFluidHandler output = FluidUtil.getFluidHandler(world, getPos().offset(face), face.getOpposite());
 			if(output != null) acceptedAmount += output.fill(infiniteFluid, true);
 		}
 	}
 
 	@Override
-	public boolean hasCapability(final Capability<?> capability, final EnumFacing facing) {
+	public boolean hasCapability(final Capability<?> capability, final Direction facing) {
 		if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) return true;
 		return false;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
+	public <T> T getCapability(Capability<T> capability, @Nullable Direction facing) {
 		if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) return (T) this;
 		return super.getCapability(capability, facing);
 	}
@@ -137,7 +137,7 @@ public class TileEntityBarrel extends TileEntityCommonOSD implements IFluidTank,
 	}
 
 	@Override
-	public boolean interact(EnumFacing side, EntityPlayer player, EnumHand hand, ItemStack heldItem, float hitX, float hitY, float hitZ) {
+	public boolean interact(Direction side, PlayerEntity player, Hand hand, ItemStack heldItem, float hitX, float hitY, float hitZ) {
 		FluidStack fluid = FluidUtil.getFluidContained(heldItem);
 		if(fluid != null) {
 			infiniteFluid = new FluidStack(fluid, Integer.MAX_VALUE);
@@ -152,22 +152,22 @@ public class TileEntityBarrel extends TileEntityCommonOSD implements IFluidTank,
 	}
 
 	@Override
-	public void receiveMessageFromServer(NBTTagCompound message) {
+	public void receiveMessageFromServer(CompoundNBT message) {
 		if(serializeNBT().hasKey("fluid")) infiniteFluid = new FluidStack(FluidRegistry.getFluid(message.getString("fluid")), Integer.MAX_VALUE);
 		super.receiveMessageFromServer(message);
 	}
 
 	@Override
-	public void notifyNearbyClients(NBTTagCompound nbt) {
+	public void notifyNearbyClients(CompoundNBT nbt) {
 		if(infiniteFluid != null) nbt.setString("fluid", infiniteFluid.getFluid().getName());
 		super.notifyNearbyClients(nbt);
 	}
 
 	@Override
-	public ItemStack getTileDrop(EntityPlayer player, IBlockState state) {
+	public ItemStack getTileDrop(PlayerEntity player, BlockState state) {
 		ItemStack stack = new ItemStack(state.getBlock(), 1, state.getBlock().getMetaFromState(state));
 		if(infiniteFluid != null) {
-			NBTTagCompound tag = new NBTTagCompound();
+			CompoundNBT tag = new CompoundNBT();
 			tag.setString("fluid", infiniteFluid.getFluid().getName());
 			stack.setTagCompound(tag);
 		}
@@ -180,8 +180,8 @@ public class TileEntityBarrel extends TileEntityCommonOSD implements IFluidTank,
 	}
 
 	@Override
-	public String[] getOverlayText(EntityPlayer player, RayTraceResult mop, boolean hammer) {
-		return new String[]{ infiniteFluid != null? text().format(infiniteFluid.getLocalizedName(), lastAcceptedAmount) : TranslationKey.GUI_EMPTY.text() };
+	public String[] getOverlayText(PlayerEntity player, RayTraceResult mop, boolean hammer) {
+		return new String[]{ infiniteFluid != null? text().format(infiniteFluid.getTranslationKey(), lastAcceptedAmount) : TranslationKey.GUI_EMPTY.text() };
 	}
 
 	@Override

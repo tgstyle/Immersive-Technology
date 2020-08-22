@@ -12,14 +12,14 @@ import blusunrize.immersiveengineering.common.util.Utils;
 import mctmods.immersivetechnology.common.Config;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityFluidPipe.DirectionalFluidOutput;
 import mctmods.immersivetechnology.common.util.IPipe;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.init.Blocks;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fluids.Fluid;
+import net.minecraft.fluid.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
@@ -38,7 +38,7 @@ public class TileEntityFluidPump extends blusunrize.immersiveengineering.common.
 
 	public int getRSPower(BlockPos position) {
 		int toReturn = 0;
-		for(EnumFacing directions : EnumFacing.values()) toReturn = Math.max(world.getRedstonePower(position.offset(directions, -1), directions), toReturn);
+		for(Direction directions : Direction.values()) toReturn = Math.max(world.getRedstonePower(position.offset(directions, -1), directions), toReturn);
 		return toReturn;
 	}
 		
@@ -52,7 +52,7 @@ public class TileEntityFluidPump extends blusunrize.immersiveengineering.common.
 		}
 
 		if(getRSPower(getPos()) > 0 || getRSPower(getPos().add(0, 1, 0)) > 0) {
-			for(EnumFacing f : EnumFacing.values()) {
+			for(Direction f : Direction.values()) {
 				if(sideConfig[f.ordinal()] == 0) {
 					BlockPos output = getPos().offset(f);
 					TileEntity tile = Utils.getExistingTileEntity(world, output);
@@ -64,8 +64,8 @@ public class TileEntityFluidPump extends blusunrize.immersiveengineering.common.
 						handler.drain(out, true);
 					} else if(world.getTotalWorldTime()%20 == ((getPos().getX()^getPos().getZ())&19) && world.getBlockState(getPos().offset(f)).getBlock() == Blocks.WATER && IEConfig.Machines.pump_infiniteWater && tank.fill(new FluidStack(FluidRegistry.WATER, 1000), false) == 1000 && this.energyStorage.extractEnergy(IEConfig.Machines.pump_consumption, true) >= IEConfig.Machines.pump_consumption) {
 						int connectedSources = 0;
-						for(EnumFacing f2 : EnumFacing.HORIZONTALS) {
-							IBlockState waterState = world.getBlockState(getPos().offset(f).offset(f2));
+						for(Direction f2 : Direction.HORIZONTALS) {
+							BlockState waterState = world.getBlockState(getPos().offset(f).offset(f2));
 							if(waterState.getBlock() == Blocks.WATER && Blocks.WATER.getMetaFromState(waterState) == 0) connectedSources++;
 						}
 						if(connectedSources > 1) {
@@ -99,7 +99,7 @@ public class TileEntityFluidPump extends blusunrize.immersiveengineering.common.
 		openList.clear();
 		closedList.clear();
 		checked.clear();
-		for(EnumFacing f : EnumFacing.values()) {
+		for(Direction f : Direction.values()) {
 			if(sideConfig[f.ordinal()] == 0) {
 				openList.add(getPos().offset(f));
 				checkingArea = true;
@@ -119,7 +119,7 @@ public class TileEntityFluidPump extends blusunrize.immersiveengineering.common.
 				if(fluid != null && (fluid != FluidRegistry.WATER || !IEConfig.Machines.pump_infiniteWater) && (searchFluid == null || fluid == searchFluid)) {
 					if(searchFluid == null) searchFluid = fluid;
 					if(Utils.drainFluidBlock(world, next, false) != null) closedList.add(next);
-					for(EnumFacing f : EnumFacing.values()) {
+					for(Direction f : Direction.values()) {
 						BlockPos pos2 = next.offset(f);
 						fluid = Utils.getRelatedFluid(world, pos2);
 						if(!checked.contains(pos2) && !closedList.contains(pos2) && !openList.contains(pos2) && fluid != null && (fluid != FluidRegistry.WATER || !IEConfig.Machines.pump_infiniteWater) && (searchFluid == null || fluid == searchFluid)) openList.add(pos2);
@@ -142,15 +142,15 @@ public class TileEntityFluidPump extends blusunrize.immersiveengineering.common.
 		final int fluidForSort = canAccept;
 		int sum = 0;
 		HashMap<TileEntityFluidPipe.DirectionalFluidOutput, Integer> sorting = new HashMap<DirectionalFluidOutput, Integer>();
-		for(EnumFacing f : EnumFacing.values()) {
+		for(Direction f : Direction.values()) {
 			if(sideConfig[f.ordinal()] == 1) {
 				TileEntity tile = Utils.getExistingTileEntity(world, getPos().offset(f));
 				if(tile != null && tile.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, f.getOpposite())) {
 					IFluidHandler handler = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, f.getOpposite());
 					FluidStack insertResource = Utils.copyFluidStackWithAmount(fs, fs.amount, true);
 					if(tile instanceof IPipe && this.energyStorage.extractEnergy(accelPower, true) >= accelPower) {
-						insertResource.tag = new NBTTagCompound();
-						insertResource.tag.setBoolean("pressurized", true);
+						insertResource.tag = new CompoundNBT();
+						insertResource.tag.putBoolean("pressurized", true);
 					}
 					int temp = handler.fill(insertResource, false);
 					if(temp > 0) {
@@ -170,8 +170,8 @@ public class TileEntityFluidPump extends blusunrize.immersiveengineering.common.
 				FluidStack insertResource = Utils.copyFluidStackWithAmount(fs, amount, true);
 				if(output.containingTile instanceof IPipe && this.energyStorage.extractEnergy(accelPower, true) >= accelPower) {
 					this.energyStorage.extractEnergy(accelPower, false);
-					insertResource.tag = new NBTTagCompound();
-					insertResource.tag.setBoolean("pressurized", true);
+					insertResource.tag = new CompoundNBT();
+					insertResource.tag.putBoolean("pressurized", true);
 				}
 				int r = output.output.fill(insertResource, !simulate);
 				f += r;

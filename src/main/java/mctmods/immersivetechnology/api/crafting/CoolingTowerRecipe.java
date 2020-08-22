@@ -2,8 +2,8 @@ package mctmods.immersivetechnology.api.crafting;
 
 import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import com.google.common.collect.Lists;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.fluids.Fluid;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.fluid.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
 import java.util.ArrayList;
@@ -93,15 +93,15 @@ public class CoolingTowerRecipe extends MultiblockRecipe {
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
-        nbt.setTag("input0", fluidInput0.writeToNBT(new NBTTagCompound()));
-        nbt.setTag("input1", fluidInput0.writeToNBT(new NBTTagCompound()));
+    public CompoundNBT writeToNBT(CompoundNBT nbt) {
+        nbt.put("input0", fluidInput0.writeToNBT(new CompoundNBT()));
+        nbt.put("input1", fluidInput0.writeToNBT(new CompoundNBT()));
         return nbt;
     }
 
-    public static CoolingTowerRecipe loadFromNBT(NBTTagCompound nbt) {
-        FluidStack fluidInput0 = FluidStack.loadFluidStackFromNBT(nbt.getCompoundTag("input0"));
-        FluidStack fluidInput1 = FluidStack.loadFluidStackFromNBT(nbt.getCompoundTag("input0"));
+    public static CoolingTowerRecipe loadFromNBT(CompoundNBT nbt) {
+        FluidStack fluidInput0 = FluidStack.loadFluidStackFromNBT(nbt.getCompound("input0"));
+        FluidStack fluidInput1 = FluidStack.loadFluidStackFromNBT(nbt.getCompound("input0"));
         return findRecipe(fluidInput0, fluidInput1);
     }
 

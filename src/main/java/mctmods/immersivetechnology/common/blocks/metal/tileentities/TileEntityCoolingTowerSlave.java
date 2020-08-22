@@ -8,11 +8,11 @@ import mctmods.immersivetechnology.common.blocks.metal.TileEntityMultiblockNewSy
 import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockCoolingTower;
 import mctmods.immersivetechnology.common.util.multiblock.IMultiblockAdvAABB;
 import mctmods.immersivetechnology.common.util.multiblock.MultiblockUtils;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -29,12 +29,12 @@ public class TileEntityCoolingTowerSlave extends TileEntityMultiblockNewSystem<T
     }
 
     @Override
-    public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
+    public void readCustomNBT(CompoundNBT nbt, boolean descPacket) {
         super.readCustomNBT(nbt, descPacket);
     }
 
     @Override
-    public void writeCustomNBT(NBTTagCompound nbt, boolean descPacket) {
+    public void writeCustomNBT(CompoundNBT nbt, boolean descPacket) {
         super.writeCustomNBT(nbt, descPacket);
     }
 
@@ -91,7 +91,7 @@ public class TileEntityCoolingTowerSlave extends TileEntityMultiblockNewSystem<T
     }
 
     @Override
-    protected CoolingTowerRecipe readRecipeFromNBT(NBTTagCompound tag) {
+    protected CoolingTowerRecipe readRecipeFromNBT(CompoundNBT tag) {
         return CoolingTowerRecipe.loadFromNBT(tag);
     }
 
@@ -159,21 +159,21 @@ public class TileEntityCoolingTowerSlave extends TileEntityMultiblockNewSystem<T
     }
 
     @Override
-    protected IFluidTank[] getAccessibleFluidTanks(EnumFacing side) {
+    protected IFluidTank[] getAccessibleFluidTanks(Direction side) {
         TileEntityCoolingTowerMaster master = master();
         if(master == null) return ITUtils.emptyIFluidTankList;
         return master.getAccessibleFluidTanks(side, pos);
     }
 
     @Override
-    protected boolean canFillTankFrom(int iTank, EnumFacing side, FluidStack resource) {
+    protected boolean canFillTankFrom(int iTank, Direction side, FluidStack resource) {
         TileEntityCoolingTowerMaster master = this.master();
         if(master == null || side == null) return false;
         return master.canFillTankFrom(iTank, side, resource, pos);
     }
 
     @Override
-    protected boolean canDrainTankFrom(int iTank, EnumFacing side) {
+    protected boolean canDrainTankFrom(int iTank, Direction side) {
         TileEntityCoolingTowerMaster master = this.master();
         if(master == null || side == null) return false;
         return master.canDrainTankFrom(iTank, side, pos);
@@ -190,7 +190,7 @@ public class TileEntityCoolingTowerSlave extends TileEntityMultiblockNewSystem<T
     }
 
     @Override
-    public boolean isOverrideBox(AxisAlignedBB box, EntityPlayer player, RayTraceResult mop, ArrayList<AxisAlignedBB> list) {
+    public boolean isOverrideBox(AxisAlignedBB box, PlayerEntity player, RayTraceResult mop, ArrayList<AxisAlignedBB> list) {
         return false;
     }
 

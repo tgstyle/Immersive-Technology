@@ -1,22 +1,22 @@
 package mctmods.immersivetechnology.common.util.multiblock;
 
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 
 public class PoICache {
 
-    public EnumFacing facing;
+    public Direction facing;
     public int position;
 
-    public PoICache(EnumFacing facing, PoIJSONSchema poi, boolean isMirrored) {
+    public PoICache(Direction facing, PoIJSONSchema poi, boolean isMirrored) {
         this(poi.facing.LocalToGlobal(facing), poi.position, poi.facing, isMirrored);
     }
 
-    public PoICache(EnumFacing facing, int position, LocalFacing localFacing, boolean isMirrored) {
+    public PoICache(Direction facing, int position, LocalFacing localFacing, boolean isMirrored) {
         this.position = position;
         this.facing = isMirrored && (localFacing == LocalFacing.LEFT || localFacing == LocalFacing.RIGHT)? facing.getOpposite() : facing;
     }
 
-    public boolean isPoI(EnumFacing facing, int position) {
+    public boolean isPoI(Direction facing, int position) {
         return this.position == position && this.facing == facing;
     }
 }

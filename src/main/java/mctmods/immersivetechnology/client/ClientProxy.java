@@ -34,9 +34,9 @@ package mctmods.immersivetechnology.client;
 //import mctmods.immersivetechnology.common.util.network.MessageTileSync;
 //import mctmods.immersivetechnology.common.util.sound.ITSoundHandler;
 //import net.minecraft.block.Block;
-//import net.minecraft.block.state.IBlockState;
+//import net.minecraft.block.BlockState;
 //import net.minecraft.client.Minecraft;
-//import net.minecraft.client.entity.EntityPlayerSP;
+//import net.minecraft.client.entity.player.ClientPlayerEntity;
 //import net.minecraft.client.renderer.ItemMeshDefinition;
 //import net.minecraft.client.renderer.block.model.ModelBakery;
 //import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -54,7 +54,7 @@ package mctmods.immersivetechnology.client;
 //import net.minecraftforge.client.model.ModelLoaderRegistry;
 //import net.minecraftforge.client.model.obj.OBJLoader;
 //import net.minecraftforge.common.MinecraftForge;
-//import net.minecraftforge.fluids.Fluid;
+//import net.minecraft.fluid.Fluid;
 //import net.minecraftforge.fml.client.registry.ClientRegistry;
 //import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 //import net.minecraftforge.fml.common.gameevent.PlayerEvent;
@@ -108,7 +108,7 @@ public class ClientProxy extends CommonProxy {
 	@SubscribeEvent
 	public void onClientTick(TickEvent.ClientTickEvent event) {
 		if(!ITUtils.REMOVE_FROM_TICKING.isEmpty() && event.phase == TickEvent.Phase.END) {
-			World world = Minecraft.getMinecraft().world;
+			World world = Minecraft.getInstance().world;
 			if (world == null) ITLogger.warn("ClientProxy has tried to access null world! This shouldn't normally happen...");
 			else {
 				world.tickableTileEntities.removeAll(ITUtils.REMOVE_FROM_TICKING);
@@ -123,7 +123,7 @@ public class ClientProxy extends CommonProxy {
 
 	public void calculateVolume() {
 		float prevVolume = volumeAdjustment;
-		EntityPlayerSP player = ClientUtils.mc().player;
+		ClientPlayerEntity player = ClientUtils.mc().player;
 		if(player == null) return;
 		ItemStack stack = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
 		if(!stack.isEmpty()) {
@@ -270,7 +270,7 @@ public class ClientProxy extends CommonProxy {
 
 		@Nonnull
 		@Override
-		protected ModelResourceLocation getModelResourceLocation(@Nonnull IBlockState state) {
+		protected ModelResourceLocation getModelResourceLocation(@Nonnull BlockState state) {
 			return location;
 		}
 
