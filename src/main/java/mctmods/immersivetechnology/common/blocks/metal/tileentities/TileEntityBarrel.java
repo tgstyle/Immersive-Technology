@@ -38,7 +38,7 @@ public class TileEntityBarrel extends TileEntityCommonOSD implements IFluidTank,
 	@Override
 	public void writeCustomNBT(CompoundNBT nbt, boolean descPacket) {
 		super.writeCustomNBT(nbt, descPacket);
-		if(infiniteFluid != null) nbt.setString("fluid", infiniteFluid.getFluid().getName());
+		if(infiniteFluid != null) nbt.setString("fluid", infiniteFluid.getFluid().getString());
 	}
 
 	@Override
@@ -159,7 +159,7 @@ public class TileEntityBarrel extends TileEntityCommonOSD implements IFluidTank,
 
 	@Override
 	public void notifyNearbyClients(CompoundNBT nbt) {
-		if(infiniteFluid != null) nbt.setString("fluid", infiniteFluid.getFluid().getName());
+		if(infiniteFluid != null) nbt.setString("fluid", infiniteFluid.getFluid().getString());
 		super.notifyNearbyClients(nbt);
 	}
 
@@ -168,7 +168,7 @@ public class TileEntityBarrel extends TileEntityCommonOSD implements IFluidTank,
 		ItemStack stack = new ItemStack(state.getBlock(), 1, state.getBlock().getMetaFromState(state));
 		if(infiniteFluid != null) {
 			CompoundNBT tag = new CompoundNBT();
-			tag.setString("fluid", infiniteFluid.getFluid().getName());
+			tag.setString("fluid", infiniteFluid.getFluid().getString());
 			stack.setTagCompound(tag);
 		}
 		return stack;

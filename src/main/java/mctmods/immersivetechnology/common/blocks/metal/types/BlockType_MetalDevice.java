@@ -9,7 +9,7 @@ public enum BlockType_MetalDevice implements IStringSerializable, BlockITBase.IB
 	COKE_OVEN_PREHEATER;
 
 	@Override
-	public String getName() {
+	public String getString() {
 		return this.toString().toLowerCase(Locale.ENGLISH);
 	}
 

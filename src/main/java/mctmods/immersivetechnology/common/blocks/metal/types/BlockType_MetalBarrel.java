@@ -11,7 +11,7 @@ public enum BlockType_MetalBarrel implements IStringSerializable, BlockITBase.IB
 	BARREL_STEEL;
 
 	@Override
-	public String getName() {
+	public String getString() {
 		return this.toString().toLowerCase(Locale.ENGLISH);
 	}
 

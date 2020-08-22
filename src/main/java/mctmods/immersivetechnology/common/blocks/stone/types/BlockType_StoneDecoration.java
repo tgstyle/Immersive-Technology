@@ -9,7 +9,7 @@ public enum BlockType_StoneDecoration implements IStringSerializable, BlockITBas
 	COKEBRICK_REINFORCED;
 
 	@Override
-	public String getName() {
+	public String getString() {
 		return this.toString().toLowerCase(Locale.ENGLISH);
 	}
 

@@ -38,7 +38,7 @@ public class PressurizedFluid {
 
         @Override
         public String describe() {
-            return "Adding Naturally Pressurized Fluid " + fluid.getName();
+            return "Adding Naturally Pressurized Fluid " + fluid.getString();
         }
     }
 
@@ -55,7 +55,7 @@ public class PressurizedFluid {
 
         @Override
         public String describe() {
-            return "Removing Naturally Pressurized Fluid " + fluid.getName();
+            return "Removing Naturally Pressurized Fluid " + fluid.getString();
         }
     }
 

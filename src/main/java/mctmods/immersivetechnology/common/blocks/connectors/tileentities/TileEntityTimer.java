@@ -12,7 +12,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.EnumDyeColor;
+import net.minecraft.item.DyeColor;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
@@ -175,7 +175,7 @@ public class TileEntityTimer extends TileEntityConnectorRedstone implements IGui
 	public String[] getOverlayText(PlayerEntity player, RayTraceResult mop, boolean hammer) {
 		if(!hammer)	return null;
 		float time = (float) this.target / 20;
-		return new String[] {I18n.format(Lib.DESC_INFO + "redstoneChannel.send", I18n.format("item.fireworksCharge." + EnumDyeColor.byMetadata(redstoneChannelsending).getUnlocalizedName())), I18n.format(String.valueOf(time).toString() + " Sec.")};
+		return new String[] {I18n.format(Lib.DESC_INFO + "redstoneChannel.send", I18n.format("item.fireworksCharge." + DyeColor.byMetadata(redstoneChannelsending).getUnlocalizedName())), I18n.format(String.valueOf(time).toString() + " Sec.")};
 	}
 
 	@Override
@@ -231,7 +231,7 @@ public class TileEntityTimer extends TileEntityConnectorRedstone implements IGui
 	@SideOnly(Side.CLIENT)
 	@Override
 	public int getRenderColour(BlockState object, String group) {
-		if("colour_out".equals(group)) return 0xff000000 | EnumDyeColor.byMetadata(this.redstoneChannelsending).getColorValue();
+		if("colour_out".equals(group)) return 0xff000000 | DyeColor.byMetadata(this.redstoneChannelsending).getColorValue();
 		return 0xffffffff;
 	}
 

@@ -18,11 +18,11 @@ import mctmods.immersivetechnology.common.Config;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityFluidPipeAlternative;
 import mctmods.immersivetechnology.common.util.IPipe;
 import net.minecraft.block.Block;
-import net.minecraft.block.material.EnumPushReaction;
+import net.minecraft.block.material.PushReaction;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.IProperty;
+import net.minecraft.state.Property;
 import net.minecraft.block.properties.PropertyEnum;
-import net.minecraft.block.BlockStateContainer;
+import net.minecraft.state.StateContainer;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.PlayerEntity;
@@ -65,12 +65,12 @@ public class BlockMetalDevice1 extends BlockIETileProvider<BlockTypes_MetalDevic
 		this.setNotNormalBlock(BlockTypes_MetalDevice1.TURRET_CHEM.getMeta());
 		this.setNotNormalBlock(BlockTypes_MetalDevice1.TURRET_GUN.getMeta());
 		this.setNotNormalBlock(BlockTypes_MetalDevice1.BELLJAR.getMeta());
-		this.setMetaMobilityFlag(BlockTypes_MetalDevice1.BLAST_FURNACE_PREHEATER.getMeta(), EnumPushReaction.BLOCK);
-		this.setMetaMobilityFlag(BlockTypes_MetalDevice1.SAMPLE_DRILL.getMeta(), EnumPushReaction.BLOCK);
-		this.setMetaMobilityFlag(BlockTypes_MetalDevice1.TESLA_COIL.getMeta(), EnumPushReaction.BLOCK);
-		this.setMetaMobilityFlag(BlockTypes_MetalDevice1.TURRET_CHEM.getMeta(), EnumPushReaction.BLOCK);
-		this.setMetaMobilityFlag(BlockTypes_MetalDevice1.TURRET_GUN.getMeta(), EnumPushReaction.BLOCK);
-		this.setMetaMobilityFlag(BlockTypes_MetalDevice1.BELLJAR.getMeta(), EnumPushReaction.BLOCK);
+		this.setMetaMobilityFlag(BlockTypes_MetalDevice1.BLAST_FURNACE_PREHEATER.getMeta(), PushReaction.BLOCK);
+		this.setMetaMobilityFlag(BlockTypes_MetalDevice1.SAMPLE_DRILL.getMeta(), PushReaction.BLOCK);
+		this.setMetaMobilityFlag(BlockTypes_MetalDevice1.TESLA_COIL.getMeta(), PushReaction.BLOCK);
+		this.setMetaMobilityFlag(BlockTypes_MetalDevice1.TURRET_CHEM.getMeta(), PushReaction.BLOCK);
+		this.setMetaMobilityFlag(BlockTypes_MetalDevice1.TURRET_GUN.getMeta(), PushReaction.BLOCK);
+		this.setMetaMobilityFlag(BlockTypes_MetalDevice1.BELLJAR.getMeta(), PushReaction.BLOCK);
 	}
 
 	@Override

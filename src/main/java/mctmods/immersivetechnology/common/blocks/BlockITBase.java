@@ -7,11 +7,11 @@ import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.ITContent;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
-import net.minecraft.block.material.EnumPushReaction;
+import net.minecraft.block.material.PushReaction;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.IProperty;
+import net.minecraft.state.Property;
 import net.minecraft.block.properties.PropertyEnum;
-import net.minecraft.block.BlockStateContainer;
+import net.minecraft.state.StateContainer;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.creativetab.CreativeTabs;
@@ -54,7 +54,7 @@ public class BlockITBase<E extends Enum<E> & BlockITBase.IBlockEnum> extends Blo
 	protected Map<Integer, Integer> metaLightOpacities = new HashMap<>();
 	protected Map<Integer, Float> metaHardness = new HashMap<>();
 	protected Map<Integer, Integer> metaResistances = new HashMap<>();
-	protected EnumPushReaction[] metaMobilityFlags;
+	protected PushReaction[] metaMobilityFlags;
 	protected boolean[] canHammerHarvest;
 	protected boolean[] metaNotNormalBlock;
 	private boolean opaqueCube = false;
@@ -69,7 +69,7 @@ public class BlockITBase<E extends Enum<E> & BlockITBase.IBlockEnum> extends Blo
 		this.hasFlavour = new boolean[this.enumValues.length];
 		this.metaRenderLayers = new Set[this.enumValues.length];
 		this.canHammerHarvest = new boolean[this.enumValues.length];
-		this.metaMobilityFlags = new EnumPushReaction[this.enumValues.length];
+		this.metaMobilityFlags = new PushReaction[this.enumValues.length];
 
 		ArrayList<IProperty> propList = new ArrayList<IProperty>();
 		ArrayList<IUnlistedProperty> unlistedPropList = new ArrayList<IUnlistedProperty>();
@@ -264,7 +264,7 @@ public class BlockITBase<E extends Enum<E> & BlockITBase.IBlockEnum> extends Blo
 		return super.getExplosionResistance(world, pos, exploder, explosion);
 	}
 
-	public BlockITBase<E> setMetaMobilityFlag(int meta, EnumPushReaction flag) {
+	public BlockITBase<E> setMetaMobilityFlag(int meta, PushReaction flag) {
 		metaMobilityFlags[meta] = flag;
 		return this;
 	}
@@ -273,9 +273,9 @@ public class BlockITBase<E extends Enum<E> & BlockITBase.IBlockEnum> extends Blo
 	* @deprecated call via {@link BlockState#getMobilityFlag()} whenever possible. Implementing/overriding is fine.
 	**/
 	@Override
-	public EnumPushReaction getMobilityFlag(BlockState state) {
+	public PushReaction getMobilityFlag(BlockState state) {
 		int meta = getMetaFromState(state);
-		if(metaMobilityFlags[meta]==null) return EnumPushReaction.NORMAL;
+		if(metaMobilityFlags[meta]==null) return PushReaction.NORMAL;
 		return metaMobilityFlags[meta];
 	}
 

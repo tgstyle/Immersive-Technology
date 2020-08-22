@@ -36,7 +36,7 @@ public class BlockValve extends BlockITTileProvider<BlockValve.BlockType_Valve> 
 		STACK_LIMITER;
 
 		@Override
-		public String getName() {
+		public String getString() {
 			return this.toString().toLowerCase(Locale.ENGLISH);
 		}
 

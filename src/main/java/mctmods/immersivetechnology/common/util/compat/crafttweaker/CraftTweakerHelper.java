@@ -47,7 +47,7 @@ public class CraftTweakerHelper extends ITCompatModule {
 	public static Object toObject(IIngredient iStack) {
 		if(iStack == null) return null;
 		else {
-			if(iStack instanceof IOreDictEntry) return ((IOreDictEntry)iStack).getName();
+			if(iStack instanceof IOreDictEntry) return ((IOreDictEntry)iStack).getString();
 			else if(iStack instanceof IItemStack) return toStack((IItemStack)iStack);
 			else if(iStack instanceof IngredientStack) {
 				IIngredient ingr = ReflectionHelper.getPrivateValue(IngredientStack.class, (IngredientStack)iStack, "ingredient");
@@ -61,7 +61,7 @@ public class CraftTweakerHelper extends ITCompatModule {
 	public static blusunrize.immersiveengineering.api.crafting.IngredientStack toIEIngredientStack(IIngredient iStack) {
 		if(iStack == null) return null;
 		else {
-			if(iStack instanceof IOreDictEntry) return new blusunrize.immersiveengineering.api.crafting.IngredientStack(((IOreDictEntry)iStack).getName());
+			if(iStack instanceof IOreDictEntry) return new blusunrize.immersiveengineering.api.crafting.IngredientStack(((IOreDictEntry)iStack).getString());
 			else if(iStack instanceof IItemStack) return new blusunrize.immersiveengineering.api.crafting.IngredientStack(toStack((IItemStack)iStack));
 			else if(iStack instanceof IngredientStack) {
 				IIngredient ingr = ReflectionHelper.getPrivateValue(IngredientStack.class, (IngredientStack)iStack, "ingredient");

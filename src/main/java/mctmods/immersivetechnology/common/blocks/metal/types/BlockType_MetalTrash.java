@@ -11,7 +11,7 @@ public enum BlockType_MetalTrash implements IStringSerializable, BlockITBase.IBl
 	TRASH_ENERGY;
 
 	@Override
-	public String getName() {
+	public String getString() {
 		return this.toString().toLowerCase(Locale.ENGLISH);
 	}
 

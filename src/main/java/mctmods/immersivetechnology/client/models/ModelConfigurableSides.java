@@ -47,7 +47,7 @@ public class ModelConfigurableSides implements IBakedModel {
 		TYPES.put("hud_", new ITextureNamer() {
 			@Override
 			public String nameFromSide(Direction side, SideConfig cfg) {
-				return side.ordinal() < 2?side.getName() : "side";
+				return side.ordinal() < 2?side.getString() : "side";
 			}
 		});
 		TYPES.put("hv_", new ITextureNamer() {
@@ -59,7 +59,7 @@ public class ModelConfigurableSides implements IBakedModel {
 		TYPES.put("ud_", new ITextureNamer() {
 			@Override
 			public String nameFromSide(Direction side, SideConfig cfg) {
-				return side.ordinal() < 2?side.getName() : "side";
+				return side.ordinal() < 2?side.getString() : "side";
 			}
 			@Override
 			public String nameFromCfg(Direction side, SideConfig cfg) {
@@ -197,7 +197,7 @@ public class ModelConfigurableSides implements IBakedModel {
 						name = sub.substring(type.length());
 						for(Direction f : Direction.VALUES) {
 							for(SideConfig cfg : SideConfig.values()) {
-								String key = f.getName() + "_" + cfg.getTextureName();
+								String key = f.getString() + "_" + cfg.getTextureName();
 								String tex = name + "_" + e.getValue().getTextureName(f, cfg);
 								builder.put(key, new ResourceLocation(ImmersiveTechnology.MODID, "blocks/" + tex));
 							}
@@ -236,7 +236,7 @@ public class ModelConfigurableSides implements IBakedModel {
 			TextureAtlasSprite[][] tex = new TextureAtlasSprite[6][3];
 			for(Direction f : Direction.VALUES) {
 				for(SideConfig cfg : SideConfig.values()) {
-					ResourceLocation rl = textures.get(f.getName() + "_" + cfg.getTextureName());
+					ResourceLocation rl = textures.get(f.getString() + "_" + cfg.getTextureName());
 					if(rl != null) tex[f.ordinal()][cfg.ordinal()] = ApiUtils.getRegisterSprite(ClientUtils.mc().getTextureMapBlocks(), rl);
 				}
 			}
@@ -249,15 +249,15 @@ public class ModelConfigurableSides implements IBakedModel {
 			ImmutableMap.Builder<String, ResourceLocation> builder = ImmutableMap.builder();
 			for(Direction f : Direction.VALUES) {
 				for(SideConfig cfg : SideConfig.values()) {
-					String key = f.getName() + "_" + cfg.getTextureName();
+					String key = f.getString() + "_" + cfg.getTextureName();
 					ResourceLocation rl = this.textures.get(key);
 					if(textures.containsKey(key)) rl = new ResourceLocation(textures.get(key));
-					else if(textures.containsKey(f.getName())) {
+					else if(textures.containsKey(f.getString())) {
 						ITextureNamer namer = TYPES.get(type);
-						rl = new ResourceLocation(textures.get(f.getName()));
+						rl = new ResourceLocation(textures.get(f.getString()));
 						if(namer != null) {
 							String c = namer.nameFromCfg(f, cfg);
-							if(c != null) rl = new ResourceLocation(textures.get(f.getName()) + "_" + c);
+							if(c != null) rl = new ResourceLocation(textures.get(f.getString()) + "_" + c);
 						}
 					} else if(textures.containsKey("name")) {
 						ITextureNamer namer = TYPES.get(type);
@@ -281,7 +281,7 @@ public class ModelConfigurableSides implements IBakedModel {
 			return "";
 		}
 		default String nameFromSide(Direction side, SideConfig cfg) {
-			return side.getName();
+			return side.getString();
 		}
 		default String nameFromCfg(Direction side, SideConfig cfg) {
 			return cfg.getTextureName();

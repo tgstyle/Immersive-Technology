@@ -96,7 +96,7 @@ public class TileEntityTrashItem extends TileEntityCommonOSD implements IItemHan
 		public void clear() {}
 
 		@Override
-		public String getName() {
+		public String getString() {
 			return TranslationKey.TILE_TRASH_ITEM_NAME.text();
 		}
 

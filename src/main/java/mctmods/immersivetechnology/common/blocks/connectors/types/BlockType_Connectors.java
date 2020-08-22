@@ -19,7 +19,7 @@ public enum BlockType_Connectors implements IStringSerializable, BlockITBase.IBl
 	}
 
 	@Override
-	public String getName() {
+	public String getString() {
 		return this.toString().toLowerCase(Locale.ENGLISH);
 	}
 

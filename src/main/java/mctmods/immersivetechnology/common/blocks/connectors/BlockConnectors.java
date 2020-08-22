@@ -10,9 +10,9 @@ import mctmods.immersivetechnology.common.blocks.connectors.tileentities.TileEnt
 import mctmods.immersivetechnology.common.blocks.connectors.types.BlockType_Connectors;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.IProperty;
+import net.minecraft.state.Property;
 import net.minecraft.block.properties.PropertyEnum;
-import net.minecraft.block.BlockStateContainer;
+import net.minecraft.state.StateContainer;
 import net.minecraft.block.BlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;

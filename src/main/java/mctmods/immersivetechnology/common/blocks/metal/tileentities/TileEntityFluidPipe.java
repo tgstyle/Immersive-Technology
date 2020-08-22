@@ -30,7 +30,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.EnumDyeColor;
+import net.minecraft.item.DyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
@@ -193,7 +193,7 @@ public class TileEntityFluidPipe extends blusunrize.immersiveengineering.common.
 		if(sideConfig == null||sideConfig.length != 6) sideConfig = new int[]{0, 0, 0, 0, 0, 0};
 		pipeCover = new ItemStack(nbt.getCompound("pipeCover"));
 		EnumDyeColor oldColor = color;
-		if(nbt.hasKey("color", NBT.TAG_INT)) color = EnumDyeColor.byMetadata(nbt.getInt("color"));
+		if(nbt.hasKey("color", NBT.TAG_INT)) color = DyeColor.byMetadata(nbt.getInt("color"));
 		else color = null;
 		byte oldConns = connections;
 		connections = nbt.getByte("connections");
@@ -755,7 +755,7 @@ public class TileEntityFluidPipe extends blusunrize.immersiveengineering.common.
 				}
 			int heldDye = Utils.getDye(heldItem);
 			if(heldDye != - 1) {
-				color = EnumDyeColor.byDyeDamage(heldDye);
+				color = DyeColor.byDyeDamage(heldDye);
 				ITUtils.improvedMarkBlockForUpdate(world, pos, null);
 				return true;
 			}

@@ -10,7 +10,7 @@ public enum BlockType_StoneMultiblock implements IStringSerializable, BlockITBas
 	COKE_OVEN_ADVANCED_SLAVE;
 
 	@Override
-	public String getName() {
+	public String getString() {
 		return this.toString().toLowerCase(Locale.ENGLISH);
 	}
 

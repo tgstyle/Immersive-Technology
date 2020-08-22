@@ -159,7 +159,7 @@ public class ClientProxy extends CommonProxy {
 				});
 				for(int meta = 0; meta < ieMetaBlock.getMetaEnums().length; meta++) {
 					String location = loc.toString();
-					String prop = ieMetaBlock.appendPropertiesToState() ? ("inventory," + ieMetaBlock.getMetaProperty().getName() + "=" + ieMetaBlock.getMetaEnums()[meta].toString().toLowerCase(Locale.US)): null;
+					String prop = ieMetaBlock.appendPropertiesToState() ? ("inventory," + ieMetaBlock.getMetaProperty().getString() + "=" + ieMetaBlock.getMetaEnums()[meta].toString().toLowerCase(Locale.US)): null;
 					if(ieMetaBlock.useCustomStateMapper()) {
 						String custom = ieMetaBlock.getCustomStateMapping(meta, true);
 						if(custom != null) location += "_" + custom;
@@ -265,7 +265,7 @@ public class ClientProxy extends CommonProxy {
 		public final ModelResourceLocation location;
 
 		public FluidStateMapper(Fluid fluid) {
-			this.location = new ModelResourceLocation(ImmersiveTechnology.MODID + ":fluid_block", fluid.getName());
+			this.location = new ModelResourceLocation(ImmersiveTechnology.MODID + ":fluid_block", fluid.getString());
 		}
 
 		@Nonnull

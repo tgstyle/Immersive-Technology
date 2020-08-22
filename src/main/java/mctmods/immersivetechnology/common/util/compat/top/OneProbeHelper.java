@@ -29,7 +29,7 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
 
 	@Override
 	public void preInit() {
-		FMLInterModComms.sendFunctionMessage("theoneprobe", "getTheOneProbe", this.getClass().getName());
+		FMLInterModComms.sendFunctionMessage("theoneprobe", "getTheOneProbe", this.getClass().getString());
 	}
 
 	@Override

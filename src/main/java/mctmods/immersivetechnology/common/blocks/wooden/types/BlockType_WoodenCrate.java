@@ -9,7 +9,7 @@ public enum BlockType_WoodenCrate implements IStringSerializable, BlockITBase.IB
 	CRATE;
 
 	@Override
-	public String getName() {
+	public String getString() {
 		return this.toString().toLowerCase(Locale.ENGLISH);
 	}
 

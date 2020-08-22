@@ -39,7 +39,7 @@ public enum BlockType_MetalMultiblock implements IStringSerializable, BlockITBas
 	}
 
 	@Override
-	public String getName() {
+	public String getString() {
 		return this.toString().toLowerCase(Locale.ENGLISH);
 	}
 
@@ -47,7 +47,7 @@ public enum BlockType_MetalMultiblock implements IStringSerializable, BlockITBas
 		return this.needsCustomState;
 	}
 	public String getCustomState() {
-		return getName().toLowerCase();
+		return getString().toLowerCase();
 	}
 
 }
