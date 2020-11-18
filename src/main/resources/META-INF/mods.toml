@@ -32,6 +32,6 @@ license="All rights reserved"
 	[[dependencies.immersivetechnology]]
 		modId="immersiveengineering"
 		mandatory=true
-		versionRange="[1.16.3-4.1,1.16.4-4.1)"
+		versionRange="[1.16.4-4,1.17-4)"
 		ordering="AFTER"
 		side="BOTH"
