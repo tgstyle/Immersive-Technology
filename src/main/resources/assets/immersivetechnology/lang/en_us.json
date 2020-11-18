@@ -1,0 +1,23 @@
+{
+	"itemGroup.immersivetechnology": "Immersive Technology",
+
+
+	"_comment": "### Blocks ###",
+	
+	"block.immersivetechnology.fluidvalve": "Fluid Valve",
+
+	"fluid.immersivetechnology.steam": "Steam",
+	
+
+	"_comment": "### Items ###",
+	
+	"item.immersivetechnology.salt": "Salt",
+	
+	"item.immersivetechnology.steam_bucket": "Bucket of Steam",
+	
+	
+	"_comment": "### Descriptions ###",
+	
+	"_comment": "### IE-Manual ###"
+
+}

@@ -13,58 +13,15 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven'
 
+sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
+
+
 ext.configFile = file("..//common//common-1.16.properties")
 ext.config = parseConfig(configFile)
 
 version = "${config.mc_version}-${mod_version}.${mod_subversion}"
 group = "${mod_group}"
 archivesBaseName = "${mod_archivename}"
-
-sourceSets {
-    main {
-        java {
-            srcDir 'src/main/java'
-        }
-        resources {
-            srcDirs += 'src/main/resources'
-        }	
-	}
-}
-
-sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
-
-minecraft {
-    mappings channel: "${config.mapping_channel}", version: "${config.mapping_version}"
-
-    runs {
-        client {
-            workingDirectory project.file('run')
-			properties 'fml.earlyprogresswindow': 'false'
-
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-            property 'forge.logging.console.level', 'debug'
-
-            mods {
-				immersivetechnology {
-                    source sourceSets.main
-                }
-            }
-        }
-
-        server {
-            workingDirectory project.file('run')
-
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-            property 'forge.logging.console.level', 'debug'
-
-            mods {
-                immersivetechnology {
-                    source sourceSets.main
-                }
-            }
-        }
-    }
-}
 
 repositories {
 	maven {
@@ -77,9 +34,66 @@ repositories {
 	}
 }
 
+sourceSets {
+	main {
+		resources {
+			srcDirs = [
+				"$rootDir/src/main/resources",
+				"$rootDir/src/generated/resources"
+			]
+		}
+	}
+}
+
+minecraft {
+    mappings channel: "${config.mapping_channel}", version: "${config.mapping_version}"
+
+	runs {
+		client {
+			workingDirectory project.file('run')
+			property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+			property 'forge.logging.console.level', 'info'
+			property 'fml.earlyprogresswindow', 'false'
+			mods {
+				immersivetechnology {
+					source sourceSets.main
+				}
+			}
+		}
+
+		server {
+			workingDirectory project.file('run')
+			property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+			property 'forge.logging.console.level', 'info'
+			property 'fml.earlyprogresswindow', 'false'
+			mods {
+				immersivetechnology {
+					source sourceSets.main
+				}
+			}
+		}
+
+		data {
+			workingDirectory project.file('run')
+			property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+			property 'forge.logging.console.level', 'info'
+			property 'fml.earlyprogresswindow', 'false'
+			
+			args '--mod', 'immersivetechnology', '--all', '--output', file('src/generated/resources/'), '--validate', '--existing', sourceSets.main.resources.srcDirs[0], '--existing', 'C:/Users/TwistedGate/.gradle/caches/forge_gradle/deobf_dependencies/blusunrize/immersiveengineering/ImmersiveEngineering/1.16.3-4.0.1-121_mapped_snapshot_20200912-1.16.2/ImmersiveEngineering-1.16.3-4.0.1-121_mapped_snapshot_20200912-1.16.2.jar'
+			
+			mods {
+				immersivetechnology {
+					source sourceSets.main
+				}
+			}
+		}
+	}
+}
+
 dependencies {
     minecraft "net.minecraftforge:forge:${config.mc_version}-${config.forge_version}"
 	compile fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:${config.mc_version}-${config.imme_version}")
+	compile fg.deobf("com.blamejared.crafttweaker:CraftTweaker-${config.mc_version}:${config.crft_version}")
     compileOnly fg.deobf("mezz.jei:jei-${config.mc_version}:${config.jei_version}:api")
     runtimeOnly fg.deobf("mezz.jei:jei-${config.mc_version}:${config.jei_version}")
 }
@@ -105,3 +119,17 @@ jar {
         ])
     }
 }
+
+processResources {
+	from(sourceSets.main.resources.srcDirs) {
+		include 'META-INF/mods.toml'
+		expand 'version': project.version
+	}
+	from(sourceSets.main.resources.srcDirs) {
+		exclude 'META-INF/mods.toml'
+	}
+	outputs.upToDateWhen { false }
+}
+
+def reobfFile = file("$buildDir/reobfJar/output.jar")
+def reobfArtifact = artifacts.add('default', reobfFile) { type 'jar'; builtBy 'reobfJar'; }

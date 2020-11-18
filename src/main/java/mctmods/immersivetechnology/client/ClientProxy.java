@@ -1,212 +1,87 @@
 package mctmods.immersivetechnology.client;
 
-//import blusunrize.immersiveengineering.api.ManualHelper;
-//import blusunrize.immersiveengineering.api.ManualPageMultiblock;
-//import blusunrize.immersiveengineering.api.energy.wires.WireApi;
-//import blusunrize.immersiveengineering.client.ClientUtils;
-//import blusunrize.immersiveengineering.client.IECustomStateMapper;
-//import blusunrize.immersiveengineering.client.models.obj.IEOBJLoader;
-//import blusunrize.immersiveengineering.common.IEContent;
-//import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IIEMetaBlock;
-//import blusunrize.immersiveengineering.common.items.ItemEarmuffs;
-//import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
-//import blusunrize.lib.manual.ManualPages;
-//import mctmods.immersivetechnology.ImmersiveTechnology;
-//import mctmods.immersivetechnology.api.ITUtils;
-//import mctmods.immersivetechnology.client.render.TileRenderBarrelOpen;
-//import mctmods.immersivetechnology.client.render.TileRenderSteamTurbine;
-//import mctmods.immersivetechnology.client.render.TileRenderSteelSheetmetalTank;
-//import mctmods.immersivetechnology.common.ITContent;
-//import mctmods.immersivetechnology.common.Config.ITConfig.Machines.Multiblock;
-//import mctmods.immersivetechnology.common.blocks.BlockITFluid;
-//import mctmods.immersivetechnology.common.blocks.BlockValve.BlockType_Valve;
-//import mctmods.immersivetechnology.common.blocks.connectors.types.BlockType_Connectors;
-//import mctmods.immersivetechnology.common.blocks.metal.multiblocks.*;
-//import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBarrelOpen;
-//import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySteamTurbineMaster;
-//import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySteelSheetmetalTankMaster;
-//import mctmods.immersivetechnology.common.blocks.metal.types.BlockType_MetalDevice;
-//import mctmods.immersivetechnology.common.blocks.stone.multiblocks.MultiblockCokeOvenAdvanced;
-//import mctmods.immersivetechnology.common.items.ItemITBase;
-//import mctmods.immersivetechnology.common.util.ITLogger;
-//import mctmods.immersivetechnology.common.util.network.MessageRequestUpdate;
-//import mctmods.immersivetechnology.common.util.network.MessageStopSound;
-//import mctmods.immersivetechnology.common.util.network.MessageTileSync;
-//import mctmods.immersivetechnology.common.util.sound.ITSoundHandler;
-//import net.minecraft.block.Block;
-//import net.minecraft.block.BlockState;
-//import net.minecraft.client.Minecraft;
-//import net.minecraft.client.entity.player.ClientPlayerEntity;
-//import net.minecraft.client.renderer.ItemMeshDefinition;
-//import net.minecraft.client.renderer.block.model.ModelBakery;
-//import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-//import net.minecraft.client.renderer.block.statemap.StateMapperBase;
-//import net.minecraft.init.Items;
-//import net.minecraft.inventory.EntityEquipmentSlot;
-//import net.minecraft.item.Item;
-//import net.minecraft.item.ItemBlock;
-//import net.minecraft.item.ItemStack;
-//import net.minecraft.util.ResourceLocation;
-//import net.minecraft.world.World;
-//import net.minecraftforge.api.distmarker.Dist;
-//import net.minecraftforge.client.event.ModelRegistryEvent;
-//import net.minecraftforge.client.model.ModelLoader;
-//import net.minecraftforge.client.model.ModelLoaderRegistry;
-//import net.minecraftforge.client.model.obj.OBJLoader;
-//import net.minecraftforge.common.MinecraftForge;
-//import net.minecraft.fluid.Fluid;
-//import net.minecraftforge.fml.client.registry.ClientRegistry;
-//import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-//import net.minecraftforge.fml.common.gameevent.PlayerEvent;
-//import net.minecraftforge.fml.common.gameevent.TickEvent;
-//import net.minecraftforge.fml.common.network.FMLNetworkEvent;
-//import net.minecraftforge.fml.relauncher.Side;
-//import javax.annotation.Nonnull;
-//import java.util.Locale;
+import java.text.DecimalFormat;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.lwjgl.glfw.GLFW;
+
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
+
+import blusunrize.immersiveengineering.api.ManualHelper;
+import blusunrize.immersiveengineering.common.blocks.IEBlocks;
+import blusunrize.immersiveengineering.common.blocks.metal.MetalScaffoldingType;
+import blusunrize.immersiveengineering.common.gui.GuiHandler;
+import blusunrize.lib.manual.ManualEntry;
+import blusunrize.lib.manual.ManualEntry.EntryData;
+import blusunrize.lib.manual.ManualInstance;
+import blusunrize.lib.manual.TextSplitter;
+import blusunrize.lib.manual.Tree.InnerNode;
+import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.CommonProxy;
-
+import net.minecraft.block.BlockState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.IHasContainer;
+import net.minecraft.client.gui.ScreenManager;
+import net.minecraft.client.gui.ScreenManager.IScreenFactory;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.renderer.BlockRendererDispatcher;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.model.IBakedModel;
+import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
+import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.client.util.InputMappings;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.ContainerType;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.vector.Quaternion;
+import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.ModelBakeEvent;
+import net.minecraftforge.client.model.data.EmptyModelData;
+import net.minecraftforge.client.settings.KeyConflictContext;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.EventPriority;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 
-import static mctmods.immersivetechnology.ImmersiveTechnology.MODID;
-
-@Mod.EventBusSubscriber(value = Dist.CLIENT, modid = MODID, bus = Bus.MOD)
+@Mod.EventBusSubscriber(value = Dist.CLIENT, modid = ImmersiveTechnology.MODID)
 public class ClientProxy extends CommonProxy {
 
+	@SuppressWarnings("unused")
+	private static final Logger log=LogManager.getLogger(ImmersiveTechnology.MODID + "/ClientProxy");
+	public static final String CAT_IT = "it";
+	public static final KeyBinding keybind_preview_flip = new KeyBinding("key.immersivetechnology.projector.flip", InputMappings.Type.MOUSE, GLFW.GLFW_MOUSE_BUTTON_3, "key.categories.gameplay");
+
 	@Override
-	public void serverStarting() {
+	public void construct() {}
+
+	@Override
+	public void registerContainersAndScreens() {
+		super.registerContainersAndScreens();
 	}
 
-	/*public static final String CAT_IT = "it";
+	@SuppressWarnings("unchecked")
+	public <C extends Container, S extends Screen & IHasContainer<C>> void registerScreen(ResourceLocation name, IScreenFactory<C, S> factory) {
+		ContainerType<C> type=(ContainerType<C>)GuiHandler.getContainerType(name);
+		ScreenManager.registerFactory(type, factory);
+	}
+
+	@Override
+	public void completed() {
+		setupManualPages();
+	}
 
 	@Override
 	public void preInit() {
-		ClientUtils.mc().getFramebuffer().enableStencil();
-		ModelLoaderRegistry.registerLoader(IEOBJLoader.instance);
-		OBJLoader.INSTANCE.addDomain(ImmersiveTechnology.MODID);
-		IEOBJLoader.instance.addDomain(ImmersiveTechnology.MODID);
-		MinecraftForge.EVENT_BUS.register(this);
-	}
-
-	@SubscribeEvent()
-	public void PlayerChangedDimensions(PlayerEvent.PlayerChangedDimensionEvent e) {
-		ITSoundHandler.DeleteAllSounds();
-	}
-
-	@SubscribeEvent()
-	public void PlayerLeftSession(PlayerEvent.PlayerLoggedOutEvent e) {
-		ITSoundHandler.DeleteAllSounds();
-	}
-
-	@SubscribeEvent()
-	public void PlayerDisconnected(FMLNetworkEvent.ClientDisconnectionFromServerEvent e) {
-		ITSoundHandler.DeleteAllSounds();
-	}
-
-	@SubscribeEvent
-	public void onClientTick(TickEvent.ClientTickEvent event) {
-		if(!ITUtils.REMOVE_FROM_TICKING.isEmpty() && event.phase == TickEvent.Phase.END) {
-			World world = Minecraft.getInstance().world;
-			if (world == null) ITLogger.warn("ClientProxy has tried to access null world! This shouldn't normally happen...");
-			else {
-				world.tickableTileEntities.removeAll(ITUtils.REMOVE_FROM_TICKING);
-				ITUtils.REMOVE_FROM_TICKING.clear();
-			}
-		}
-
-		calculateVolume();
-	}
-
-	public static float volumeAdjustment = 1;
-
-	public void calculateVolume() {
-		float prevVolume = volumeAdjustment;
-		ClientPlayerEntity player = ClientUtils.mc().player;
-		if(player == null) return;
-		ItemStack stack = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
-		if(!stack.isEmpty()) {
-			if(IEContent.itemEarmuffs.equals(stack.getItem())) volumeAdjustment = ItemEarmuffs.getVolumeMod(stack);
-			 else if(ItemNBTHelper.hasKey(stack, "IE:Earmuffs")) {
-				stack = ItemNBTHelper.getItemStack(stack, "IE:Earmuffs");
-				if(!stack.isEmpty() && IEContent.itemEarmuffs.equals(stack.getItem())) volumeAdjustment = ItemEarmuffs.getVolumeMod(stack);
-				else volumeAdjustment = 1;
-			} else volumeAdjustment = 1;
-		} else volumeAdjustment = 1;
-
-		if(prevVolume != volumeAdjustment) ITSoundHandler.UpdateAllVolumes();
-	}
-
-	@SuppressWarnings("deprecation")
-	@SubscribeEvent
-	public static void registerModels(ModelRegistryEvent evt) {
-		WireApi.registerConnectorForRender("conn_timer", new ResourceLocation("immersivetech:block/connector/connectors_timer.obj.ie"), null);
-		WireApi.registerConnectorForRender("conn_con_net", new ResourceLocation("immersivetech:block/connector/connectors_con_net.obj.ie"), null);
-
-		for(Block block : ITContent.registeredITBlocks) {
-			final ResourceLocation loc = Block.REGISTRY.getNameForObject(block);
-			Item blockItem = Item.getItemFromBlock(block);
-			if(blockItem == null)	throw new RuntimeException("ITEMBLOCK for" + loc + " : " + block + " IS NULL");
-			if(block instanceof IIEMetaBlock) {
-				IIEMetaBlock ieMetaBlock = (IIEMetaBlock)block;
-				if(ieMetaBlock.useCustomStateMapper()) ModelLoader.setCustomStateMapper(block, IECustomStateMapper.getStateMapper(ieMetaBlock));
-				ModelLoader.setCustomMeshDefinition(blockItem, new ItemMeshDefinition() {
-					@Override
-					public ModelResourceLocation getModelLocation(ItemStack stack) {
-						return new ModelResourceLocation(loc, "inventory");
-					}
-				});
-				for(int meta = 0; meta < ieMetaBlock.getMetaEnums().length; meta++) {
-					String location = loc.toString();
-					String prop = ieMetaBlock.appendPropertiesToState() ? ("inventory," + ieMetaBlock.getMetaProperty().getString() + "=" + ieMetaBlock.getMetaEnums()[meta].toString().toLowerCase(Locale.US)): null;
-					if(ieMetaBlock.useCustomStateMapper()) {
-						String custom = ieMetaBlock.getCustomStateMapping(meta, true);
-						if(custom != null) location += "_" + custom;
-					} try {
-						ModelLoader.setCustomModelResourceLocation(blockItem, meta, new ModelResourceLocation(location, prop));
-					} catch (NullPointerException npe) {
-						throw new RuntimeException("WELP! apparently " + ieMetaBlock + " lacks an item!", npe);
-					}
-				}
-			} else if(block instanceof BlockITFluid) {
-				mapFluidState(block, ((BlockITFluid) block).getFluid());
-			} else {
-				ModelLoader.setCustomModelResourceLocation(blockItem, 0, new ModelResourceLocation(loc, "inventory"));
-			}
-		}
-
-		for(Item item : ITContent.registeredITItems) {
-			if(item instanceof ItemBlock) continue;
-			if(item instanceof ItemITBase) {
-				ItemITBase ipMetaItem = (ItemITBase) item;
-				if(ipMetaItem.registerSubModels && ipMetaItem.getSubNames() != null && ipMetaItem.getSubNames().length > 0) {
-					for(int meta = 0; meta < ipMetaItem.getSubNames().length; meta++) {
-						ResourceLocation loc = new ResourceLocation(ImmersiveTechnology.MODID, ipMetaItem.itemName + "/" + ipMetaItem.getSubNames()[meta]);
-						ModelBakery.registerItemVariants(ipMetaItem, loc);
-						ModelLoader.setCustomModelResourceLocation(ipMetaItem, meta, new ModelResourceLocation(loc, "inventory"));
-					}
-				} else {
-					final ResourceLocation loc = new ResourceLocation(ImmersiveTechnology.MODID, ipMetaItem.itemName);
-					ModelBakery.registerItemVariants(ipMetaItem, loc);
-					ModelLoader.setCustomMeshDefinition(ipMetaItem, new ItemMeshDefinition() {
-						@Override
-						public ModelResourceLocation getModelLocation(ItemStack stack) {
-							return new ModelResourceLocation(loc, "inventory");
-						}
-					});
-				}
-			} else {
-				final ResourceLocation loc = Item.REGISTRY.getNameForObject(item);
-				ModelBakery.registerItemVariants(item, loc);
-				ModelLoader.setCustomMeshDefinition(item, new ItemMeshDefinition() {
-					@Override
-					public ModelResourceLocation getModelLocation(ItemStack stack) {
-						return new ModelResourceLocation(loc, "inventory");
-					}
-				});
-			}
-		}
 	}
 
 	@Override
@@ -215,70 +90,65 @@ public class ClientProxy extends CommonProxy {
 
 	@Override
 	public void init() {
-		ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySteamTurbineMaster.class, new TileRenderSteamTurbine());
-		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityBarrelOpen.class, new TileRenderBarrelOpen());
-		ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySteelSheetmetalTankMaster.class, new TileRenderSteelSheetmetalTank());
-		ImmersiveTechnology.packetHandler.registerMessage(MessageTileSync.HandlerClient.class, MessageTileSync.class, 0, Side.CLIENT);
-		//has to be here as well because this one is used when playing Singleplayer, go figure
-		ImmersiveTechnology.packetHandler.registerMessage(MessageTileSync.HandlerServer.class, MessageTileSync.class, 0, Side.SERVER);
-		ImmersiveTechnology.packetHandler.registerMessage(MessageStopSound.HandlerClient.class, MessageStopSound.class, 1, Side.CLIENT);
-		ImmersiveTechnology.packetHandler.registerMessage(MessageRequestUpdate.HandlerClient.class, MessageRequestUpdate.class, 2, Side.CLIENT);
-		ImmersiveTechnology.packetHandler.registerMessage(MessageRequestUpdate.HandlerServer.class, MessageRequestUpdate.class, 2, Side.SERVER);
+		MinecraftForge.EVENT_BUS.register(new ClientEventHandler());
+		keybind_preview_flip.setKeyConflictContext(KeyConflictContext.IN_GAME);
+		ClientRegistry.registerKeyBinding(keybind_preview_flip);
 	}
+
+	private static InnerNode<ResourceLocation, ManualEntry> IT_CATEGORY;
+	public void setupManualPages() {
+		ManualInstance man=ManualHelper.getManual();
+		IT_CATEGORY=man.getRoot().getOrCreateSubnode(modLoc("main"), 100);
+		man.addEntry(IT_CATEGORY, modLoc("fluidvalve"), 1);
+	}
+
+	protected static EntryData createContentTest(TextSplitter splitter) {
+		return new EntryData("title", "subtext", "content");
+	}
+
+	static final DecimalFormat FORMATTER = new DecimalFormat("#,###.##");
+	static ManualEntry entry;
 
 	@Override
 	public void postInit() {
-		if(Multiblock.enable_advancedCokeOven) {
-			ManualHelper.addEntry("advancedCokeOven", CAT_IT, new ManualPageMultiblock(ManualHelper.getManual(), "advancedCokeOven0", MultiblockCokeOvenAdvanced.instance), new ManualPages.Text(ManualHelper.getManual(), "advancedCokeOven1"), new ManualPages.Crafting(ManualHelper.getManual(), "advancedCokeOven2", new ItemStack(ITContent.blockMetalDevice, 1, BlockType_MetalDevice.COKE_OVEN_PREHEATER.getMeta())));
-		}
-		if(Multiblock.enable_boiler) {
-			ManualHelper.addEntry("boiler", CAT_IT, new ManualPageMultiblock(ManualHelper.getManual(), "boiler0", MultiblockBoiler.instance), new ManualPages.Text(ManualHelper.getManual(), "boiler1"), new ManualPages.Text(ManualHelper.getManual(), "boiler2"));
-		}
-		if(Multiblock.enable_distiller) {
-			ManualHelper.addEntry("distiller", CAT_IT, new ManualPageMultiblock(ManualHelper.getManual(), "distiller0", MultiblockDistiller.instance), new ManualPages.Text(ManualHelper.getManual(), "distiller1"));
-		}
-		if(Multiblock.enable_solarTower) {
-			ManualHelper.addEntry("solarTower", CAT_IT, new ManualPageMultiblock(ManualHelper.getManual(), "solarTower0", MultiblockSolarTower.instance), new ManualPages.Text(ManualHelper.getManual(), "solarTower1"), new ManualPageMultiblock(ManualHelper.getManual(), "solarTower2", MultiblockSolarReflector.instance), new ManualPages.Text(ManualHelper.getManual(), "solarTower3"));
-		}
-		if(Multiblock.enable_steamTurbine) {
-			ManualHelper.addEntry("alternator", CAT_IT, new ManualPageMultiblock(ManualHelper.getManual(), "alternator0", MultiblockAlternator.instance), new ManualPages.Text(ManualHelper.getManual(), "alternator1"), new ManualPages.Image(ManualHelper.getManual(), "alternator2", "immersivetech:textures/misc/alternator.png;0;0;110;50"));
-			ManualHelper.addEntry("steamTurbine", CAT_IT, new ManualPageMultiblock(ManualHelper.getManual(), "steamTurbine0", MultiblockSteamTurbine.instance), new ManualPages.Text(ManualHelper.getManual(), "steamTurbine1"), new ManualPages.Text(ManualHelper.getManual(), "steamTurbine2"));
-		}
-		ManualHelper.addEntry("fluidValve", CAT_IT, new ManualPages.Crafting(ManualHelper.getManual(), "fluidValve0", new ItemStack(ITContent.blockValve, 1, BlockType_Valve.FLUID_VALVE.getMeta())));
-		ManualHelper.addEntry("loadController", CAT_IT, new ManualPages.Crafting(ManualHelper.getManual(), "loadController0", new ItemStack(ITContent.blockValve, 1, BlockType_Valve.LOAD_CONTROLLER.getMeta())));
-		ManualHelper.addEntry("redstone", CAT_IT, new ManualPages.Crafting(ManualHelper.getManual(), "redstone0", new ItemStack(ITContent.blockConnectors, 1, BlockType_Connectors.CONNECTORS_TIMER.getMeta())));
-		ManualHelper.addEntry("stackLimiter", CAT_IT, new ManualPages.Crafting(ManualHelper.getManual(), "stackLimiter0", new ItemStack(ITContent.blockValve, 1, BlockType_Valve.STACK_LIMITER.getMeta())));
-		ManualHelper.addEntry("steelTank", CAT_IT, new ManualPageMultiblock(ManualHelper.getManual(), "steelTank0", MultiblockSteelSheetmetalTank.instance), new ManualPages.Text(ManualHelper.getManual(), "steelTank1"));
 	}
 
-	private static void mapFluidState(Block block, Fluid fluid)	{
-		Item item = Item.getItemFromBlock(block);
-		FluidStateMapper mapper = new FluidStateMapper(fluid);
-		if(item != Items.AIR) {
-			ModelLoader.registerItemVariants(item);
-			ModelLoader.setCustomMeshDefinition(item, mapper);
-		}
-		ModelLoader.setCustomStateMapper(block, mapper);
+	@SubscribeEvent(priority = EventPriority.LOWEST)
+	public static void onModelBakeEvent(ModelBakeEvent event) {
 	}
 
-	static class FluidStateMapper extends StateMapperBase implements ItemMeshDefinition	{
-		public final ModelResourceLocation location;
+	@Override
+	public void renderTile(TileEntity te, IVertexBuilder iVertexBuilder, MatrixStack transform, IRenderTypeBuffer buffer) {
+		TileEntityRenderer<TileEntity> tesr = TileEntityRendererDispatcher.instance.getRenderer((TileEntity) te);
+		transform.push();
+		transform.rotate(new Quaternion(0, -90, 0, true));
+		transform.translate(0, 1, -4);
+		tesr.render(te, 0, transform, buffer, 0xF000F0, 0);
+		transform.pop();
+	}
 
-		public FluidStateMapper(Fluid fluid) {
-			this.location = new ModelResourceLocation(ImmersiveTechnology.MODID + ":fluid_block", fluid.getString());
-		}
+	@Override
+	public void drawUpperHalfSlab(MatrixStack transform, ItemStack stack) {
+		BlockRendererDispatcher blockRenderer = Minecraft.getInstance().getBlockRendererDispatcher();
+		BlockState state = IEBlocks.MetalDecoration.steelScaffolding.get(MetalScaffoldingType.STANDARD).getDefaultState();
+		IBakedModel model = blockRenderer.getBlockModelShapes().getModel(state);
+		IRenderTypeBuffer.Impl buffers = IRenderTypeBuffer.getImpl(Tessellator.getInstance().getBuffer());
+		transform.push();
+		transform.translate(0.0F, 0.5F, 1.0F);
+		blockRenderer.getBlockModelRenderer().renderModel(transform.getLast(), buffers.getBuffer(RenderType.getSolid()), state, model, 1.0F, 1.0F, 1.0F, -1, -1, EmptyModelData.INSTANCE);
+		transform.pop();
+	}
 
-		@Nonnull
-		@Override
-		protected ModelResourceLocation getModelResourceLocation(@Nonnull BlockState state) {
-			return location;
-		}
+	@SuppressWarnings("resource")
+	@Override
+	public World getClientWorld() {
+		return Minecraft.getInstance().world;
+	}
 
-		@Nonnull
-		@Override
-		public ModelResourceLocation getModelLocation(@Nonnull ItemStack stack)	{
-			return location;
-		}
-	}*/
+	@SuppressWarnings("resource")
+	@Override
+	public PlayerEntity getClientPlayer() {
+		return Minecraft.getInstance().player;
+	}
 
 }

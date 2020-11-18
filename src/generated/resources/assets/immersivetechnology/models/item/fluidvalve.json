@@ -1,0 +1,6 @@
+{
+  "parent": "immersivetechnology:block/fluidvalve",
+  "textures": {
+    "particle": "immersivetechnology:block/fluid_valve_side"
+  }
+}

@@ -1,82 +1,64 @@
 package mctmods.immersivetechnology.common.util.compat.jei;
 
-import mctmods.immersivetechnology.ImmersiveTechnology;
-import mezz.jei.api.IModRegistry;
-import mezz.jei.api.gui.IDrawable;
-import mezz.jei.api.recipe.IRecipeCategory;
-import mezz.jei.api.recipe.IRecipeWrapper;
-import mezz.jei.api.recipe.IRecipeWrapperFactory;
-import net.minecraft.client.Minecraft;
+import mezz.jei.api.gui.drawable.IDrawable;
+import mezz.jei.api.gui.drawable.IDrawableStatic;
+import mezz.jei.api.helpers.IGuiHelper;
+import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 
-import javax.annotation.Nullable;
-import java.util.Collections;
-import java.util.List;
+public abstract class ITRecipeCategory<T> implements IRecipeCategory<T> {
 
-public abstract class ITRecipeCategory<T, W extends IRecipeWrapper> implements IRecipeCategory<W>, IRecipeWrapperFactory<T> {
-	public String uniqueName;
+	public final ResourceLocation location;
 	public String localizedName;
-	private final IDrawable background;
-	private final Class<T> recipeClass;
-	private final GenericMultiblockIngredient[] displayStacks;
+	protected final IGuiHelper guiHelper;
+	private final Class<? extends T> recipeClass;
+	private IDrawableStatic background;
+	private IDrawable icon;
 
-	public ITRecipeCategory(String uniqueName, String localKey, IDrawable background, Class<T> recipeClass, GenericMultiblockIngredient... displayStacks) {
-		this.uniqueName = uniqueName;
-		this.localizedName = I18n.format(localKey);
+	public ITRecipeCategory(Class<? extends T> recipeClass, IGuiHelper guiHelper, ResourceLocation location, String localKey) {
+		this.recipeClass=recipeClass;
+		this.guiHelper=guiHelper;
+		this.location=location;
+		this.localizedName=I18n.format(localKey);
+	}
+
+	public void setBackground(IDrawableStatic background) {
 		this.background = background;
-		this.recipeClass = recipeClass;
-		this.displayStacks = displayStacks;
 	}
 
-	public void addCatalysts(IModRegistry registry) {
-		for(GenericMultiblockIngredient stack : displayStacks) registry.addRecipeCatalyst(stack, getUid());
+	public void setIcon(ItemStack stack) {
+		setIcon(this.guiHelper.createDrawableIngredient(stack));
 	}
 
-	@Nullable
-	@Override
-	public IDrawable getIcon() {
-		return null;
-	}
-
-	@Override
-	public String getUid() {
-		return "it."+uniqueName;
-	}
-
-	@Override
-	public String getTitle() {
-		return localizedName;
+	public void setIcon(IDrawable icon) {
+		this.icon = icon;
 	}
 
 	@Override
 	public IDrawable getBackground() {
-		return background;
+		return this.background;
 	}
 
 	@Override
-	public void drawExtras(Minecraft minecraft) {
+	public IDrawable getIcon() {
+		return this.icon;
 	}
 
 	@Override
-	public List<String> getTooltipStrings(int mouseX, int mouseY) {
-		return Collections.emptyList();
+	public ResourceLocation getUid() {
+		return this.location;
 	}
 
-	public Class<T> getRecipeClass() {
+	@Override
+	public String getTitle() {
+		return this.localizedName;
+	}
+
+	@Override
+	public Class<? extends T> getRecipeClass() {
 		return this.recipeClass;
-	}
-
-	public String getRecipeCategoryUid() {
-		return "it."+uniqueName;
-	}
-
-	public boolean isRecipeValid(T recipe) {
-		return true;
-	}
-
-	@Override
-	public String getModName() {
-		return ImmersiveTechnology.NAME;
 	}
 
 }
