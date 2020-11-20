@@ -1,6 +1,12 @@
 {
-  "parent": "minecraft:block/cube_all",
+  "parent": "immersiveengineering:block/ie_six_sides",
   "textures": {
-    "all": "immersivetechnology:block/fluid_valve_side"
+    "down": "immersivetechnology:block/fluid_valve_bottom",
+    "up": "immersivetechnology:block/fluid_valve_top",
+    "north": "immersivetechnology:block/fluid_valve_side",
+    "south": "immersivetechnology:block/fluid_valve_side",
+    "west": "immersivetechnology:block/fluid_valve_side",
+    "east": "immersivetechnology:block/fluid_valve_side",
+    "particle": "immersivetechnology:block/fluid_valve_side"
   }
 }
