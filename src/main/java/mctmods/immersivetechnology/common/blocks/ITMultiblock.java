@@ -9,9 +9,9 @@ import net.minecraft.state.Property;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ResourceLocation;
 
-public class ITMetalMultiblock<T extends MultiblockPartTileEntity<T>> extends MetalMultiblockBlock<T> {
+public class ITMultiblock<T extends MultiblockPartTileEntity<T>> extends MetalMultiblockBlock<T> {
 
-	public ITMetalMultiblock(String name, Supplier<TileEntityType<T>> tileEntity, Property<?>... additionalProperties) {
+	public ITMultiblock(String name, Supplier<TileEntityType<T>> tileEntity, Property<?>... additionalProperties) {
 		super(name, tileEntity, additionalProperties);
 	}
 

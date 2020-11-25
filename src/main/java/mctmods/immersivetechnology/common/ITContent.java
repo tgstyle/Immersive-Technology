@@ -11,15 +11,17 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import mctmods.immersivetechnology.ImmersiveTechnology;
-import mctmods.immersivetechnology.common.blocks.FuidValveBlock;
 import mctmods.immersivetechnology.common.blocks.ITBlockBase;
 import mctmods.immersivetechnology.common.items.ITItemBase;
 import mctmods.immersivetechnology.common.util.fluids.ITFluid;
 import net.minecraft.block.Block;
+import net.minecraft.block.SoundType;
+import net.minecraft.block.material.Material;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
+import net.minecraftforge.common.ToolType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -54,7 +56,7 @@ public class ITContent {
 
 		//Multiblock.amultiblock=new AMultiBlockBlock();
 
-		Blocks.fluidValve=new FuidValveBlock();
+		Blocks.fluidValve=new ITBlockBase("fluidvalve", Block.Properties.create(Material.ROCK).hardnessAndResistance(2.0F, 10.0F).harvestTool(ToolType.PICKAXE).sound(SoundType.STONE));
 
 		Items.salt = new ITItemBase("salt");
 	}
