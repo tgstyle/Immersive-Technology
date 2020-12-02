@@ -37,7 +37,7 @@ public class FluidValveTileEntity extends CommonValveTileEntity implements IFlui
 
 	@Override
 	public void showGui() {
-		Minecraft.getMinecraft().displayGuiScreen(new GuiFluidValve(this));
+		Minecraft.getMinecraft().displayGuiScreen(new FluidValveScreen(this));
 	}
 
 	public static class DummyTank implements IFluidHandler, IFluidTankProperties {
