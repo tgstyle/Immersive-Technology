@@ -1,0 +1,76 @@
+{
+	"forge_marker": 1,
+	"defaults": {
+		"transform": "forge:default-block",
+		"custom": {
+			"flip-v": true
+		},
+		"textures": {
+			"particle": "immersiveengineering:blocks/storage_steel"
+		}
+	},
+	"variants": {
+		"inventory": {
+			"model": "immersivetech:metal_multiblock/gas_turbine.obj",
+			"transform": {
+				"scale": 0.16,
+				"rotation": [{
+						"x": 20
+					},
+					{
+						"y": -45
+					}
+				],
+				"translation": [ -0.3, -0.1, 0 ]
+			}
+		},
+		"type": {
+			"gas_turbine": {},
+			"gas_turbine_slave": {}
+		},
+		"facing": {
+			"north": {
+				"transform": {
+					"rotation": {
+						"y": 0
+					}
+				}
+			},
+			"south": {
+				"transform": {
+					"rotation": {
+						"y": 180
+					}
+				}
+			},
+			"west": {
+				"transform": {
+					"rotation": {
+						"y": 90
+					}
+				}
+			},
+			"east": {
+				"transform": {
+					"rotation": {
+						"y": -90
+					}
+				}
+			}
+		},
+		"render": {
+			"hidden": {
+				"model": "immersiveengineering:ie_empty"
+			},
+			"normal": {
+				"model": "immersivetech:metal_multiblock/gas_turbine.obj"
+			},
+			"mirrored": {
+				"model": "immersivetech:metal_multiblock/gas_turbine_mirrored.obj"
+			},
+			"dynamic": {
+				"model": "immersivetech:metal_multiblock/gas_turbine_rotor.obj"
+			}
+		}
+	}
+}

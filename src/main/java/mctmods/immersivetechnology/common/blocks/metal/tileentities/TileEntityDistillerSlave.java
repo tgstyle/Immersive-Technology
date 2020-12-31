@@ -8,7 +8,7 @@ import com.google.common.collect.Lists;
 import mctmods.immersivetechnology.api.ITLib;
 import mctmods.immersivetechnology.api.ITUtils;
 import mctmods.immersivetechnology.api.crafting.DistillerRecipe;
-import mctmods.immersivetechnology.common.blocks.metal.TileEntityMultiblockNewSystem;
+import mctmods.immersivetechnology.common.blocks.metal.TileEntityGenericMultiblock;
 import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockDistiller;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -26,7 +26,7 @@ import net.minecraftforge.fluids.IFluidTank;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TileEntityDistillerSlave extends TileEntityMultiblockNewSystem<TileEntityDistillerSlave, DistillerRecipe, TileEntityDistillerMaster> implements IGuiTile, IAdvancedSelectionBounds, IAdvancedCollisionBounds {
+public class TileEntityDistillerSlave extends TileEntityGenericMultiblock<TileEntityDistillerSlave, DistillerRecipe, TileEntityDistillerMaster> implements IGuiTile, IAdvancedSelectionBounds, IAdvancedCollisionBounds {
 
 	public TileEntityDistillerSlave() {
 		super(MultiblockDistiller.instance, new int[] { 3, 3, 3 }, 16000, true);
@@ -46,21 +46,6 @@ public class TileEntityDistillerSlave extends TileEntityMultiblockNewSystem<Tile
 	public void update() {
 		if(isDummy()) ITUtils.RemoveDummyFromTicking(this);
 		super.update();
-	}
-
-	@Override
-	public boolean isDummy() {
-		return true;
-	}
-
-	TileEntityDistillerMaster master;
-
-	public TileEntityDistillerMaster master() {
-		if(master != null && !master.tileEntityInvalid) return master;
-		BlockPos masterPos = getPos().add(-offset[0], -offset[1], -offset[2]);
-		TileEntity te = Utils.getExistingTileEntity(world, masterPos);
-		master = te instanceof TileEntityDistillerMaster?(TileEntityDistillerMaster)te: null;
-		return master;
 	}
 
 	@Override

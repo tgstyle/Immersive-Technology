@@ -31,15 +31,15 @@ import net.minecraftforge.oredict.OreDictionary;
 
 public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implements ITFluidTank.TankListener {
 
-	private static int inputTankSize = SolarTower.solarTower_input_tankSize;
-	private static int outputTankSize = SolarTower.solarTower_output_tankSize;	
-	private static int solarMaxRange = SolarReflector.solarReflector_maxRange;
-	private static int solarMinRange = SolarReflector.solarReflector_minRange;
-	private static int progressLossPerTick = SolarTower.solarTower_progress_lossInTicks;
-	private static int heatLossPerTick = SolarTower.solarTower_heat_lossPerTick;
-	private static float speedMult = SolarTower.solarTower_speed_multiplier;
-	private static float reflectorSpeedMult = SolarTower.solarTower_solarReflector_speed_multiplier;
-	private static double workingHeatLevel = SolarTower.solarTower_heat_workingLevel;
+	private static final int inputTankSize = SolarTower.solarTower_input_tankSize;
+	private static final int outputTankSize = SolarTower.solarTower_output_tankSize;
+	private static final int solarMaxRange = SolarReflector.solarReflector_maxRange;
+	private static final int solarMinRange = SolarReflector.solarReflector_minRange;
+	private static final int progressLossPerTick = SolarTower.solarTower_progress_lossInTicks;
+	private static final int heatLossPerTick = SolarTower.solarTower_heat_lossPerTick;
+	private static final float speedMult = SolarTower.solarTower_speed_multiplier;
+	private static final float reflectorSpeedMult = SolarTower.solarTower_solarReflector_speed_multiplier;
+	private static final double workingHeatLevel = SolarTower.solarTower_heat_workingLevel;
 	BlockPos fluidOutputPos;
 
 	public FluidTank[] tanks = new FluidTank[] {
@@ -244,10 +244,6 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
 		heatLevel = message.getDouble("heat");
 	}
 
-	public void efficientMarkDirty() { // !!!!!!! only use it within update() function !!!!!!!
-		world.getChunkFromBlockCoords(this.getPos()).markDirty();
-	}
-
 	private boolean heatLogic() {
 		boolean update = false;
 		if(checkReflector()) {
@@ -339,12 +335,6 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
 	@Override
 	public boolean isDummy() {
 		return false;
-	}
-
-	@Override
-	public TileEntitySolarTowerMaster master() {
-		master = this;
-		return this;
 	}
 
 }

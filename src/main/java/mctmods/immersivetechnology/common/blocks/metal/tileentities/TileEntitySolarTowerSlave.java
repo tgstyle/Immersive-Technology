@@ -6,7 +6,7 @@ import com.google.common.collect.Lists;
 import mctmods.immersivetechnology.api.ITLib;
 import mctmods.immersivetechnology.api.ITUtils;
 import mctmods.immersivetechnology.api.crafting.SolarTowerRecipe;
-import mctmods.immersivetechnology.common.blocks.metal.TileEntityMultiblockNewSystem;
+import mctmods.immersivetechnology.common.blocks.metal.TileEntityGenericMultiblock;
 import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockSolarTower;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -24,7 +24,7 @@ import net.minecraftforge.fluids.IFluidTank;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TileEntitySolarTowerSlave extends TileEntityMultiblockNewSystem<TileEntitySolarTowerSlave, SolarTowerRecipe, TileEntitySolarTowerMaster> implements IEBlockInterfaces.IGuiTile, IEBlockInterfaces.IAdvancedSelectionBounds, IEBlockInterfaces.IAdvancedCollisionBounds {
+public class TileEntitySolarTowerSlave extends TileEntityGenericMultiblock<TileEntitySolarTowerSlave, SolarTowerRecipe, TileEntitySolarTowerMaster> implements IEBlockInterfaces.IGuiTile, IEBlockInterfaces.IAdvancedSelectionBounds, IEBlockInterfaces.IAdvancedCollisionBounds {
 
 	public TileEntitySolarTowerSlave() {
 		super(MultiblockSolarTower.instance, new int[] { 7, 3, 3 }, 0, true);
@@ -44,21 +44,6 @@ public class TileEntitySolarTowerSlave extends TileEntityMultiblockNewSystem<Til
 	public void update() {
 		if(isDummy()) ITUtils.RemoveDummyFromTicking(this);
 		super.update();
-	}
-
-	@Override
-	public boolean isDummy() {
-		return true;
-	}
-
-	TileEntitySolarTowerMaster master;
-
-	public TileEntitySolarTowerMaster master() {
-		if(master != null && !master.tileEntityInvalid) return master;
-		BlockPos masterPos = getPos().add(-offset[0], -offset[1], -offset[2]);
-		TileEntity te = Utils.getExistingTileEntity(world, masterPos);
-		master = te instanceof TileEntitySolarTowerMaster?(TileEntitySolarTowerMaster)te: null;
-		return master;
 	}
 
 	@Override

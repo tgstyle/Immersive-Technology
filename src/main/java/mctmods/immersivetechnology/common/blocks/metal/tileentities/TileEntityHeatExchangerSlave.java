@@ -1,22 +1,19 @@
 package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 
 import blusunrize.immersiveengineering.common.blocks.TileEntityMultiblockPart;
-import blusunrize.immersiveengineering.common.util.Utils;
 import mctmods.immersivetechnology.api.ITUtils;
 import mctmods.immersivetechnology.api.crafting.HeatExchangerRecipe;
 import mctmods.immersivetechnology.common.Config;
-import mctmods.immersivetechnology.common.blocks.metal.TileEntityMultiblockNewSystem;
+import mctmods.immersivetechnology.common.blocks.metal.TileEntityGenericMultiblock;
 import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockHeatExchanger;
 import mctmods.immersivetechnology.common.util.multiblock.IMultiblockAdvAABB;
 import mctmods.immersivetechnology.common.util.multiblock.MultiblockUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
@@ -25,7 +22,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 
-public class TileEntityHeatExchangerSlave extends TileEntityMultiblockNewSystem<TileEntityHeatExchangerSlave, HeatExchangerRecipe, TileEntityHeatExchangerMaster> implements IMultiblockAdvAABB {
+public class TileEntityHeatExchangerSlave extends TileEntityGenericMultiblock<TileEntityHeatExchangerSlave, HeatExchangerRecipe, TileEntityHeatExchangerMaster> implements IMultiblockAdvAABB {
 
     public TileEntityHeatExchangerSlave() {
         super(MultiblockHeatExchanger.instance, Config.ITConfig.Machines.HeatExchanger.heatExchanger_energy_size, true);
@@ -50,21 +47,6 @@ public class TileEntityHeatExchangerSlave extends TileEntityMultiblockNewSystem<
     @Override
     public void disassemble() {
         super.disassemble();
-    }
-
-    @Override
-    public boolean isDummy() {
-        return true;
-    }
-
-    TileEntityHeatExchangerMaster master;
-
-    public TileEntityHeatExchangerMaster master() {
-        if(master != null && !master.tileEntityInvalid) return master;
-        BlockPos masterPos = getPos().add(-offset[0], -offset[1], -offset[2]);
-        TileEntity te = Utils.getExistingTileEntity(world, masterPos);
-        master = te instanceof TileEntityHeatExchangerMaster?(TileEntityHeatExchangerMaster)te: null;
-        return master;
     }
 
     @Override
@@ -167,28 +149,6 @@ public class TileEntityHeatExchangerSlave extends TileEntityMultiblockNewSystem<
         return false;
     }
 
-    @Nonnull
-    @Override
-    protected IFluidTank[] getAccessibleFluidTanks(EnumFacing side) {
-        TileEntityHeatExchangerMaster master = master();
-        if(master == null) return ITUtils.emptyIFluidTankList;
-        return master.getAccessibleFluidTanks(side, pos);
-    }
-
-    @Override
-    protected boolean canFillTankFrom(int iTank, @Nullable EnumFacing side, @Nullable FluidStack resource) {
-        TileEntityHeatExchangerMaster master = this.master();
-        if(master == null || side == null) return false;
-        return master.canFillTankFrom(iTank, side, resource, pos);
-    }
-
-    @Override
-    protected boolean canDrainTankFrom(int iTank, @Nullable EnumFacing side) {
-        TileEntityHeatExchangerMaster master = this.master();
-        if(master == null || side == null) return false;
-        return master.canDrainTankFrom(iTank, side, pos);
-    }
-
     @Override
     public float[] getBlockBounds() {
         return null;
@@ -207,11 +167,6 @@ public class TileEntityHeatExchangerSlave extends TileEntityMultiblockNewSystem<
     @Override
     public byte[][][] GetAABBArray() {
         return MultiblockHeatExchanger.instance.collisionData;
-    }
-
-    @Override
-    public TileEntityMultiblockPart<TileEntityHeatExchangerSlave> This() {
-        return this;
     }
 
 }

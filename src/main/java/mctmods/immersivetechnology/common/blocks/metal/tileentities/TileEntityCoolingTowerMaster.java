@@ -36,8 +36,8 @@ import java.util.Random;
 
 public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave implements ITFluidTank.TankListener, IBinaryMessageReceiver {
 
-    private static int inputTankSize = Config.ITConfig.Machines.CoolingTower.coolingTower_input_tankSize;
-    private static int outputTankSize = Config.ITConfig.Machines.CoolingTower.coolingTower_output_tankSize;
+    private static final int inputTankSize = Config.ITConfig.Machines.CoolingTower.coolingTower_input_tankSize;
+    private static final int outputTankSize = Config.ITConfig.Machines.CoolingTower.coolingTower_output_tankSize;
 
     public FluidTank[] tanks = new FluidTank[] {
             new ITFluidTank(inputTankSize, this),
@@ -172,10 +172,6 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
         }
     }
 
-    public void efficientMarkDirty() { // !!!!!!! only use it within update() function !!!!!!!
-        world.getChunkFromBlockCoords(this.getPos()).markDirty();
-    }
-
     @Override
     public void TankContentsChanged() {
         this.markContainingBlockForUpdate(null);
@@ -184,12 +180,6 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
     @Override
     public boolean isDummy() {
         return false;
-    }
-
-    @Override
-    public TileEntityCoolingTowerMaster master() {
-        master = this;
-        return this;
     }
 
     private PoICache input0, input1, output0, output1;
@@ -210,6 +200,7 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
         }
     }
 
+    @Override
     public IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
         if(input0 == null) InitializePoIs();
         if(side == null) return tanks;
@@ -220,6 +211,7 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
         return ITUtils.emptyIFluidTankList;
     }
 
+    @Override
     public boolean canFillTankFrom(int iTank, EnumFacing side, FluidStack resource, int position) {
         if(input0 == null) InitializePoIs();
         if(input0.isPoI(side, position)) {
@@ -234,6 +226,7 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
         return false;
     }
 
+    @Override
     public boolean canDrainTankFrom(int iTank, EnumFacing side, int position) {
         if(input0 == null) InitializePoIs();
         if(output0.isPoI(side, position)) {

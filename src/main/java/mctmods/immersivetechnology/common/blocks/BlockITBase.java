@@ -482,6 +482,7 @@ public class BlockITBase<E extends Enum<E> & BlockITBase.IBlockEnum> extends Blo
 	public interface IBlockEnum extends IStringSerializable {
 		int getMeta();
 		boolean listForCreative();
+		String getPath();
 	}
 
 	public abstract static class IPLadderBlock<E extends Enum<E> & IBlockEnum> extends BlockITBase<E> {

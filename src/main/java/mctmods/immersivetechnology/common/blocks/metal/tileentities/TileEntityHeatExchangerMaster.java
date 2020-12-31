@@ -188,10 +188,6 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
         serverUpdate();
     }
 
-    public void efficientMarkDirty() { // !!!!!!! only use it within update() function !!!!!!!
-        world.getChunkFromBlockCoords(this.getPos()).markDirty();
-    }
-
     @Override
     public void TankContentsChanged() {
         this.markContainingBlockForUpdate(null);
@@ -206,12 +202,6 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
     @Override
     public boolean isDummy() {
         return false;
-    }
-
-    @Override
-    public TileEntityHeatExchangerMaster master() {
-        master = this;
-        return this;
     }
 
     private PoICache input0, input1, output0, output1;
@@ -234,6 +224,7 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
         }
     }
 
+    @Override
     public IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
         if(input0 == null) InitializePoIs();
         if(side == null) return tanks;
@@ -244,6 +235,7 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
         return ITUtils.emptyIFluidTankList;
     }
 
+    @Override
     public boolean canFillTankFrom(int iTank, EnumFacing side, FluidStack resource, int position) {
         if(input0 == null) InitializePoIs();
         if(input0.isPoI(side, position)) {
@@ -258,6 +250,7 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
         return false;
     }
 
+    @Override
     public boolean canDrainTankFrom(int iTank, EnumFacing side, int position) {
         if(input0 == null) InitializePoIs();
         if(output0.isPoI(side, position)) {

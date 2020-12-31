@@ -10,23 +10,22 @@
 		}
 	},
 	"variants": {
-		"inventory,type=distiller_slave": [{
+		"inventory": {
 			"model": "immersivetech:metal_multiblock/distiller.obj",
 			"transform": {
 				"scale": 0.23,
 				"rotation": [{
-					"x": 20
-				},
+						"x": 20
+					},
 					{
 						"y": -45
 					}
 				]
 			}
-		}],
+		},
 		"type": {
-			"distiller_slave": {
-				"model": "immersiveengineering:ie_empty"
-			}
+			"distiller": {},
+			"distiller_slave": {}
 		},
 		"facing": {
 			"north": {
@@ -58,22 +57,18 @@
 				}
 			}
 		},
-		"_0multiblockslave": {
-			"false": {},
-			"true": {
+		"render": {
+			"hidden": {
 				"model": "immersiveengineering:ie_empty"
-			}
-		},
-		"_1dynamicrender": {
-			"false": {},
-			"true": {}
-		},
-		"boolean0": {
-			"false": {
+			},
+			"normal": {
 				"model": "immersivetech:metal_multiblock/distiller.obj"
 			},
-			"true": {
+			"mirrored": {
 				"model": "immersivetech:metal_multiblock/distiller_mirrored.obj"
+			},
+			"dynamic": {
+				"model": "immersiveengineering:ie_empty"
 			}
 		}
 	}

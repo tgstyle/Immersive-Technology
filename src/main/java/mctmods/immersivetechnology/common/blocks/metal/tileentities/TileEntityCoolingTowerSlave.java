@@ -1,28 +1,25 @@
 package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 
 import blusunrize.immersiveengineering.common.blocks.TileEntityMultiblockPart;
-import blusunrize.immersiveengineering.common.util.Utils;
 import mctmods.immersivetechnology.api.ITUtils;
 import mctmods.immersivetechnology.api.crafting.CoolingTowerRecipe;
-import mctmods.immersivetechnology.common.blocks.metal.TileEntityMultiblockNewSystem;
+import mctmods.immersivetechnology.common.blocks.metal.TileEntityGenericMultiblock;
 import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockCoolingTower;
 import mctmods.immersivetechnology.common.util.multiblock.IMultiblockAdvAABB;
 import mctmods.immersivetechnology.common.util.multiblock.MultiblockUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 
 import java.util.ArrayList;
 
-public class TileEntityCoolingTowerSlave extends TileEntityMultiblockNewSystem<TileEntityCoolingTowerSlave, CoolingTowerRecipe, TileEntityCoolingTowerMaster> implements IMultiblockAdvAABB {
+public class TileEntityCoolingTowerSlave extends TileEntityGenericMultiblock<TileEntityCoolingTowerSlave, CoolingTowerRecipe, TileEntityCoolingTowerMaster> implements IMultiblockAdvAABB {
 
     public TileEntityCoolingTowerSlave() {
         super(MultiblockCoolingTower.instance, 0, false);
@@ -47,21 +44,6 @@ public class TileEntityCoolingTowerSlave extends TileEntityMultiblockNewSystem<T
     @Override
     public void disassemble() {
         super.disassemble();
-    }
-
-    @Override
-    public boolean isDummy() {
-        return true;
-    }
-
-    TileEntityCoolingTowerMaster master;
-
-    public TileEntityCoolingTowerMaster master() {
-        if(master != null && !master.tileEntityInvalid) return master;
-        BlockPos masterPos = getPos().add(-offset[0], -offset[1], -offset[2]);
-        TileEntity te = Utils.getExistingTileEntity(world, masterPos);
-        master = te instanceof TileEntityCoolingTowerMaster?(TileEntityCoolingTowerMaster)te: null;
-        return master;
     }
 
     @Override
@@ -159,27 +141,6 @@ public class TileEntityCoolingTowerSlave extends TileEntityMultiblockNewSystem<T
     }
 
     @Override
-    protected IFluidTank[] getAccessibleFluidTanks(EnumFacing side) {
-        TileEntityCoolingTowerMaster master = master();
-        if(master == null) return ITUtils.emptyIFluidTankList;
-        return master.getAccessibleFluidTanks(side, pos);
-    }
-
-    @Override
-    protected boolean canFillTankFrom(int iTank, EnumFacing side, FluidStack resource) {
-        TileEntityCoolingTowerMaster master = this.master();
-        if(master == null || side == null) return false;
-        return master.canFillTankFrom(iTank, side, resource, pos);
-    }
-
-    @Override
-    protected boolean canDrainTankFrom(int iTank, EnumFacing side) {
-        TileEntityCoolingTowerMaster master = this.master();
-        if(master == null || side == null) return false;
-        return master.canDrainTankFrom(iTank, side, pos);
-    }
-
-    @Override
     public float[] getBlockBounds() {
         return null;
     }
@@ -197,10 +158,5 @@ public class TileEntityCoolingTowerSlave extends TileEntityMultiblockNewSystem<T
     @Override
     public byte[][][] GetAABBArray() {
         return MultiblockCoolingTower.instance.collisionData;
-    }
-
-    @Override
-    public TileEntityMultiblockPart<TileEntityCoolingTowerSlave> This() {
-        return this;
     }
 }

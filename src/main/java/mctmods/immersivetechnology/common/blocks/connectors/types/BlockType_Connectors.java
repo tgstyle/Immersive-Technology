@@ -19,6 +19,11 @@ public enum BlockType_Connectors implements IStringSerializable, BlockITBase.IBl
 	}
 
 	@Override
+	public String getPath() {
+		return null;
+	}
+
+	@Override
 	public String getName() {
 		return this.toString().toLowerCase(Locale.ENGLISH);
 	}

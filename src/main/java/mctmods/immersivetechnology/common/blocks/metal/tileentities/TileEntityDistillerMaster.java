@@ -27,8 +27,8 @@ import net.minecraftforge.oredict.OreDictionary;
 
 public class TileEntityDistillerMaster extends TileEntityDistillerSlave implements ITFluidTank.TankListener {
 
-	private static int inputTankSize = Distiller.distiller_input_tankSize;
-	private static int outputTankSize = Distiller.distiller_output_tankSize;
+	private static final int inputTankSize = Distiller.distiller_input_tankSize;
+	private static final int outputTankSize = Distiller.distiller_output_tankSize;
 	BlockPos fluidOutputPos;
 
 	public FluidTank[] tanks = new FluidTank[] {
@@ -107,10 +107,6 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
 		ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageTileSync(this, tag), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 0));
 	}
 
-	public void efficientMarkDirty() { // !!!!!!! only use it within update() function !!!!!!!
-		world.getChunkFromBlockCoords(this.getPos()).markDirty();
-	}
-
 	@SuppressWarnings("unchecked")
 	@Override
 	public void update() {
@@ -167,14 +163,7 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
 	}
 
 	@Override
-	public TileEntityDistillerMaster master() {
-		master = this;
-		return this;
-	}
-
-	@Override
 	public void receiveMessageFromServer(NBTTagCompound message) {
 		running = message.getBoolean("running");
 	}
-
 }

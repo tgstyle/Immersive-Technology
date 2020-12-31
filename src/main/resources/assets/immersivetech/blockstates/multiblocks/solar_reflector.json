@@ -1,0 +1,80 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "transform": "forge:default-block",
+    "custom": {
+      "flip-v": true
+    },
+    "textures": {
+      "particle": "immersiveengineering:blocks/storage_steel"
+    }
+  },
+  "variants": {
+    "inventory": {
+      "model": "immersivetech:metal_multiblock/solar_reflector.obj",
+      "transform": {
+        "scale": 0.125,
+        "rotation": [{
+          "x": 20
+        },
+          {
+            "y": -45
+          }
+        ],
+        "translation": [
+          0,
+          0,
+          0
+        ]
+      }
+    },
+    "type": {
+      "solar_reflector": {},
+      "solar_reflector_slave": {}
+    },
+    "facing": {
+      "north": {
+        "transform": {
+          "rotation": {
+            "y": 0
+          }
+        }
+      },
+      "south": {
+        "transform": {
+          "rotation": {
+            "y": 180
+          }
+        }
+      },
+      "west": {
+        "transform": {
+          "rotation": {
+            "y": 90
+          }
+        }
+      },
+      "east": {
+        "transform": {
+          "rotation": {
+            "y": -90
+          }
+        }
+      }
+    },
+    "render": {
+      "hidden": {
+        "model": "immersiveengineering:ie_empty"
+      },
+      "normal": {
+        "model": "immersivetech:metal_multiblock/solar_reflector.obj"
+      },
+      "mirrored": {
+        "model": "immersivetech:metal_multiblock/solar_reflector.obj"
+      },
+      "dynamic": {
+        "model": "immersiveengineering:ie_empty"
+      }
+    }
+  }
+}

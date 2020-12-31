@@ -34,10 +34,10 @@ import net.minecraftforge.oredict.OreDictionary;
 
 public class TileEntityCokeOvenAdvancedMaster extends TileEntityCokeOvenAdvancedSlave implements IEBlockInterfaces.IActiveState, IEBlockInterfaces.IProcessTile, ITFluidTank.TankListener {
 
-	private static int tankSize = AdvancedCokeOven.advancedCokeOven_tankSize;
-	public static float baseSpeed = AdvancedCokeOven.advancedCokeOven_speed_base;
-	public static float preheaterAdd = AdvancedCokeOven.advancedCokeOven_preheater_speed_increase;
-	public static float preheaterMult = AdvancedCokeOven.advancedCokeOven_preheater_speed_multiplier;
+	private static final int tankSize = AdvancedCokeOven.advancedCokeOven_tankSize;
+	public static final float baseSpeed = AdvancedCokeOven.advancedCokeOven_speed_base;
+	public static final float preheaterAdd = AdvancedCokeOven.advancedCokeOven_preheater_speed_increase;
+	public static final float preheaterMult = AdvancedCokeOven.advancedCokeOven_preheater_speed_multiplier;
 	BlockPos fluidOutputPos;
 
 	public float process = 0;
@@ -46,9 +46,9 @@ public class TileEntityCokeOvenAdvancedMaster extends TileEntityCokeOvenAdvanced
 	private float soundVolume;
 	private CokeOvenRecipe processing;
 
-  public ITFluidTank tank = new ITFluidTank(tankSize, this);
-  public static int slotCount = 4;
-  NonNullList<ItemStack> inventory = NonNullList.withSize(slotCount, ItemStack.EMPTY);
+	public ITFluidTank tank = new ITFluidTank(tankSize, this);
+	public static int slotCount = 4;
+	NonNullList<ItemStack> inventory = NonNullList.withSize(slotCount, ItemStack.EMPTY);
 
 	@Override
 	public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
@@ -131,10 +131,6 @@ public class TileEntityCokeOvenAdvancedMaster extends TileEntityCokeOvenAdvanced
 		tag.setFloat("process", process);
 		tag.setInteger("processMax", processMax);
 		ImmersiveTechnology.packetHandler.sendTo(new MessageTileSync(this, tag), player);
-	}
-
-	public void efficientMarkDirty() { // !!!!!!! only use it within update() function !!!!!!!
-		world.getChunkFromBlockCoords(this.getPos()).markDirty();
 	}
 
 	@Override
@@ -242,12 +238,6 @@ public class TileEntityCokeOvenAdvancedMaster extends TileEntityCokeOvenAdvanced
 	@Override
 	public boolean isDummy() {
 		return false;
-	}
-
-	@Override
-	public TileEntityCokeOvenAdvancedMaster master() {
-		master = this;
-		return this;
 	}
 
 	@Override

@@ -10,24 +10,23 @@
 		}
 	},
 	"variants": {
-		"inventory,type=heat_exchanger_slave": [{
-			"model": "immersivetech:metal_multiblock/heat_exchanger.obj",
+		"inventory": {
+			"model": "immersivetech:stone_multiblock/coke_oven_advanced.obj",
 			"transform": {
-				"scale": 0.17,
+				"scale": 0.22,
 				"rotation": [{
-					"x": 20
-				},
+						"x": 20
+					},
 					{
 						"y": -45
 					}
 				],
-				"translation": [ -0.1, 0, 0 ]
+				"translation": [-0.2, -0.1, 0]
 			}
-		}],
+		},
 		"type": {
-			"heat_exchanger_slave": {
-				"model": "immersiveengineering:ie_empty"
-			}
+			"coke_oven_advanced": {},
+			"coke_oven_advanced_slave": {}
 		},
 		"facing": {
 			"north": {
@@ -59,22 +58,18 @@
 				}
 			}
 		},
-		"_0multiblockslave": {
-			"false": {},
-			"true": {
+		"render": {
+			"hidden": {
 				"model": "immersiveengineering:ie_empty"
-			}
-		},
-		"_1dynamicrender": {
-			"false": {},
-			"true": {}
-		},
-		"boolean0": {
-			"false": {
-				"model": "immersivetech:metal_multiblock/heat_exchanger.obj"
 			},
-			"true": {
-				"model": "immersivetech:metal_multiblock/heat_exchanger_mirrored.obj"
+			"normal": {
+				"model": "immersivetech:stone_multiblock/coke_oven_advanced.obj"
+			},
+			"mirrored": {
+				"model": "immersivetech:stone_multiblock/coke_oven_advanced.obj"
+			},
+			"dynamic": {
+				"model": "immersiveengineering:ie_empty"
 			}
 		}
 	}

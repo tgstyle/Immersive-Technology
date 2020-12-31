@@ -1,9 +1,8 @@
 package mctmods.immersivetechnology.common.blocks.stone;
 
-import blusunrize.immersiveengineering.api.IEProperties;
+import mctmods.immersivetechnology.api.ITProperties;
 import mctmods.immersivetechnology.common.blocks.BlockITMultiblock;
 import mctmods.immersivetechnology.common.blocks.ItemBlockITBase;
-import mctmods.immersivetechnology.common.blocks.stone.tileentities.TileEntityCokeOvenAdvancedMaster;
 import mctmods.immersivetechnology.common.blocks.stone.tileentities.TileEntityCokeOvenAdvancedSlave;
 import mctmods.immersivetechnology.common.blocks.stone.types.BlockType_StoneMultiblock;
 import net.minecraft.block.material.Material;
@@ -18,7 +17,7 @@ import net.minecraft.world.World;
 public class BlockStoneMultiblock extends BlockITMultiblock<BlockType_StoneMultiblock> {
 
 	public BlockStoneMultiblock() {
-		super("stone_multiblock", Material.ROCK, PropertyEnum.create("type", BlockType_StoneMultiblock.class), ItemBlockITBase.class, IEProperties.BOOLEANS[0]);
+		super("stone_multiblock", Material.ROCK, PropertyEnum.create("type", BlockType_StoneMultiblock.class), ItemBlockITBase.class, ITProperties.RENDER);
 		setHardness(2.0F);
 		setResistance(20f);
 		this.setAllNotNormalBlock();
@@ -34,13 +33,7 @@ public class BlockStoneMultiblock extends BlockITMultiblock<BlockType_StoneMulti
 
 	@Override
 	public TileEntity createBasicTE(World worldIn, BlockType_StoneMultiblock type) {
-		switch(type) {
-			case COKE_OVEN_ADVANCED:
-				return new TileEntityCokeOvenAdvancedMaster();
-			case COKE_OVEN_ADVANCED_SLAVE:
-				return new TileEntityCokeOvenAdvancedSlave();
-		}
-		return null;
+		return type.createTE();
 	}
 
 }

@@ -200,14 +200,16 @@ public class TileEntityBarrel extends TileEntityCommonOSD implements IFluidTank,
 	@Override
 	public void receiveMessageFromClient(ByteBuf buf, EntityPlayerMP player) {
 		ByteBuf message = Unpooled.copyLong(lastAcceptedAmount);
-		ByteBufUtils.writeUTF8String(message, infiniteFluid.getFluid().getName());
+		ByteBufUtils.writeUTF8String(message, infiniteFluid == null? "empty" : infiniteFluid.getFluid().getName());
 		BinaryMessageTileSync.sendToPlayer(player, getPos(), message);
 	}
 
 	@Override
 	public void receiveMessageFromServer(ByteBuf buf) {
 		lastAcceptedAmount = buf.readLong();
-		setFluid(FluidRegistry.getFluid(ByteBufUtils.readUTF8String(buf)));
+		String fluidName = ByteBufUtils.readUTF8String(buf);
+		if (fluidName.equals("empty")) return;
+		setFluid(FluidRegistry.getFluid(fluidName));
 	}
 
 	@Override

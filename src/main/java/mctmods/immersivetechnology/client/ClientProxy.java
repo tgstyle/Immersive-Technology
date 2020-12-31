@@ -16,36 +16,20 @@ import blusunrize.lib.manual.ManualPages;
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.ITLib;
 import mctmods.immersivetechnology.api.ITUtils;
-import mctmods.immersivetechnology.client.gui.GuiBoiler;
-import mctmods.immersivetechnology.client.gui.GuiCokeOvenAdvanced;
-import mctmods.immersivetechnology.client.gui.GuiDistiller;
-import mctmods.immersivetechnology.client.gui.GuiFluidValve;
-import mctmods.immersivetechnology.client.gui.GuiLoadController;
-import mctmods.immersivetechnology.client.gui.GuiSolarTower;
-import mctmods.immersivetechnology.client.gui.GuiStackLimiter;
-import mctmods.immersivetechnology.client.gui.GuiTimer;
-import mctmods.immersivetechnology.client.gui.GuiTrashItem;
+import mctmods.immersivetechnology.client.gui.*;
 import mctmods.immersivetechnology.client.models.ModelConfigurableSides;
+import mctmods.immersivetechnology.client.render.MultiblockRenderSystem;
 import mctmods.immersivetechnology.client.render.TileRenderBarrelOpen;
-import mctmods.immersivetechnology.client.render.TileRenderSteamTurbine;
-import mctmods.immersivetechnology.client.render.TileRenderSteelSheetmetalTank;
-import mctmods.immersivetechnology.client.render.TileRendererGasTurbine;
 import mctmods.immersivetechnology.common.CommonProxy;
 import mctmods.immersivetechnology.common.Config.ITConfig.Machines.Multiblock;
 import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.blocks.BlockITFluid;
+import mctmods.immersivetechnology.common.blocks.BlockITMultiblock;
 import mctmods.immersivetechnology.common.blocks.BlockValve.BlockType_Valve;
 import mctmods.immersivetechnology.common.blocks.connectors.tileentities.TileEntityTimer;
 import mctmods.immersivetechnology.common.blocks.connectors.types.BlockType_Connectors;
 import mctmods.immersivetechnology.common.blocks.metal.multiblocks.*;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBarrelOpen;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBoilerMaster;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityDistillerMaster;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityGasTurbineMaster;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySolarTowerMaster;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySteamTurbineMaster;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntitySteelSheetmetalTankMaster;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityTrashItem;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.*;
 import mctmods.immersivetechnology.common.blocks.metal.types.BlockType_MetalBarrel;
 import mctmods.immersivetechnology.common.blocks.metal.types.BlockType_MetalDevice;
 import mctmods.immersivetechnology.common.blocks.stone.multiblocks.MultiblockCokeOvenAdvanced;
@@ -64,7 +48,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.client.renderer.ItemMeshDefinition;
+import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
@@ -79,6 +63,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.model.obj.OBJLoader;
@@ -93,7 +78,7 @@ import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
 import javax.annotation.Nonnull;
-import java.util.Locale;
+import java.util.*;
 
 @Mod.EventBusSubscriber(Side.CLIENT)
 public class ClientProxy extends CommonProxy {
@@ -118,11 +103,13 @@ public class ClientProxy extends CommonProxy {
 	@SubscribeEvent()
 	public void PlayerLeftSession(PlayerEvent.PlayerLoggedOutEvent e) {
 		ITSoundHandler.DeleteAllSounds();
+		MultiblockRenderSystem.clear();
 	}
 
 	@SubscribeEvent()
 	public void PlayerDisconnected(FMLNetworkEvent.ClientDisconnectionFromServerEvent e) {
 		ITSoundHandler.DeleteAllSounds();
+		MultiblockRenderSystem.clear();
 	}
 
 	@SubscribeEvent
@@ -136,6 +123,18 @@ public class ClientProxy extends CommonProxy {
 			}
 		}
 		calculateVolume();
+
+		/*if (event.phase != TickEvent.Phase.END) {
+			return;
+		}
+		final Minecraft minecraft = Minecraft.getMinecraft();
+		if (minecraft.world == null) {
+			return;
+		}
+		if (minecraft.player == null) {
+			return;
+		}
+		MultiblockRenderSystem.buildCache(minecraft);*/
 	}
 
 	public static float volumeAdjustment = 1;
@@ -157,10 +156,10 @@ public class ClientProxy extends CommonProxy {
 		if(prevVolume != volumeAdjustment) ITSoundHandler.UpdateAllVolumes();
 	}
 
-	
-	/*
-	@author BluSunrize
-	*/
+	@SubscribeEvent
+	public static void onRenderWorldLastEvent(final RenderWorldLastEvent event) {
+		MultiblockRenderSystem.installHook(event);
+	}
 
 	@SuppressWarnings("deprecation")
 	@SubscribeEvent
@@ -171,16 +170,22 @@ public class ClientProxy extends CommonProxy {
 		for(Block block : ITContent.registeredITBlocks) {
 			final ResourceLocation loc = Block.REGISTRY.getNameForObject(block);
 			Item blockItem = Item.getItemFromBlock(block);
-			if(blockItem == null)	throw new RuntimeException("ITEMBLOCK for" + loc + " : " + block + " IS NULL");
-			if(block instanceof IIEMetaBlock) {
+			if(blockItem == null) throw new RuntimeException("ITEMBLOCK for" + loc + " : " + block + " IS NULL");
+			if(block instanceof BlockITMultiblock) {
+				IIEMetaBlock ieMetaBlock = (IIEMetaBlock)block;
+				ModelLoader.setCustomStateMapper(block, ITCustomStateMapper.getStateMapper(ieMetaBlock));
+				ModelLoader.setCustomMeshDefinition(blockItem, stack -> new ModelResourceLocation(loc, "inventory"));
+				for(int meta = 0; meta < ieMetaBlock.getMetaEnums().length; meta++) {
+					try {
+						ModelLoader.setCustomModelResourceLocation(blockItem, meta, new ModelResourceLocation(((BlockITMultiblock<?>)block).getPath(meta), "inventory"));
+					} catch (NullPointerException npe) {
+						throw new RuntimeException("WELP! apparently " + ieMetaBlock + " lacks an item!", npe);
+					}
+				}
+			} else if(block instanceof IIEMetaBlock) {
 				IIEMetaBlock ieMetaBlock = (IIEMetaBlock)block;
 				if(ieMetaBlock.useCustomStateMapper()) ModelLoader.setCustomStateMapper(block, IECustomStateMapper.getStateMapper(ieMetaBlock));
-				ModelLoader.setCustomMeshDefinition(blockItem, new ItemMeshDefinition() {
-					@Override
-					public ModelResourceLocation getModelLocation(ItemStack stack) {
-						return new ModelResourceLocation(loc, "inventory");
-					}
-				});
+				ModelLoader.setCustomMeshDefinition(blockItem, stack -> new ModelResourceLocation(loc, "inventory"));
 				for(int meta = 0; meta < ieMetaBlock.getMetaEnums().length; meta++) {
 					String location = loc.toString();
 					String prop = ieMetaBlock.appendPropertiesToState() ? ("inventory," + ieMetaBlock.getMetaProperty().getName() + "=" + ieMetaBlock.getMetaEnums()[meta].toString().toLowerCase(Locale.US)): null;
@@ -239,10 +244,7 @@ public class ClientProxy extends CommonProxy {
 
 	@Override
 	public void init() {
-		ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySteamTurbineMaster.class, new TileRenderSteamTurbine());
-		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityGasTurbineMaster.class, new TileRendererGasTurbine());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityBarrelOpen.class, new TileRenderBarrelOpen());
-		ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySteelSheetmetalTankMaster.class, new TileRenderSteelSheetmetalTank());
 		ImmersiveTechnology.packetHandler.registerMessage(MessageTileSync.HandlerClient.class, MessageTileSync.class, 0, Side.CLIENT);
 		//has to be here as well because this one is used when playing Singleplayer, go figure
 		ImmersiveTechnology.packetHandler.registerMessage(MessageTileSync.HandlerServer.class, MessageTileSync.class, 0, Side.SERVER);
@@ -347,5 +349,4 @@ public class ClientProxy extends CommonProxy {
 		}
 		return null;
 	}
-
 }

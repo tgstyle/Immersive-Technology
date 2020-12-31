@@ -22,4 +22,9 @@ public enum BlockType_MetalDevice implements IStringSerializable, BlockITBase.IB
 	public boolean listForCreative() {
 		return true;
 	}
+
+	@Override
+	public String getPath() {
+		return null;
+	}
 }

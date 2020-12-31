@@ -8,6 +8,7 @@ import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.ITUtils;
 import mctmods.immersivetechnology.api.client.MechanicalEnergyAnimation;
 import mctmods.immersivetechnology.api.crafting.GasTurbineRecipe;
+import mctmods.immersivetechnology.client.render.TileRendererGasTurbine;
 import mctmods.immersivetechnology.common.Config;
 import mctmods.immersivetechnology.common.Config.ITConfig.Machines.GasTurbine;
 import mctmods.immersivetechnology.common.blocks.ITBlockInterfaces.IMechanicalEnergy;
@@ -27,6 +28,7 @@ import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleSmokeNormal;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.energy.IEnergyStorage;
@@ -267,12 +269,6 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
         return false;
     }
 
-    @Override
-    public TileEntityGasTurbineMaster master() {
-        master = this;
-        return this;
-    }
-
     private PoICache input, output, power0, power1, redstone, mechanicalOutput;
     private BlockPos particleOrigin, runningSoundOrigin, arcSoundOrigin, ignitionSoundOrigin, starterSoundOrigin, outputFront, mechanicalOutputFront;
 
@@ -302,6 +298,7 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
         return new int[] { redstone.position };
     }
 
+    @Override
     public IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
         if(input == null) InitializePoIs();
         if(side == null) return tanks;
@@ -310,6 +307,7 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
         return ITUtils.emptyIFluidTankList;
     }
 
+    @Override
     public boolean canFillTankFrom(int iTank, EnumFacing side, FluidStack resource, int position) {
         if(input == null) InitializePoIs();
         if(input.isPoI(side, position)) {
@@ -320,6 +318,7 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
         return false;
     }
 
+    @Override
     public boolean canDrainTankFrom(int iTank, EnumFacing side, int position) {
         if(input == null) InitializePoIs();
         if(output.isPoI(side, position)) return tanks[1].getFluidAmount() > 0;
@@ -356,4 +355,14 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
         else if (power0.isPoI(facing, position)) return starterStorage;
         else return null;
     }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void renderDynamic(double x, double y, double z, float partialTicks) {
+        TileRendererGasTurbine.renderer.render(this, x, y, z, partialTicks, 0, 1);
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public boolean canRenderDynamicInLayer(BlockRenderLayer layer) { return layer == BlockRenderLayer.SOLID; }
 }

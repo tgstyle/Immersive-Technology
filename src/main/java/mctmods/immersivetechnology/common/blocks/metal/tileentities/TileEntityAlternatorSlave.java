@@ -5,22 +5,19 @@ import blusunrize.immersiveengineering.api.energy.immersiveflux.FluxStorage;
 import blusunrize.immersiveengineering.api.energy.immersiveflux.IFluxProvider;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IAdvancedCollisionBounds;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IAdvancedSelectionBounds;
-import blusunrize.immersiveengineering.common.blocks.TileEntityMultiblockPart;
 import blusunrize.immersiveengineering.common.util.EnergyHelper.IEForgeEnergyWrapper;
 import blusunrize.immersiveengineering.common.util.EnergyHelper.IIEInternalFluxHandler;
-import blusunrize.immersiveengineering.common.util.Utils;
 import com.google.common.collect.Lists;
 import mctmods.immersivetechnology.api.ITUtils;
 import mctmods.immersivetechnology.api.client.MechanicalEnergyAnimation;
 import mctmods.immersivetechnology.common.blocks.ITBlockInterfaces.IMechanicalEnergy;
+import mctmods.immersivetechnology.common.blocks.metal.TileEntityGenericMultipart;
 import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockAlternator;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
@@ -30,12 +27,10 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TileEntityAlternatorSlave extends TileEntityMultiblockPart <TileEntityAlternatorSlave> implements IMechanicalEnergy, IAdvancedSelectionBounds, IAdvancedCollisionBounds, IFluxProvider, IIEInternalFluxHandler {
-	private static int[] size = new int[] {3, 4, 3};
-
+public class TileEntityAlternatorSlave extends TileEntityGenericMultipart<TileEntityAlternatorSlave, TileEntityAlternatorMaster> implements IMechanicalEnergy, IAdvancedSelectionBounds, IAdvancedCollisionBounds, IFluxProvider, IIEInternalFluxHandler {
 
 	public TileEntityAlternatorSlave() {
-		super(size);
+		super(new int[] {3, 4, 3});
 	}
 
 	@Override
@@ -51,21 +46,6 @@ public class TileEntityAlternatorSlave extends TileEntityMultiblockPart <TileEnt
 	@Override
 	public void update() {
 		ITUtils.RemoveDummyFromTicking(this);
-	}
-
-	@Override
-	public boolean isDummy() {
-		return true;
-	}
-
-	TileEntityAlternatorMaster master;
-
-	public TileEntityAlternatorMaster master() {
-		if(master != null && !master.tileEntityInvalid) return master;
-		BlockPos masterPos = getPos().add(-offset[0], -offset[1], -offset[2]);
-		TileEntity te = Utils.getExistingTileEntity(world, masterPos);
-		master = te instanceof TileEntityAlternatorMaster?(TileEntityAlternatorMaster)te: null;
-		return master;
 	}
 
 	public boolean isEnergyPos(@Nullable EnumFacing enumFacing) {

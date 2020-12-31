@@ -24,4 +24,9 @@ public enum BlockType_MetalTrash implements IStringSerializable, BlockITBase.IBl
 	public boolean listForCreative() {
 		return true;
 	}
+
+	@Override
+	public String getPath() {
+		return null;
+	}
 }

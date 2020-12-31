@@ -5,6 +5,7 @@ import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.ITUtils;
 import mctmods.immersivetechnology.api.client.MechanicalEnergyAnimation;
 import mctmods.immersivetechnology.api.crafting.SteamTurbineRecipe;
+import mctmods.immersivetechnology.client.render.TileRendererSteamTurbine;
 import mctmods.immersivetechnology.common.Config.ITConfig.Machines.SteamTurbine;
 import mctmods.immersivetechnology.common.Config.ITConfig.MechanicalEnergy;
 import mctmods.immersivetechnology.common.blocks.ITBlockInterfaces.IMechanicalEnergy;
@@ -16,6 +17,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fluids.FluidStack;
@@ -28,12 +30,12 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class TileEntitySteamTurbineMaster extends TileEntitySteamTurbineSlave implements ITFluidTank.TankListener {
 
-	private static int inputTankSize = SteamTurbine.steamTurbine_input_tankSize;
-	private static int outputTankSize = SteamTurbine.steamTurbine_input_tankSize;
-	private static int maxSpeed = MechanicalEnergy.mechanicalEnergy_speed_max;
-	private static int speedGainPerTick = SteamTurbine.steamTurbine_speed_gainPerTick;
-	private static int speedLossPerTick = SteamTurbine.steamTurbine_speed_lossPerTick;
-	private static float maxRotationSpeed = SteamTurbine.steamTurbine_speed_maxRotation;
+	private static final int inputTankSize = SteamTurbine.steamTurbine_input_tankSize;
+	private static final int outputTankSize = SteamTurbine.steamTurbine_input_tankSize;
+	private static final int maxSpeed = MechanicalEnergy.mechanicalEnergy_speed_max;
+	private static final int speedGainPerTick = SteamTurbine.steamTurbine_speed_gainPerTick;
+	private static final int speedLossPerTick = SteamTurbine.steamTurbine_speed_lossPerTick;
+	private static final float maxRotationSpeed = SteamTurbine.steamTurbine_speed_maxRotation;
 	BlockPos fluidOutputPos;
 
 	public FluidTank[] tanks = new FluidTank[] {
@@ -171,13 +173,17 @@ public class TileEntitySteamTurbineMaster extends TileEntitySteamTurbineSlave im
 		return false;
 	}
 
-	@Override
-	public TileEntitySteamTurbineMaster master() {
-		master = this;
-		return this;
-	}
-
 	public boolean isMechanicalEnergyTransmitter(EnumFacing facing, int position) {
 		return facing == this.facing && position == 58;
 	}
+
+	@SideOnly(Side.CLIENT)
+	@Override
+	public void renderDynamic(double x, double y, double z, float partialTicks) {
+		TileRendererSteamTurbine.renderer.render(this, x, y, z, partialTicks, 0, 1);
+	}
+
+	@SideOnly(Side.CLIENT)
+	@Override
+	public boolean canRenderDynamicInLayer(BlockRenderLayer layer) { return layer == BlockRenderLayer.SOLID; }
 }

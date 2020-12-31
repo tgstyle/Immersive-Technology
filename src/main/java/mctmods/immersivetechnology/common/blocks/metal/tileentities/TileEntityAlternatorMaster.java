@@ -101,10 +101,6 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
 				new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 0));
 	}
 
-	public void efficientMarkDirty() { // !!!!!!! only use it within update() function !!!!!!!
-		world.getChunkFromBlockCoords(this.getPos()).markDirty();
-	}
-
 	public void checkProvider() {
 		if (provider == null || !provider.isValid()) {
 			TileEntity tile = world.getTileEntity(getPos().offset(facing, 4));
@@ -163,12 +159,6 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
 	}
 
 	EnergyHelper.IEForgeEnergyWrapper wrapper = new EnergyHelper.IEForgeEnergyWrapper(this, null);
-
-	@Override
-	public TileEntityAlternatorMaster master() {
-		master = this;
-		return this;
-	}
 
 	@Override
 	public void receiveMessageFromServer(ByteBuf buf) {

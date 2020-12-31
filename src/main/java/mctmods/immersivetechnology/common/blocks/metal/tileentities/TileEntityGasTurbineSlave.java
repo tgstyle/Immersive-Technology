@@ -1,23 +1,20 @@
 package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 
 import blusunrize.immersiveengineering.common.blocks.TileEntityMultiblockPart;
-import blusunrize.immersiveengineering.common.util.Utils;
 import mctmods.immersivetechnology.api.ITUtils;
 import mctmods.immersivetechnology.api.client.MechanicalEnergyAnimation;
 import mctmods.immersivetechnology.api.crafting.GasTurbineRecipe;
 import mctmods.immersivetechnology.common.blocks.ITBlockInterfaces;
-import mctmods.immersivetechnology.common.blocks.metal.TileEntityMultiblockNewSystem;
+import mctmods.immersivetechnology.common.blocks.metal.TileEntityGenericMultiblock;
 import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockGasTurbine;
 import mctmods.immersivetechnology.common.util.multiblock.IMultiblockAdvAABB;
 import mctmods.immersivetechnology.common.util.multiblock.MultiblockUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
@@ -27,7 +24,7 @@ import net.minecraftforge.fluids.IFluidTank;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 
-public class TileEntityGasTurbineSlave extends TileEntityMultiblockNewSystem<TileEntityGasTurbineSlave, GasTurbineRecipe, TileEntityGasTurbineMaster> implements IMultiblockAdvAABB, ITBlockInterfaces.IMechanicalEnergy {
+public class TileEntityGasTurbineSlave extends TileEntityGenericMultiblock<TileEntityGasTurbineSlave, GasTurbineRecipe, TileEntityGasTurbineMaster> implements IMultiblockAdvAABB, ITBlockInterfaces.IMechanicalEnergy {
 
     public TileEntityGasTurbineSlave() {
         super(MultiblockGasTurbine.instance, 0, true);
@@ -52,21 +49,6 @@ public class TileEntityGasTurbineSlave extends TileEntityMultiblockNewSystem<Til
     @Override
     public IFluidTank[] getInternalTanks() {
         return master() == null? new IFluidTank[0] : master.tanks;
-    }
-
-    @Override
-    public boolean isDummy() {
-        return true;
-    }
-
-    TileEntityGasTurbineMaster master;
-
-    public TileEntityGasTurbineMaster master() {
-        if(master != null && !master.tileEntityInvalid) return master;
-        BlockPos masterPos = getPos().add(-offset[0], -offset[1], -offset[2]);
-        TileEntity te = Utils.getExistingTileEntity(world, masterPos);
-        master = te instanceof TileEntityGasTurbineMaster?(TileEntityGasTurbineMaster)te: null;
-        return master;
     }
 
     @Override
@@ -187,21 +169,6 @@ public class TileEntityGasTurbineSlave extends TileEntityMultiblockNewSystem<Til
     }
 
     @Override
-    protected IFluidTank[] getAccessibleFluidTanks(EnumFacing side) {
-        return master() == null? ITUtils.emptyIFluidTankList : master.getAccessibleFluidTanks(side, pos);
-    }
-
-    @Override
-    protected boolean canFillTankFrom(int iTank, EnumFacing side, FluidStack resource) {
-        return side != null && master() != null && master.canFillTankFrom(iTank, side, resource, pos);
-    }
-
-    @Override
-    protected boolean canDrainTankFrom(int iTank, EnumFacing side) {
-        return side != null && master() != null && master.canDrainTankFrom(iTank, side, pos);
-    }
-
-    @Override
     public float[] getBlockBounds() {
         return null;
     }
@@ -219,11 +186,6 @@ public class TileEntityGasTurbineSlave extends TileEntityMultiblockNewSystem<Til
     @Override
     public byte[][][] GetAABBArray() {
         return MultiblockGasTurbine.instance.collisionData;
-    }
-
-    @Override
-    public TileEntityMultiblockPart<TileEntityGasTurbineSlave> This() {
-        return this;
     }
 
     @Override

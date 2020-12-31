@@ -28,12 +28,12 @@ import net.minecraftforge.oredict.OreDictionary;
 
 public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITFluidTank.TankListener {
 
-	private static int inputTankSize = Boiler.boiler_input_tankSize;
-	private static int outputTankSize = Boiler.boiler_output_tankSize;
-	private static int inputFuelTankSize = Boiler.boiler_fuel_tankSize;
-	private static int heatLossPerTick = Boiler.boiler_heat_lossPerTick;
-	private static int progressLossPerTick = Boiler.boiler_progress_lossInTicks;
-	private static double workingHeatLevel = Boiler.boiler_heat_workingLevel;
+	private static final int inputTankSize = Boiler.boiler_input_tankSize;
+	private static final int outputTankSize = Boiler.boiler_output_tankSize;
+	private static final int inputFuelTankSize = Boiler.boiler_fuel_tankSize;
+	private static final int heatLossPerTick = Boiler.boiler_heat_lossPerTick;
+	private static final int progressLossPerTick = Boiler.boiler_progress_lossInTicks;
+	private static final double workingHeatLevel = Boiler.boiler_heat_workingLevel;
 	BlockPos fluidOutputPos;
 
 	public FluidTank[] tanks = new FluidTank[] {
@@ -167,10 +167,6 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
 		heatLevel = message.getDouble("heat");
 	}
 
-	public void efficientMarkDirty() { // !!!!!!! only use it within update() function !!!!!!!
-		world.getChunkFromBlockCoords(this.getPos()).markDirty();
-	}
-
 	private boolean heatLogic() {
 		boolean update = false;
 		if(burnRemaining > 0) {
@@ -283,12 +279,6 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
 	@Override
 	public boolean isDummy() {
 		return false;
-	}
-
-	@Override
-	public TileEntityBoilerMaster master() {
-		master = this;
-		return this;
 	}
 
 }

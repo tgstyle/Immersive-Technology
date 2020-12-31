@@ -10,10 +10,10 @@
 		}
 	},
 	"variants": {
-		"inventory,type=gas_turbine": [{
-			"model": "immersivetech:metal_multiblock/gas_turbine.obj",
+		"inventory": {
+			"model": "immersivetech:metal_multiblock/steam_turbine.obj",
 			"transform": {
-				"scale": 0.16,
+				"scale": 0.115,
 				"rotation": [{
 						"x": 20
 					},
@@ -23,9 +23,10 @@
 				],
 				"translation": [ -0.3, -0.1, 0 ]
 			}
-		}],
+		},
 		"type": {
-			"gas_turbine": {}
+			"steam_turbine": {},
+			"steam_turbine_slave": {}
 		},
 		"facing": {
 			"north": {
@@ -57,24 +58,18 @@
 				}
 			}
 		},
-		"_0multiblockslave": {
-			"false": {},
-			"true": {
+		"render": {
+			"hidden": {
 				"model": "immersiveengineering:ie_empty"
-			}
-		},
-		"_1dynamicrender": {
-			"false": {},
-			"true": {
-				"model": "immersivetech:metal_multiblock/gas_turbine_rotor.obj"
-			}
-		},
-		"boolean0": {
-			"false": {
-				"model": "immersivetech:metal_multiblock/gas_turbine.obj"
 			},
-			"true": {
-				"model": "immersivetech:metal_multiblock/gas_turbine_mirrored.obj"
+			"normal": {
+				"model": "immersivetech:metal_multiblock/steam_turbine.obj"
+			},
+			"mirrored": {
+				"model": "immersivetech:metal_multiblock/steam_turbine_mirrored.obj"
+			},
+			"dynamic": {
+				"model": "immersivetech:metal_multiblock/steam_turbine_rotor.obj"
 			}
 		}
 	}

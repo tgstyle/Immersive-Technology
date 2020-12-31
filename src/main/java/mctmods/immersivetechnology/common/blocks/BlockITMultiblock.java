@@ -17,22 +17,13 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-	/*
-	* @author BluSunrize
-	*/
 public abstract class BlockITMultiblock<E extends Enum<E> & BlockITBase.IBlockEnum> extends BlockITTileProvider<E> {
 	protected final boolean[] hasMultiblockTile;
 
 	public BlockITMultiblock(String name, Material material, PropertyEnum<E> mainProperty, Class<? extends ItemBlockITBase> itemBlock, Object... additionalProperties) {
-		super(name, material, mainProperty, itemBlock, combineProperties(additionalProperties, IEProperties.FACING_HORIZONTAL, IEProperties.MULTIBLOCKSLAVE));
+		super(name, material, mainProperty, itemBlock, combineProperties(additionalProperties, IEProperties.FACING_HORIZONTAL));
 		this.hasMultiblockTile = new boolean[this.enumValues.length];
 		for(int i = 0; i < this.hasMultiblockTile.length; i++) this.hasMultiblockTile[i] = true;
-	}
-
-	@Override
-	public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
-		state = super.getActualState(state, world, pos);
-		return state;
 	}
 
 	@Override
@@ -75,6 +66,10 @@ public abstract class BlockITMultiblock<E extends Enum<E> & BlockITBase.IBlockEn
 		TileEntity te = world.getTileEntity(pos);
 		if(te instanceof TileEntityMultiblockPart) return ((TileEntityMultiblockPart<?>)te).getOriginalBlock();
 		return ItemStack.EMPTY;
+	}
+
+	public String getPath(int meta) {
+		return enumValues[meta].getPath();
 	}
 
 }

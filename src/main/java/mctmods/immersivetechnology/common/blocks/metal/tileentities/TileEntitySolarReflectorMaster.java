@@ -16,12 +16,6 @@ public class TileEntitySolarReflectorMaster extends TileEntitySolarReflectorSlav
 		return false;
 	}
 
-	@Override
-	public TileEntitySolarReflectorMaster master() {
-		master = this;
-		return this;
-	}
-
 	public boolean canSeeSun() {
 		BlockPos pos = this.getPos();
 		int hh = 256 - pos.getY();

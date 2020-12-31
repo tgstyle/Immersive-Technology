@@ -1,16 +1,20 @@
 package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 
 import blusunrize.immersiveengineering.common.util.Utils;
+import mctmods.immersivetechnology.client.render.TileRendererSteelSheetmetalTank;
 import mctmods.immersivetechnology.common.Config.ITConfig.Machines.SteelTank;
 import mctmods.immersivetechnology.common.util.IPipe;
 import mctmods.immersivetechnology.common.util.ITFluidTank;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class TileEntitySteelSheetmetalTankMaster extends TileEntitySteelSheetmetalTankSlave implements ITFluidTank.TankListener {
 
@@ -25,12 +29,6 @@ public class TileEntitySteelSheetmetalTankMaster extends TileEntitySteelSheetmet
 	@Override
 	public boolean isDummy() {
 		return false;
-	}
-
-	@Override
-	public TileEntitySteelSheetmetalTankMaster master() {
-		master = this;
-		return this;
 	}
 
 	@Override
@@ -104,5 +102,15 @@ public class TileEntitySteelSheetmetalTankMaster extends TileEntitySteelSheetmet
 		NBTTagCompound tankTag = tank.writeToNBT(new NBTTagCompound());
 		nbt.setTag("tank", tankTag);
 	}
+
+	@SideOnly(Side.CLIENT)
+	@Override
+	public void renderDynamic(double x, double y, double z, float partialTicks) {
+		TileRendererSteelSheetmetalTank.renderer.render(this, x, y, z, partialTicks, 0, 1);
+	}
+
+	@SideOnly(Side.CLIENT)
+	@Override
+	public boolean canRenderDynamicInLayer(BlockRenderLayer layer) { return layer == BlockRenderLayer.SOLID; }
 
 }

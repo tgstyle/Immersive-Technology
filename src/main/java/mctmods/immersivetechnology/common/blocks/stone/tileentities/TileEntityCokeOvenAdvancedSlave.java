@@ -4,12 +4,12 @@ import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.api.crafting.CokeOvenRecipe;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.*;
-import blusunrize.immersiveengineering.common.blocks.TileEntityMultiblockPart;
 import blusunrize.immersiveengineering.common.util.Utils;
 import blusunrize.immersiveengineering.common.util.inventory.IIEInventory;
 import com.google.common.collect.Lists;
 import mctmods.immersivetechnology.api.ITLib;
 import mctmods.immersivetechnology.api.ITUtils;
+import mctmods.immersivetechnology.common.blocks.metal.TileEntityGenericMultipart;
 import mctmods.immersivetechnology.common.blocks.stone.multiblocks.MultiblockCokeOvenAdvanced;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -18,7 +18,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
@@ -28,7 +27,7 @@ import net.minecraftforge.fluids.IFluidTank;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TileEntityCokeOvenAdvancedSlave extends TileEntityMultiblockPart<TileEntityCokeOvenAdvancedSlave> implements IIEInventory, IGuiTile, IProcessTile, IActiveState, IAdvancedSelectionBounds, IAdvancedCollisionBounds {
+public class TileEntityCokeOvenAdvancedSlave extends TileEntityGenericMultipart<TileEntityCokeOvenAdvancedSlave, TileEntityCokeOvenAdvancedMaster> implements IIEInventory, IGuiTile, IProcessTile, IActiveState, IAdvancedSelectionBounds, IAdvancedCollisionBounds {
 
 	private static final int[] size = { 4, 3, 3 };
 
@@ -127,17 +126,6 @@ public class TileEntityCokeOvenAdvancedSlave extends TileEntityMultiblockPart<Ti
 
 	@Override
 	public void doGraphicalUpdates(int slot) {
-	}
-
-	TileEntityCokeOvenAdvancedMaster master;
-
-	@Override
-	public TileEntityCokeOvenAdvancedMaster master() {
-		if(master != null && !master.tileEntityInvalid) return master;
-		BlockPos masterPos = getPos().add(-offset[0], -offset[1], -offset[2]);
-		TileEntity te = Utils.getExistingTileEntity(world, masterPos);
-		master = te instanceof TileEntityCokeOvenAdvancedMaster?(TileEntityCokeOvenAdvancedMaster)te: null;
-		return master;
 	}
 
 	@Override

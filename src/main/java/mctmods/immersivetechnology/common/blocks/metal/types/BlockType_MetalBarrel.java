@@ -24,4 +24,9 @@ public enum BlockType_MetalBarrel implements IStringSerializable, BlockITBase.IB
 	public boolean listForCreative() {
 		return true;
 	}
+
+	@Override
+	public String getPath() {
+		return null;
+	}
 }

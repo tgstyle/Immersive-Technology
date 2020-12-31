@@ -49,6 +49,11 @@ public class BlockValve extends BlockITTileProvider<BlockValve.BlockType_Valve> 
 		public boolean listForCreative() {
 			return true;
 		}
+
+		@Override
+		public String getPath() {
+			return null;
+		}
 	}
 
 	public BlockValve() {

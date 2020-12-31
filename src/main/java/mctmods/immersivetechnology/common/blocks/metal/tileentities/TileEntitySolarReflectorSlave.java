@@ -1,18 +1,15 @@
 package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
-import blusunrize.immersiveengineering.common.blocks.TileEntityMultiblockPart;
-import blusunrize.immersiveengineering.common.util.Utils;
 import com.google.common.collect.Lists;
 import mctmods.immersivetechnology.api.ITUtils;
+import mctmods.immersivetechnology.common.blocks.metal.TileEntityGenericMultipart;
 import mctmods.immersivetechnology.common.blocks.metal.multiblocks.MultiblockSolarReflector;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
@@ -20,7 +17,7 @@ import net.minecraftforge.fluids.IFluidTank;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TileEntitySolarReflectorSlave extends TileEntityMultiblockPart<TileEntitySolarReflectorSlave> implements IEBlockInterfaces.IAdvancedSelectionBounds, IEBlockInterfaces.IAdvancedCollisionBounds {
+public class TileEntitySolarReflectorSlave extends TileEntityGenericMultipart<TileEntitySolarReflectorSlave, TileEntitySolarReflectorMaster> implements IEBlockInterfaces.IAdvancedSelectionBounds, IEBlockInterfaces.IAdvancedCollisionBounds {
 
 	private static final int[] size = { 5, 1, 3 };
 	public TileEntitySolarReflectorSlave() {
@@ -40,21 +37,6 @@ public class TileEntitySolarReflectorSlave extends TileEntityMultiblockPart<Tile
 	@Override
 	public void update() {
 		ITUtils.RemoveDummyFromTicking(this);
-	}
-
-	@Override
-	public boolean isDummy() {
-		return true;
-	}
-
-	TileEntitySolarReflectorMaster master;
-
-	public TileEntitySolarReflectorMaster master() {
-		if(master != null && !master.tileEntityInvalid) return master;
-		BlockPos masterPos = getPos().add(-offset[0], -offset[1], -offset[2]);
-		TileEntity te = Utils.getExistingTileEntity(world, masterPos);
-		master = te instanceof TileEntitySolarReflectorMaster?(TileEntitySolarReflectorMaster)te: null;
-		return master;
 	}
 
 	@Override

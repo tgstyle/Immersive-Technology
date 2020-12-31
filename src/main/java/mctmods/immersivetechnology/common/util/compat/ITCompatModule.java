@@ -2,8 +2,8 @@ package mctmods.immersivetechnology.common.util.compat;
 
 import mctmods.immersivetechnology.common.util.ITLogger;
 import mctmods.immersivetechnology.common.util.compat.crafttweaker.CraftTweakerHelper;
-import mctmods.immersivetechnology.common.util.compat.top.OneProbeHelper;
 import mctmods.immersivetechnology.common.util.compat.opencomputers.OCHelper;
+import mctmods.immersivetechnology.common.util.compat.top.OneProbeHelper;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;

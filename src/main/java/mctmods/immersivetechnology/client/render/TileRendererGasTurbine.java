@@ -1,19 +1,20 @@
 package mctmods.immersivetechnology.client.render;
 
-import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.client.ClientUtils;
+import mctmods.immersivetechnology.api.ITProperties;
 import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityGasTurbineMaster;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.block.model.IBakedModel;
-import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.math.BlockPos;
 import org.lwjgl.opengl.GL11;
 
-public class TileRendererGasTurbine extends TileEntitySpecialRenderer<TileEntityGasTurbineMaster> {
+public class TileRendererGasTurbine extends TileRendererMultiblockBase<TileEntityGasTurbineMaster> {
+
+    public static final TileRendererGasTurbine renderer = new TileRendererGasTurbine();
 
     @SuppressWarnings("deprecation")
     @Override
@@ -28,8 +29,8 @@ public class TileRendererGasTurbine extends TileEntitySpecialRenderer<TileEntity
             return;
         }
         state = state.getBlock().getActualState(state, getWorld(), blockPos);
-        state = state.withProperty(IEProperties.DYNAMICRENDER, true);
-        IBakedModel model = blockRenderer.getBlockModelShapes().getModelForState(state);
+        if (!state.getPropertyKeys().contains(ITProperties.RENDER)) return;
+        state = state.withProperty(ITProperties.RENDER, ITProperties.Render_Type.DYNAMIC);
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder worldRenderer = tessellator.getBuffer();
         ClientUtils.bindAtlas();
@@ -49,6 +50,7 @@ public class TileRendererGasTurbine extends TileEntitySpecialRenderer<TileEntity
         worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
         worldRenderer.setTranslation(- .5 - blockPos.getX(), - .5 - blockPos.getY(), - .5 - blockPos.getZ());
         worldRenderer.color(255, 255, 255, 255);
+        IBakedModel model = blockRenderer.getBlockModelShapes().getModelForState(state);
         blockRenderer.getBlockModelRenderer().renderModel(te.getWorld(), model, state, blockPos, worldRenderer, true);
         worldRenderer.setTranslation(0.0D, 0.0D, 0.0D);
         tessellator.draw();

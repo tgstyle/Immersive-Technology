@@ -8,10 +8,9 @@ import net.minecraft.util.math.AxisAlignedBB;
 import java.util.ArrayList;
 import java.util.List;
 
-public interface IMultiblockAdvAABB extends IEBlockInterfaces.IAdvancedCollisionBounds, IEBlockInterfaces.IAdvancedSelectionBounds {
+public interface IMultiblockAdvAABB extends IEBlockInterfaces.IAdvancedCollisionBounds, IEBlockInterfaces.IAdvancedSelectionBounds, IMultipart {
 
     byte[][][] GetAABBArray();
-    TileEntityMultiblockPart<?> This();
 
     default List<AxisAlignedBB> Inject(List <AxisAlignedBB> list, double A, double B, double C, double D, double minY, double maxY) {
         double[] boundingArray = ITUtils.alternativeSmartBoundingBox(A, B, C, D, minY, maxY, This().facing, This().mirrored? This().facing.rotateYCCW() : This().facing.rotateY());

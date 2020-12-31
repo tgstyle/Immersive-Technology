@@ -23,4 +23,9 @@ public enum BlockType_StoneDecoration implements IStringSerializable, BlockITBas
 		return true;
 	}
 
+	@Override
+	public String getPath() {
+		return null;
+	}
+
 }

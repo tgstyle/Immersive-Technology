@@ -17,6 +17,8 @@ import blusunrize.immersiveengineering.common.util.Utils;
 import blusunrize.immersiveengineering.common.util.inventory.IEInventoryHandler;
 import blusunrize.immersiveengineering.common.util.inventory.IIEInventory;
 import mctmods.immersivetechnology.common.CommonProxy;
+import mctmods.immersivetechnology.common.blocks.metal.TileEntityGenericMultiblock;
+import mctmods.immersivetechnology.common.blocks.metal.TileEntityGenericMultipart;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
@@ -57,9 +59,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-	/*
-	* @author BluSunrize
-	*/
 @SuppressWarnings("deprecation")
 public abstract class BlockITTileProvider<E extends Enum<E> & BlockITBase.IBlockEnum> extends BlockITBase<E> implements IColouredBlock {
 	
@@ -250,10 +249,12 @@ public abstract class BlockITTileProvider<E extends Enum<E> & BlockITBase.IBlock
 			if(state.getPropertyKeys().contains(boolProp)) state = applyProperty(state, boolProp, ((IDualState) tile).getIsSecondState());
 		}
 
-		if(tile instanceof TileEntityMultiblockPart) state = applyProperty(state, IEProperties.MULTIBLOCKSLAVE, ((TileEntityMultiblockPart<?>) tile).isDummy());
-		else if(tile instanceof IHasDummyBlocks) state = applyProperty(state, IEProperties.MULTIBLOCKSLAVE, ((IHasDummyBlocks) tile).isDummy());
+		if(!(tile instanceof TileEntityGenericMultiblock || tile instanceof TileEntityGenericMultipart)) {
+			if(tile instanceof TileEntityMultiblockPart) state = applyProperty(state, IEProperties.MULTIBLOCKSLAVE, ((TileEntityMultiblockPart<?>) tile).isDummy());
+			else if(tile instanceof IHasDummyBlocks) state = applyProperty(state, IEProperties.MULTIBLOCKSLAVE, ((IHasDummyBlocks) tile).isDummy());
 
-		if(tile instanceof IMirrorAble)	state = applyProperty(state, ((IMirrorAble) tile).getBoolProperty(IMirrorAble.class), ((IMirrorAble) tile).getIsMirrored());
+			if(tile instanceof IMirrorAble)	state = applyProperty(state, ((IMirrorAble) tile).getBoolProperty(IMirrorAble.class), ((IMirrorAble) tile).getIsMirrored());
+		}
 
 		return state;
 	}

@@ -10,10 +10,10 @@
     }
   },
   "variants": {
-    "inventory,type=gas_turbine_slave": [{
-      "model": "immersivetech:metal_multiblock/gas_turbine.obj",
+    "inventory": {
+      "model": "immersivetech:metal_multiblock/alternator.obj",
       "transform": {
-        "scale": 0.16,
+        "scale": 0.25,
         "rotation": [{
           "x": 20
         },
@@ -21,13 +21,16 @@
             "y": -45
           }
         ],
-        "translation": [ -0.3, -0.1, 0 ]
+        "translation": [
+          0,
+          0,
+          0
+        ]
       }
-    }],
+    },
     "type": {
-      "gas_turbine_slave": {
-        "model": "immersiveengineering:ie_empty"
-      }
+      "alternator": {},
+      "alternator_slave": {}
     },
     "facing": {
       "north": {
@@ -59,24 +62,18 @@
         }
       }
     },
-    "_0multiblockslave": {
-      "false": {},
-      "true": {
+    "render": {
+      "hidden": {
         "model": "immersiveengineering:ie_empty"
-      }
-    },
-    "_1dynamicrender": {
-      "false": {},
-      "true": {
-        "model": "immersivetech:metal_multiblock/gas_turbine_rotor.obj"
-      }
-    },
-    "boolean0": {
-      "false": {
-        "model": "immersivetech:metal_multiblock/gas_turbine.obj"
       },
-      "true": {
-        "model": "immersivetech:metal_multiblock/gas_turbine_mirrored.obj"
+      "normal": {
+        "model": "immersivetech:metal_multiblock/alternator.obj"
+      },
+      "mirrored": {
+        "model": "immersivetech:metal_multiblock/alternator.obj"
+      },
+      "dynamic": {
+        "model": "immersiveengineering:ie_empty"
       }
     }
   }

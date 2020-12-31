@@ -10,8 +10,8 @@
 		}
 	},
 	"variants": {
-		"inventory,type=heat_exchanger": [{
-			"model": "immersivetech:metal_multiblock/heat_exchanger.obj",
+		"inventory": {
+			"model": "immersivetech:metal_multiblock/boiler.obj",
 			"transform": {
 				"scale": 0.17,
 				"rotation": [{
@@ -23,9 +23,10 @@
 				],
 				"translation": [ -0.1, 0, 0 ]
 			}
-		}],
+		},
 		"type": {
-			"heat_exchanger": {}
+			"boiler": {},
+			"boiler_slave": {}
 		},
 		"facing": {
 			"north": {
@@ -57,22 +58,18 @@
 				}
 			}
 		},
-		"_0multiblockslave": {
-			"false": {},
-			"true": {
+		"render": {
+			"hidden": {
 				"model": "immersiveengineering:ie_empty"
-			}
-		},
-		"_1dynamicrender": {
-			"false": {},
-			"true": {}
-		},
-		"boolean0": {
-			"false": {
-				"model": "immersivetech:metal_multiblock/heat_exchanger.obj"
 			},
-			"true": {
-				"model": "immersivetech:metal_multiblock/heat_exchanger_mirrored.obj"
+			"normal": {
+				"model": "immersivetech:metal_multiblock/boiler.obj"
+			},
+			"mirrored": {
+				"model": "immersivetech:metal_multiblock/boiler_mirrored.obj"
+			},
+			"dynamic": {
+				"model": "immersiveengineering:ie_empty"
 			}
 		}
 	}

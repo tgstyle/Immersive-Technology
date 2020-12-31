@@ -1,5 +1,6 @@
 package mctmods.immersivetechnology.api;
 
+import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.client.MechanicalEnergyAnimation;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -190,4 +191,7 @@ public class ITUtils {
 		}
 	}
 
+	public static String appendModName(String appendTo) {
+		return ImmersiveTechnology.MODID + ":" + appendTo;
+	}
 }

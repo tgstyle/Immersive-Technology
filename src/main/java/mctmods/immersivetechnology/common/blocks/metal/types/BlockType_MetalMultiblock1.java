@@ -1,20 +1,34 @@
 package mctmods.immersivetechnology.common.blocks.metal.types;
 
+import mctmods.immersivetechnology.api.ITUtils;
 import mctmods.immersivetechnology.common.blocks.BlockITBase;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityGasTurbineMaster;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityGasTurbineSlave;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityHeatExchangerMaster;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityHeatExchangerSlave;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IStringSerializable;
 
 import java.util.Locale;
+import java.util.function.Function;
 
 public enum BlockType_MetalMultiblock1 implements IStringSerializable, BlockITBase.IBlockEnum {
 
-    GAS_TURBINE(true),
-    GAS_TURBINE_SLAVE(true),
-    HEAT_EXCHANGER(true),
-    HEAT_EXCHANGER_SLAVE(true);
+    GAS_TURBINE(ITUtils.appendModName("multiblocks/gas_turbine"), x -> new TileEntityGasTurbineMaster()),
+    GAS_TURBINE_SLAVE(ITUtils.appendModName("multiblocks/gas_turbine"), x -> new TileEntityGasTurbineSlave()),
+    HEAT_EXCHANGER(ITUtils.appendModName("multiblocks/heat_exchanger"), x -> new TileEntityHeatExchangerMaster()),
+    HEAT_EXCHANGER_SLAVE(ITUtils.appendModName("multiblocks/heat_exchanger"), x -> new TileEntityHeatExchangerSlave());
 
-    private boolean needsCustomState;
-    BlockType_MetalMultiblock1(boolean needsCustomState) {
-        this.needsCustomState = needsCustomState;
+    private final String path;
+    private final Function<?, TileEntity> func;
+
+    BlockType_MetalMultiblock1(String path, Function<?, TileEntity> func) {
+        this.path = path;
+        this.func = func;
+    }
+
+    public TileEntity createTE() {
+        return func.apply(null);
     }
 
     @Override
@@ -28,15 +42,13 @@ public enum BlockType_MetalMultiblock1 implements IStringSerializable, BlockITBa
     }
 
     @Override
-    public String getName() {
-        return this.toString().toLowerCase(Locale.ENGLISH);
+    public String getPath() {
+        return path;
     }
 
-    public boolean needsCustomState() {
-        return this.needsCustomState;
-    }
-    public String getCustomState() {
-        return getName().toLowerCase();
+    @Override
+    public String getName() {
+        return this.toString().toLowerCase(Locale.ENGLISH);
     }
 
 }
